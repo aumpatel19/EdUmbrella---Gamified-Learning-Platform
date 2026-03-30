@@ -1,0 +1,57 @@
+{
+    "id": "teacher_test123",
+    "title": "Test Mathematics Quiz",
+    "description": "A test quiz to verify the folder structure",
+    "subject": "mathematics",
+    "subject_name": "Mathematics",
+    "subject_icon": "🧮",
+    "difficulty": "medium",
+    "duration_minutes": 10,
+    "total_questions": 2,
+    "quiz_type": "traditional",
+    "classes": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+    ],
+    "questions": [
+        {
+            "id": 1,
+            "question_text": "What is 2 + 2?",
+            "question_type": "multiple_choice",
+            "options": [
+                "3",
+                "4",
+                "5",
+                "6"
+            ],
+            "correct_answer": "4",
+            "explanation": "2 + 2 = 4",
+            "points": 1
+        },
+        {
+            "id": 2,
+            "question_text": "What is 5 × 3?",
+            "question_type": "multiple_choice",
+            "options": [
+                "15",
+                "12",
+                "18",
+                "20"
+            ],
+            "correct_answer": "15",
+            "explanation": "5 × 3 = 15",
+            "points": 1
+        }
+    ],
+    "status": "Published",
+    "responses": 0,
+    "created_at": "2024-01-15T10:30:00.000Z",
+    "teacher_email": "test@example.com",
+    "teacher_created": true,
+    "available_to_students": true
+}

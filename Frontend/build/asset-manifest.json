@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a88e95ae.css",
+    "main.js": "/static/js/main.67c335ce.js",
+    "static/media/sci2.png": "/static/media/sci2.1aa4d9ce09cd9c9b2da1.png",
+    "static/media/sci3.png": "/static/media/sci3.0345c4dc44ccc41cdb64.png",
+    "static/media/sci5.png": "/static/media/sci5.f0a0e077296d61701cfc.png",
+    "static/media/sci4.png": "/static/media/sci4.6c4ade681cf6ec4aacd1.png",
+    "static/media/sci6.png": "/static/media/sci6.a6e5b74827c21e5eb932.png",
+    "static/media/hero-illustration.jpg": "/static/media/hero-illustration.a75a01aa8b447158c72c.jpg",
+    "static/media/sci1.png": "/static/media/sci1.3bd8b7a092e194db3489.png",
+    "static/media/teacher-avatar.jpg": "/static/media/teacher-avatar.a9ce3cd154d470b3bfbb.jpg",
+    "static/media/student-avatar.jpg": "/static/media/student-avatar.389e1a33247a2f123610.jpg",
+    "static/media/circuit-design.svg": "/static/media/circuit-design.2fcb63bb5ac024425e03399a1d21f276.svg",
+    "index.html": "/index.html",
+    "main.a88e95ae.css.map": "/static/css/main.a88e95ae.css.map",
+    "main.67c335ce.js.map": "/static/js/main.67c335ce.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a88e95ae.css",
+    "static/js/main.67c335ce.js"
+  ]
+}

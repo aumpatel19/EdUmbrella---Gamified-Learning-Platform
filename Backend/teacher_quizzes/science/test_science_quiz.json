@@ -1,0 +1,71 @@
+{
+    "id": "teacher_science456",
+    "title": "Test Science Quiz",
+    "description": "A test science quiz to verify the folder structure",
+    "subject": "science",
+    "subject_name": "Science",
+    "subject_icon": "🔬",
+    "difficulty": "easy",
+    "duration_minutes": 15,
+    "total_questions": 3,
+    "quiz_type": "traditional",
+    "classes": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+    ],
+    "questions": [
+        {
+            "id": 1,
+            "question_text": "What is the chemical symbol for water?",
+            "question_type": "multiple_choice",
+            "options": [
+                "H2O",
+                "CO2",
+                "NaCl",
+                "O2"
+            ],
+            "correct_answer": "H2O",
+            "explanation": "Water is composed of 2 hydrogen atoms and 1 oxygen atom, hence H2O",
+            "points": 1
+        },
+        {
+            "id": 2,
+            "question_text": "What is the center of our solar system?",
+            "question_type": "multiple_choice",
+            "options": [
+                "Earth",
+                "Moon",
+                "Sun",
+                "Mars"
+            ],
+            "correct_answer": "Sun",
+            "explanation": "The Sun is the center of our solar system",
+            "points": 1
+        },
+        {
+            "id": 3,
+            "question_text": "What gas do plants absorb from the atmosphere?",
+            "question_type": "multiple_choice",
+            "options": [
+                "Oxygen",
+                "Carbon Dioxide",
+                "Nitrogen",
+                "Hydrogen"
+            ],
+            "correct_answer": "Carbon Dioxide",
+            "explanation": "Plants absorb carbon dioxide during photosynthesis",
+            "points": 1
+        }
+    ],
+    "status": "Published",
+    "responses": 0,
+    "created_at": "2024-01-15T10:35:00.000Z",
+    "teacher_email": "test@example.com",
+    "teacher_created": true,
+    "available_to_students": true
+}

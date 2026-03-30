@@ -1,0 +1,107 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with radial lines -->
+  <defs>
+    <pattern id="backgroundPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="#1a4a5c" opacity="0.3"/>
+    </pattern>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="#1a4a5c"/>
+  <rect width="400" height="300" fill="url(#backgroundPattern)"/>
+  
+  <!-- Radial lines from center -->
+  <g stroke="#2a5a6c" stroke-width="1" opacity="0.4">
+    <line x1="200" y1="150" x2="50" y2="50"/>
+    <line x1="200" y1="150" x2="350" y2="50"/>
+    <line x1="200" y1="150" x2="50" y2="250"/>
+    <line x1="200" y1="150" x2="350" y2="250"/>
+    <line x1="200" y1="150" x2="200" y2="50"/>
+    <line x1="200" y1="150" x2="200" y2="250"/>
+    <line x1="200" y1="150" x2="50" y2="150"/>
+    <line x1="200" y1="150" x2="350" y2="150"/>
+  </g>
+  
+  <!-- Title "CIRCUITS" -->
+  <text x="200" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#f5f5dc" stroke="#1a4a5c" stroke-width="2">
+    CIRCUITS
+  </text>
+  
+  <!-- Lightning bolts around title -->
+  <g fill="#ff8c00" stroke="#ff8c00" stroke-width="1">
+    <path d="M 120 25 L 130 35 L 125 35 L 135 45 L 130 45 L 140 55 L 135 55 L 125 45 L 130 45 L 120 35 L 125 35 Z"/>
+    <path d="M 280 25 L 290 35 L 285 35 L 295 45 L 290 45 L 300 55 L 295 55 L 285 45 L 290 45 L 280 35 L 285 35 Z"/>
+    <path d="M 100 60 L 110 70 L 105 70 L 115 80 L 110 80 L 120 90 L 115 90 L 105 80 L 110 80 L 100 70 L 105 70 Z"/>
+    <path d="M 300 60 L 310 70 L 305 70 L 315 80 L 310 80 L 320 90 L 315 90 L 305 80 L 310 80 L 300 70 L 305 70 Z"/>
+  </g>
+  
+  <!-- Battery (left side) -->
+  <g transform="translate(80, 180)">
+    <!-- Battery body -->
+    <rect x="0" y="0" width="30" height="60" fill="#2c3e50" stroke="#34495e" stroke-width="2" rx="5"/>
+    <!-- Battery top -->
+    <rect x="8" y="-8" width="14" height="8" fill="#7f8c8d" stroke="#95a5a6" stroke-width="1"/>
+    <!-- Battery bottom -->
+    <rect x="8" y="60" width="14" height="8" fill="#7f8c8d" stroke="#95a5a6" stroke-width="1"/>
+    <!-- Plus sign -->
+    <text x="15" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ff8c00">+</text>
+  </g>
+  
+  <!-- Switch (center) -->
+  <g transform="translate(180, 190)">
+    <!-- Switch base -->
+    <rect x="0" y="0" width="40" height="20" fill="#ff8c00" stroke="#e67e22" stroke-width="2" rx="3"/>
+    <!-- Switch lever -->
+    <rect x="15" y="-5" width="10" height="30" fill="#2c3e50" stroke="#34495e" stroke-width="1" rx="2"/>
+    <!-- Switch contacts -->
+    <circle cx="8" cy="10" r="3" fill="#2c3e50"/>
+    <circle cx="32" cy="10" r="3" fill="#2c3e50"/>
+  </g>
+  
+  <!-- Light bulb (right side) -->
+  <g transform="translate(280, 180)">
+    <!-- Bulb base -->
+    <rect x="8" y="40" width="14" height="20" fill="#2c3e50" stroke="#34495e" stroke-width="1"/>
+    <!-- Bulb glass -->
+    <ellipse cx="15" cy="30" rx="12" ry="15" fill="none" stroke="#34495e" stroke-width="2"/>
+    <!-- Filament (glowing) -->
+    <path d="M 8 25 Q 15 20 22 25 Q 15 30 8 25" fill="#ff8c00" filter="url(#glow)" opacity="0.9"/>
+    <path d="M 8 30 Q 15 25 22 30 Q 15 35 8 30" fill="#ff8c00" filter="url(#glow)" opacity="0.9"/>
+    <!-- Light rays -->
+    <g stroke="#ff8c00" stroke-width="2" opacity="0.8" filter="url(#glow)">
+      <line x1="15" y1="15" x2="10" y2="5"/>
+      <line x1="15" y1="15" x2="20" y2="5"/>
+      <line x1="15" y1="15" x2="5" y2="10"/>
+      <line x1="15" y1="15" x2="25" y2="10"/>
+      <line x1="15" y1="15" x2="8" y2="8"/>
+      <line x1="15" y1="15" x2="22" y2="8"/>
+    </g>
+  </g>
+  
+  <!-- Wires connecting components -->
+  <g stroke="#ff8c00" stroke-width="4" fill="none">
+    <!-- Wire from battery to switch -->
+    <path d="M 110 210 Q 140 210 180 200"/>
+    <!-- Wire from switch to bulb -->
+    <path d="M 220 200 Q 250 200 280 200"/>
+    <!-- Wire from bulb back to battery -->
+    <path d="M 280 240 Q 200 250 110 240"/>
+  </g>
+  
+  <!-- Connection points -->
+  <g fill="#ff8c00">
+    <circle cx="110" cy="210" r="3"/>
+    <circle cx="180" cy="200" r="3"/>
+    <circle cx="220" cy="200" r="3"/>
+    <circle cx="280" cy="200" r="3"/>
+    <circle cx="280" cy="240" r="3"/>
+    <circle cx="110" cy="240" r="3"/>
+  </g>
+</svg>
