@@ -111,85 +111,87 @@ const GameWrapper = ({ gameComponent, gameName, gameTitle, onGameComplete }) => 
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen" style={{ background: "#080D1A" }}>
+      {/* Dot grid */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        backgroundImage: "radial-gradient(rgba(124,58,237,0.15) 1px, transparent 1px)",
+        backgroundSize: "30px 30px"
+      }} />
+
       {/* Header */}
-      <div className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="sticky top-0 z-50" style={{ background: "rgba(8,13,26,0.95)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(124,58,237,0.15)" }}>
+        <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={handleBackToQuizzes}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Quizzes
-            </Button>
+            <button onClick={handleBackToQuizzes} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-400 hover:text-white border text-sm transition-colors" style={{ borderColor: "rgba(99,102,241,0.3)" }}>
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
             <div>
-              <h1 className="text-xl font-bold">{gameTitle}</h1>
-              <p className="text-sm text-muted-foreground">Interactive Learning Game</p>
+              <h1 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{gameTitle}</h1>
+              <p className="text-xs text-slate-400">Interactive Learning Game</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <Badge variant="secondary" className="flex items-center gap-2">
-              <Trophy className="w-3 h-3" />
-              Score: {gameScore}
-            </Badge>
-            <Badge variant="secondary" className="flex items-center gap-2">
-              <Target className="w-3 h-3" />
-              Level: {gameLevel}
-            </Badge>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)" }}>
+              <Trophy className="w-4 h-4 text-yellow-400" />
+              <span className="text-yellow-400 font-mono text-sm font-bold">{gameScore}</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: "rgba(6,182,212,0.15)", border: "1px solid rgba(6,182,212,0.3)" }}>
+              <Target className="w-4 h-4 text-cyan-400" />
+              <span className="text-cyan-400 font-mono text-sm font-bold">Lv.{gameLevel}</span>
+            </div>
+            {gameCompleted && (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)" }}>
+                <Star className="w-4 h-4 text-emerald-400" />
+                <span className="text-emerald-400 text-sm font-bold">Complete!</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="relative z-10 px-6 py-8 max-w-5xl mx-auto">
         {/* Game Container */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <div className="rounded-2xl overflow-hidden mb-6" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(124,58,237,0.2)" }}>
+          <div className="h-1" style={{ background: "linear-gradient(90deg,#7C3AED,#4F46E5,#06B6D4)", backgroundSize: "200%", animation: "xp-shift 2.5s linear infinite" }} />
+          <div className="p-5">
+            <h2 className="text-white font-bold mb-4 flex items-center gap-2" style={{ fontFamily: "Sora, sans-serif" }}>
               🎮 {gameTitle}
-              {gameCompleted && <Badge className="bg-green-100 text-green-800">Completed!</Badge>}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h2>
             <div className="w-full">
               {loading ? (
-                <div className="flex items-center justify-center h-64 bg-gray-100 rounded-lg">
+                <div className="flex items-center justify-center h-64 rounded-xl" style={{ background: "rgba(8,13,26,0.6)", border: "1px solid rgba(99,102,241,0.15)" }}>
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Loading game...</p>
+                    <div className="animate-spin rounded-full h-10 w-10 border-2 border-violet-500 border-t-transparent mx-auto mb-4" />
+                    <p className="text-slate-400">Loading game...</p>
                   </div>
                 </div>
               ) : GameComponent ? (
-                <div className="bg-white rounded-lg p-4 border">
+                <div className="rounded-xl overflow-hidden" style={{ background: "rgba(8,13,26,0.4)", border: "1px solid rgba(99,102,241,0.15)" }}>
                   <GameComponent />
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-64 bg-red-100 rounded-lg">
-                  <div className="text-center">
-                    <p className="text-red-600">Failed to load game. Please try again later.</p>
-                  </div>
+                <div className="flex items-center justify-center h-64 rounded-xl" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                  <p className="text-red-400">Failed to load game. Please try again.</p>
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Game Instructions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              How to Play
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {getGameInstructions(gameName)}
-              <div className="flex gap-2 pt-4 border-t">
-                <Badge variant="outline">Educational</Badge>
-                <Badge variant="outline">Interactive</Badge>
-                <Badge variant="outline">Self-Paced</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Instructions */}
+        <div className="rounded-2xl p-6" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}>
+          <h3 className="text-white font-bold mb-4 flex items-center gap-2" style={{ fontFamily: "Sora, sans-serif" }}>
+            <Clock className="w-5 h-5 text-cyan-400" /> How to Play
+          </h3>
+          <div className="text-slate-300 text-sm">
+            {getGameInstructions(gameName)}
+          </div>
+          <div className="flex gap-2 pt-4 mt-4 border-t" style={{ borderColor: "rgba(99,102,241,0.15)" }}>
+            {["Educational","Interactive","Self-Paced"].map(tag => (
+              <span key={tag} className="text-xs px-2 py-1 rounded-full text-violet-300" style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)" }}>{tag}</span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

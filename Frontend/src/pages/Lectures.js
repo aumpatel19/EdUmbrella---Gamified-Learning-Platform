@@ -151,182 +151,251 @@ const Lectures = () => {
     navigate(`/lectures/${subjectId}`);
   };
 
+  const subjectGlowColors = {
+    "from-blue-500 to-blue-700": "rgba(59,130,246,0.35)",
+    "from-green-500 to-green-700": "rgba(16,185,129,0.35)",
+    "from-purple-500 to-purple-700": "rgba(124,58,237,0.35)",
+    "from-orange-500 to-orange-700": "rgba(245,158,11,0.35)",
+    "from-indigo-500 to-indigo-700": "rgba(99,102,241,0.35)",
+    "from-teal-500 to-teal-700": "rgba(6,182,212,0.35)",
+    "from-red-500 to-red-700": "rgba(236,72,153,0.35)",
+    "from-emerald-500 to-emerald-700": "rgba(16,185,129,0.35)",
+  };
+
   return (
     <SidebarProvider>
       <StudentSidebar />
       <SidebarInset>
-        <div className="min-h-screen bg-[#F8FAFC]">
-          {/* Header */}
-          <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <SidebarTrigger className="md:hidden" />
-                <div className="w-8 h-8 rounded-full bg-[#1D4ED8] flex items-center justify-center">
-                  <span className="text-lg">🎓</span>
-                </div>
-                <h1 className="text-xl font-bold text-[#1E293B] font-jakarta">
-                  EdUmbrella - Lectures
+        <div
+          className="min-h-screen dot-grid"
+          style={{ background: "#080D1A" }}
+        >
+          {/* Sticky Header */}
+          <header
+            className="sticky top-0 z-50"
+            style={{
+              background: "rgba(8,13,26,0.95)",
+              backdropFilter: "blur(16px)",
+              borderBottom: "1px solid rgba(124,58,237,0.15)",
+            }}
+          >
+            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="md:hidden text-slate-400 hover:text-white" />
+                <span className="text-xl">📚</span>
+                <h1
+                  className="text-xl font-bold gradient-text-violet font-sora"
+                  style={{ fontFamily: "'Sora', sans-serif" }}
+                >
+                  Lecture Hall
                 </h1>
+                <span
+                  className="px-2 py-0.5 rounded text-xs font-semibold"
+                  style={{
+                    background: "rgba(124,58,237,0.18)",
+                    color: "#a78bfa",
+                    border: "1px solid rgba(124,58,237,0.3)",
+                  }}
+                >
+                  Class {studentClass}
+                </span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src="/placeholder.svg" />
-                    <AvatarFallback>{userName.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{userName}</span>
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                    style={{
+                      background: "linear-gradient(135deg,#7C3AED,#06B6D4)",
+                      color: "#fff",
+                    }}
+                  >
+                    {userName.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-slate-300 hidden sm:block">{userName}</span>
                 </div>
-                <Button variant="outline" onClick={handleLogout}>
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                  style={{
+                    border: "1px solid rgba(99,102,241,0.25)",
+                    background: "rgba(15,22,41,0.6)",
+                  }}
+                >
                   Logout
-                </Button>
+                </button>
               </div>
             </div>
           </header>
 
           <div className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-2">📚 Video Lectures - Class {studentClass}</h2>
-              <p className="text-muted-foreground">
+            {/* Page Title */}
+            <div className="mb-8 animate-slide-up">
+              <h2
+                className="text-3xl font-bold mb-2"
+                style={{ color: "#fff", fontFamily: "'Sora', sans-serif" }}
+              >
+                Video Lectures
+              </h2>
+              <p className="text-slate-400">
                 Access comprehensive video lectures from expert teachers for your class level
               </p>
             </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Subjects</p>
-                      <p className="text-2xl font-bold">{subjects.length}</p>
-                    </div>
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                {
+                  icon: <BookOpen className="w-5 h-5" />,
+                  label: "Total Subjects",
+                  value: subjects.length,
+                  iconBg: "rgba(124,58,237,0.18)",
+                  iconColor: "#a78bfa",
+                },
+                {
+                  icon: <Play className="w-5 h-5" />,
+                  label: "Total Lectures",
+                  value: subjects.reduce((sum, subject) => sum + subject.lectureCount, 0),
+                  iconBg: "rgba(16,185,129,0.18)",
+                  iconColor: "#34d399",
+                },
+                {
+                  icon: <Clock className="w-5 h-5" />,
+                  label: "Total Duration",
+                  value: "37h+",
+                  iconBg: "rgba(6,182,212,0.18)",
+                  iconColor: "#22d3ee",
+                },
+                {
+                  icon: <Users className="w-5 h-5" />,
+                  label: "Enrolled",
+                  value: "540+",
+                  iconBg: "rgba(245,158,11,0.18)",
+                  iconColor: "#fbbf24",
+                },
+              ].map((stat, i) => (
+                <div key={i} className="card-game p-4 flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: stat.iconBg, color: stat.iconColor }}
+                  >
+                    {stat.icon}
                   </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <Play className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Lectures</p>
-                      <p className="text-2xl font-bold">{subjects.reduce((sum, subject) => sum + subject.lectureCount, 0)}</p>
-                    </div>
+                  <div>
+                    <p className="text-xs text-slate-400">{stat.label}</p>
+                    <p
+                      className="text-2xl font-bold"
+                      style={{ color: "#fff", fontFamily: "'Sora', sans-serif" }}
+                    >
+                      {stat.value}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Duration</p>
-                      <p className="text-2xl font-bold">37h+</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Enrolled Students</p>
-                      <p className="text-2xl font-bold">540+</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              ))}
             </div>
 
-            {/* Subject Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {subjects.map((subject) => (
-                <Card 
-                  key={subject.id} 
-                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
-                  onClick={() => handleSubjectClick(subject.id)}
-                >
-                  <div className={`h-2 bg-gradient-to-r ${subject.color}`} />
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="text-3xl">{subject.icon}</div>
-                        <div>
-                          <CardTitle className="group-hover:text-primary transition-colors">
+            {/* Subject Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {subjects.map((subject) => {
+                const glowColor = subjectGlowColors[subject.color] || "rgba(124,58,237,0.25)";
+                return (
+                  <div
+                    key={subject.id}
+                    className="card-game group cursor-pointer overflow-hidden transition-all duration-300"
+                    onClick={() => handleSubjectClick(subject.id)}
+                    style={{ "--glow": glowColor }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-4px)";
+                      e.currentTarget.style.boxShadow = `0 0 28px ${glowColor}`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = "";
+                    }}
+                  >
+                    {/* Color accent bar */}
+                    <div className={`h-1 bg-gradient-to-r ${subject.color} w-full`} />
+
+                    <div className="p-5">
+                      {/* Subject header */}
+                      <div className="flex items-start gap-3 mb-4">
+                        <div
+                          className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
+                          style={{
+                            background: "rgba(15,22,41,0.85)",
+                            border: "1px solid rgba(99,102,241,0.25)",
+                            backdropFilter: "blur(8px)",
+                          }}
+                        >
+                          {subject.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3
+                            className="font-bold text-base truncate"
+                            style={{
+                              color: "#fff",
+                              fontFamily: "'Sora', sans-serif",
+                            }}
+                          >
                             {subject.title}
-                          </CardTitle>
-                          <CardDescription className="mt-1">
+                          </h3>
+                          <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">
                             {subject.description}
-                          </CardDescription>
+                          </p>
+                        </div>
+                        <span
+                          className="badge-xp shrink-0 text-xs"
+                          style={{ whiteSpace: "nowrap" }}
+                        >
+                          {subject.progress}%
+                        </span>
+                      </div>
+
+                      {/* Stats row */}
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {[
+                          { label: "Lectures", val: subject.lectureCount },
+                          { label: "Duration", val: subject.duration },
+                          { label: "Students", val: subject.students },
+                        ].map((s) => (
+                          <div
+                            key={s.label}
+                            className="rounded-lg p-2 text-center"
+                            style={{
+                              background: "rgba(26,33,64,0.6)",
+                              border: "1px solid rgba(99,102,241,0.12)",
+                            }}
+                          >
+                            <p className="text-xs text-slate-500">{s.label}</p>
+                            <p className="text-sm font-semibold text-slate-200">{s.val}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Progress bar */}
+                      <div className="mb-4">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-slate-400">Progress</span>
+                          <span className="text-slate-500">Updated {subject.lastUpdated}</span>
+                        </div>
+                        <div className="xp-bar">
+                          <div
+                            className={`xp-bar-fill bg-gradient-to-r ${subject.color}`}
+                            style={{ width: `${subject.progress}%` }}
+                          />
                         </div>
                       </div>
-                      <Badge variant="secondary" className="shrink-0">
-                        {subject.progress}% Complete
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Teacher Info */}
-                    <div className="flex items-center gap-3">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={subject.teacherAvatar} />
-                        <AvatarFallback className="text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                          {subject.teacher.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-medium">{subject.teacher}</p>
-                        <p className="text-xs text-muted-foreground">Instructor</p>
-                      </div>
-                    </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">Lectures</p>
-                        <p className="font-medium">{subject.lectureCount}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Duration</p>
-                        <p className="font-medium">{subject.duration}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Students</p>
-                        <p className="font-medium">{subject.students}</p>
-                      </div>
+                      {/* CTA button */}
+                      <button
+                        className="btn-violet w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold"
+                      >
+                        <Play className="w-4 h-4" />
+                        Enter Subject →
+                      </button>
                     </div>
-
-                    {/* Progress Bar */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span className="text-muted-foreground">Updated {subject.lastUpdated}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`bg-gradient-to-r ${subject.color} h-2 rounded-full transition-all`}
-                          style={{ width: `${subject.progress}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Action Button */}
-                    <Button className="w-full group-hover:bg-primary/90 transition-colors">
-                      <Play className="w-4 h-4 mr-2" />
-                      Continue Learning
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

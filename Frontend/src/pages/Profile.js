@@ -10,7 +10,7 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Separator } from "../components/ui/separator";
-import { 
+import {
   User,
   Mail,
   MapPin,
@@ -37,7 +37,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
+
   // Profile data state
   const [profileData, setProfileData] = useState({
     displayName: localStorage.getItem("userName") || "Student",
@@ -82,21 +82,21 @@ const Profile = () => {
   };
 
   const grades = [
-    "6th Grade", "7th Grade", "8th Grade", "9th Grade", 
+    "6th Grade", "7th Grade", "8th Grade", "9th Grade",
     "10th Grade", "11th Grade", "12th Grade"
   ];
 
   const countries = [
-    "United States", "Canada", "United Kingdom", "Australia", "Germany", 
-    "France", "Japan", "South Korea", "Singapore", "India", "Brazil", 
+    "United States", "Canada", "United Kingdom", "Australia", "Germany",
+    "France", "Japan", "South Korea", "Singapore", "India", "Brazil",
     "Mexico", "Other"
   ];
 
   const achievements = [
-    { id: 1, title: "Quiz Master", description: "Completed 50 quizzes", icon: "🏆", date: "2024-01-10" },
-    { id: 2, title: "Study Streak", description: "7 days in a row", icon: "🔥", date: "2024-01-08" },
-    { id: 3, title: "Math Expert", description: "95% average in Math", icon: "🧮", date: "2024-01-05" },
-    { id: 4, title: "Early Bird", description: "Joined EdUmbrella", icon: "🎓", date: "2024-01-01" }
+    { id: 1, title: "Quiz Master", description: "Completed 50 quizzes", icon: "🏆", date: "2024-01-10", xp: 500 },
+    { id: 2, title: "Study Streak", description: "7 days in a row", icon: "🔥", date: "2024-01-08", xp: 200 },
+    { id: 3, title: "Math Expert", description: "95% average in Math", icon: "🧮", date: "2024-01-05", xp: 350 },
+    { id: 4, title: "Early Bird", description: "Joined EdUmbrella", icon: "🎓", date: "2024-01-01", xp: 100 }
   ];
 
   const stats = [
@@ -106,510 +106,608 @@ const Profile = () => {
     { label: "Current Streak", value: "7 days", icon: Award, color: "text-purple-600" }
   ];
 
+  // Shared dark input style
+  const inputStyle = {
+    background: 'rgba(15,22,41,0.8)',
+    border: '1px solid rgba(99,102,241,0.25)',
+    color: 'white',
+    borderRadius: '0.75rem'
+  };
+
+  const DarkInput = ({ id, type = "text", value, onChange, disabled, placeholder, min, max }) => (
+    <input
+      id={id}
+      type={type}
+      min={min}
+      max={max}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      placeholder={placeholder}
+      className="w-full px-3 py-2.5 text-sm outline-none transition-all"
+      style={{
+        ...inputStyle,
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? 'not-allowed' : 'text'
+      }}
+      onFocus={e => { if (!disabled) e.target.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.3)'; }}
+      onBlur={e => (e.target.style.boxShadow = 'none')}
+    />
+  );
+
+  const FieldLabel = ({ children }) => (
+    <label className="text-xs text-slate-400 font-medium block mb-1.5">{children}</label>
+  );
+
   return (
     <SidebarProvider>
       <StudentSidebar />
       <SidebarInset>
-        <div className="min-h-screen bg-[#F8FAFC]">
-          {/* Header */}
-          <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <SidebarTrigger className="md:hidden" />
-                <div className="w-8 h-8 rounded-full bg-[#1D4ED8] flex items-center justify-center">
-                  <span className="text-lg">👤</span>
-                </div>
-                <h1 className="text-xl font-bold font-bold text-[#1E293B]">
-                  EdUmbrella - Profile
-                </h1>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src={profileData.avatar} />
-                    <AvatarFallback>{profileData.displayName.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{profileData.displayName}</span>
-                </div>
-                <Button variant="outline" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </div>
+        {/* Root wrapper */}
+        <div className="min-h-screen dot-grid" style={{ background: '#080D1A' }}>
+
+          {/* ── Sticky Header ── */}
+          <header
+            className="sticky top-0 z-50 flex items-center justify-between px-6 py-4"
+            style={{
+              background: 'rgba(8,13,26,0.95)',
+              backdropFilter: 'blur(16px)',
+              borderBottom: '1px solid rgba(124,58,237,0.15)'
+            }}
+          >
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="text-slate-400 hover:text-white" />
+              <h1 className="text-xl font-sora font-bold gradient-text-violet flex items-center gap-2">
+                <span>👤</span> Player Profile
+              </h1>
             </div>
+            {!isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="glass flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-violet-400 hover:text-violet-300 transition-all"
+              >
+                <Edit className="w-4 h-4" />
+                Edit Profile
+              </button>
+            )}
           </header>
 
-          <div className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-3xl font-bold mb-2">👤 My Profile</h2>
-                  <p className="text-muted-foreground">
-                    Manage your account settings and personal information
-                  </p>
+          <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
+
+            {/* ── Hero Card ── */}
+            <div
+              className="card-game p-6"
+              style={{
+                background: 'linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(15,22,41,0.85) 60%, rgba(6,182,212,0.06) 100%)',
+              }}
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                {/* Avatar */}
+                <div className="relative flex-shrink-0">
+                  <div
+                    className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-sora font-bold text-white"
+                    style={{
+                      background: 'linear-gradient(135deg,#7C3AED,#06B6D4)',
+                      border: '3px solid rgba(124,58,237,0.6)',
+                      boxShadow: '0 0 24px rgba(124,58,237,0.4)'
+                    }}
+                  >
+                    {profileData.displayName.charAt(0).toUpperCase()}
+                  </div>
                 </div>
-                {!isEditing && (
-                  <Button onClick={() => setIsEditing(true)}>
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                )}
+
+                {/* Name + badges */}
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-sora font-bold text-white text-2xl leading-tight">
+                    {profileData.displayName}
+                  </h2>
+                  <p className="text-slate-400 text-sm mt-0.5">
+                    {profileData.firstName} {profileData.lastName}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span
+                      className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
+                      style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA' }}
+                    >
+                      <GraduationCap className="w-3 h-3" />
+                      {profileData.grade}
+                    </span>
+                    <span
+                      className="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full"
+                      style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.25)', color: '#67E8F9' }}
+                    >
+                      <MapPin className="w-3 h-3" />
+                      {profileData.location}
+                    </span>
+                    <span className="badge-gold">⭐ Level 8 Scholar</span>
+                  </div>
+                </div>
+
+                {/* Quick stats row */}
+                <div className="flex flex-wrap sm:flex-nowrap gap-3">
+                  {[
+                    { label: 'Quizzes', value: '32', color: '#7C3AED' },
+                    { label: 'Avg Score', value: '88%', color: '#10B981' },
+                    { label: 'Streak', value: '7🔥', color: '#F59E0B' },
+                    { label: 'Badges', value: '8', color: '#06B6D4' },
+                  ].map(({ label, value, color }) => (
+                    <div
+                      key={label}
+                      className="flex flex-col items-center justify-center px-4 py-3 rounded-xl min-w-[64px]"
+                      style={{ background: 'rgba(15,22,41,0.7)', border: '1px solid rgba(99,102,241,0.18)' }}
+                    >
+                      <span className="font-sora font-bold text-lg" style={{ color }}>{value}</span>
+                      <span className="text-xs text-slate-500 mt-0.5">{label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Profile Overview */}
-              <div className="lg:col-span-1 space-y-6">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="text-center space-y-4">
-                      <div className="relative inline-block">
-                        <Avatar className="w-24 h-24">
-                          <AvatarImage src={profileData.avatar} />
-                          <AvatarFallback className="text-2xl bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                            {profileData.displayName.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        {isEditing && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full p-0"
-                          >
-                            <Camera className="w-4 h-4" />
-                          </Button>
-                        )}
+            {/* ── Tabs ── */}
+            <Tabs defaultValue="overview" className="space-y-5">
+              {/* Tab strip */}
+              <TabsList
+                className="grid w-full grid-cols-4 p-1 gap-1"
+                style={{
+                  background: 'rgba(15,22,41,0.8)',
+                  border: '1px solid rgba(99,102,241,0.2)',
+                  borderRadius: '0.75rem'
+                }}
+              >
+                {['overview', 'edit', 'settings', 'achievements'].map((tab) => (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className="rounded-lg text-sm font-medium capitalize text-slate-400 data-[state=active]:text-white transition-all"
+                    style={{ '--tw-ring-color': 'transparent' }}
+                  >
+                    {tab === 'overview' ? 'Overview' :
+                     tab === 'edit' ? 'Edit Profile' :
+                     tab === 'settings' ? 'Settings' : 'Achievements'}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {/* ─── OVERVIEW TAB ─── */}
+              <TabsContent value="overview" className="space-y-5 animate-fade-in">
+                {/* Bio */}
+                <div className="card-game p-5">
+                  <h4 className="font-sora font-bold text-white mb-3 flex items-center gap-2">
+                    <User className="w-4 h-4 text-violet-400" /> About Me
+                  </h4>
+                  <p className="text-slate-300 text-sm leading-relaxed">{profileData.bio}</p>
+                  <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(99,102,241,0.12)' }}>
+                    <span className="flex items-center gap-2 text-xs text-slate-500">
+                      <Calendar className="w-3.5 h-3.5" />
+                      Joined EdUmbrella on {new Date(profileData.joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Stats grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { label: 'Total Quizzes', value: '34', icon: '📝', color: '#7C3AED' },
+                    { label: 'Avg Score',     value: '83%', icon: '🎯', color: '#10B981' },
+                    { label: 'Best Score',    value: '98%', icon: '🏆', color: '#F59E0B' },
+                    { label: 'Time Spent',    value: '127h', icon: '⏱️', color: '#06B6D4' },
+                  ].map(({ label, value, icon, color }) => (
+                    <div key={label} className="card-game p-4 text-center">
+                      <div className="text-2xl mb-2">{icon}</div>
+                      <div className="font-sora font-bold text-2xl" style={{ color }}>{value}</div>
+                      <div className="text-xs text-slate-500 mt-1">{label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Recent achievements */}
+                <div className="card-game p-5">
+                  <h4 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                    <span>🏆</span> Recent Achievements
+                  </h4>
+                  <div className="flex flex-wrap gap-3">
+                    {achievements.map(a => (
+                      <div
+                        key={a.id}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                        style={{ background: 'rgba(15,22,41,0.6)', border: '1px solid rgba(99,102,241,0.15)' }}
+                      >
+                        <span className="text-2xl">{a.icon}</span>
+                        <div>
+                          <div className="text-sm font-medium text-white">{a.title}</div>
+                          <div className="text-xs text-slate-500">{a.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* ─── EDIT PROFILE TAB ─── */}
+              <TabsContent value="edit" className="animate-fade-in">
+                <div className="card-game p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="font-sora font-bold text-white">Personal Information</h4>
+                    {isEditing && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleCancel}
+                          className="glass flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-slate-400 hover:text-white transition-all"
+                        >
+                          <X className="w-3.5 h-3.5" /> Cancel
+                        </button>
+                        <button
+                          onClick={handleSave}
+                          className="btn-violet flex items-center gap-1.5 px-3 py-2 text-sm"
+                        >
+                          <Save className="w-3.5 h-3.5" /> Save
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {!isEditing ? (
+                    // Read-only view
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {[
+                          { label: 'Display Name', value: profileData.displayName },
+                          { label: 'Email', value: profileData.email },
+                          { label: 'First Name', value: profileData.firstName },
+                          { label: 'Last Name', value: profileData.lastName },
+                          { label: 'Age', value: profileData.age },
+                          { label: 'Grade', value: profileData.grade },
+                          { label: 'Location', value: profileData.location },
+                        ].map(({ label, value }) => (
+                          <div key={label}>
+                            <FieldLabel>{label}</FieldLabel>
+                            <div
+                              className="px-3 py-2.5 text-sm text-slate-300 rounded-xl"
+                              style={{ background: 'rgba(15,22,41,0.5)', border: '1px solid rgba(99,102,241,0.15)' }}
+                            >
+                              {value}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold">{profileData.displayName}</h3>
-                        <p className="text-muted-foreground">{profileData.firstName} {profileData.lastName}</p>
-                        <Badge variant="secondary" className="mt-2">
-                          <GraduationCap className="w-3 h-3 mr-1" />
-                          {profileData.grade}
-                        </Badge>
-                      </div>
-                      <Separator />
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="text-center">
-                          <div className="font-medium text-blue-600">Level 5</div>
-                          <div className="text-muted-foreground">Current Level</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-medium text-green-600">83%</div>
-                          <div className="text-muted-foreground">Avg Score</div>
+                        <FieldLabel>Bio</FieldLabel>
+                        <div
+                          className="px-3 py-2.5 text-sm text-slate-300 rounded-xl leading-relaxed"
+                          style={{ background: 'rgba(15,22,41,0.5)', border: '1px solid rgba(99,102,241,0.15)' }}
+                        >
+                          {profileData.bio}
                         </div>
                       </div>
+                      <p className="text-xs text-slate-600 text-center pt-2">
+                        Click "Edit Profile" in the header to make changes
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Quick Stats */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">📊 Quick Stats</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {stats.map((stat, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                          <span className="text-sm">{stat.label}</span>
-                        </div>
-                        <span className="font-medium">{stat.value}</span>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-
-                {/* Recent Achievements */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">🏆 Recent Achievements</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {achievements.slice(0, 3).map((achievement) => (
-                      <div key={achievement.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                        <div className="text-xl">{achievement.icon}</div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">{achievement.title}</div>
-                          <div className="text-xs text-muted-foreground">{achievement.description}</div>
-                        </div>
-                      </div>
-                    ))}
-                    <Button variant="outline" className="w-full" size="sm">
-                      View All Achievements
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Profile Details */}
-              <div className="lg:col-span-2">
-                <Tabs defaultValue="personal" className="space-y-6">
-                  <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="personal">Personal</TabsTrigger>
-                    <TabsTrigger value="academic">Academic</TabsTrigger>
-                    <TabsTrigger value="preferences">Preferences</TabsTrigger>
-                    <TabsTrigger value="security">Security</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="personal" className="space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <CardTitle>Personal Information</CardTitle>
-                            <CardDescription>Your basic profile information</CardDescription>
-                          </div>
-                          {isEditing && (
-                            <div className="flex gap-2">
-                              <Button variant="outline" size="sm" onClick={handleCancel}>
-                                <X className="w-4 h-4 mr-1" />
-                                Cancel
-                              </Button>
-                              <Button size="sm" onClick={handleSave}>
-                                <Save className="w-4 h-4 mr-1" />
-                                Save
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="displayName">Display Name</Label>
-                            <Input
-                              id="displayName"
-                              value={isEditing ? editedData.displayName : profileData.displayName}
-                              onChange={(e) => setEditedData(prev => ({ ...prev, displayName: e.target.value }))}
-                              disabled={!isEditing}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              This name will be shown throughout the website
-                            </p>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email Address</Label>
-                            <Input
-                              id="email"
-                              type="email"
-                              value={isEditing ? editedData.email : profileData.email}
-                              onChange={(e) => setEditedData(prev => ({ ...prev, email: e.target.value }))}
-                              disabled={!isEditing}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="firstName">First Name</Label>
-                            <Input
-                              id="firstName"
-                              value={isEditing ? editedData.firstName : profileData.firstName}
-                              onChange={(e) => setEditedData(prev => ({ ...prev, firstName: e.target.value }))}
-                              disabled={!isEditing}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName">Last Name</Label>
-                            <Input
-                              id="lastName"
-                              value={isEditing ? editedData.lastName : profileData.lastName}
-                              onChange={(e) => setEditedData(prev => ({ ...prev, lastName: e.target.value }))}
-                              disabled={!isEditing}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="age">Age</Label>
-                            <Input
-                              id="age"
-                              type="number"
-                              min="10"
-                              max="25"
-                              value={isEditing ? editedData.age : profileData.age}
-                              onChange={(e) => setEditedData(prev => ({ ...prev, age: e.target.value }))}
-                              disabled={!isEditing}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="grade">Grade Level</Label>
-                            <Select
-                              value={isEditing ? editedData.grade : profileData.grade}
-                              onValueChange={(value) => setEditedData(prev => ({ ...prev, grade: value }))}
-                              disabled={!isEditing}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {grades.map((grade) => (
-                                  <SelectItem key={grade} value={grade}>
-                                    {grade}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="location">Location</Label>
-                            <Select
-                              value={isEditing ? editedData.location.split(',')[0] : profileData.location.split(',')[0]}
-                              onValueChange={(value) => setEditedData(prev => ({ ...prev, location: `${value}, Country` }))}
-                              disabled={!isEditing}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {countries.map((country) => (
-                                  <SelectItem key={country} value={country}>
-                                    {country}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="bio">Bio</Label>
-                          <textarea
-                            id="bio"
-                            className="w-full p-3 border rounded-md resize-none"
-                            rows={3}
-                            value={isEditing ? editedData.bio : profileData.bio}
-                            onChange={(e) => setEditedData(prev => ({ ...prev, bio: e.target.value }))}
-                            disabled={!isEditing}
-                            placeholder="Tell us about yourself..."
+                  ) : (
+                    // Editable form
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <FieldLabel>Display Name</FieldLabel>
+                          <DarkInput
+                            id="displayName"
+                            value={editedData.displayName}
+                            onChange={(e) => setEditedData(prev => ({ ...prev, displayName: e.target.value }))}
                           />
-                          <p className="text-xs text-muted-foreground">
-                            Brief description about yourself and your interests
-                          </p>
                         </div>
-
-                        <div className="pt-4 border-t">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="w-4 h-4" />
-                            Joined EdUmbrella on {new Date(profileData.joinDate).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}
-                          </div>
+                        <div>
+                          <FieldLabel>Email Address</FieldLabel>
+                          <DarkInput
+                            id="email"
+                            type="email"
+                            value={editedData.email}
+                            onChange={(e) => setEditedData(prev => ({ ...prev, email: e.target.value }))}
+                          />
                         </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="academic" className="space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Academic Performance</CardTitle>
-                        <CardDescription>Your learning progress and achievements</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-6">
-                        {/* Subject Performance */}
-                        <div className="space-y-4">
-                          <h4 className="font-medium">Subject Performance</h4>
-                          {[
-                            { subject: "Mathematics", score: 85, grade: "A", icon: "🧮" },
-                            { subject: "Science", score: 78, grade: "B+", icon: "🔬" },
-                            { subject: "Physics", score: 82, grade: "A-", icon: "⚛️" },
-                            { subject: "History", score: 91, grade: "A+", icon: "🌍" }
-                          ].map((item) => (
-                            <div key={item.subject} className="flex items-center justify-between p-3 border rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <span className="text-xl">{item.icon}</span>
-                                <span className="font-medium">{item.subject}</span>
-                              </div>
-                              <div className="text-right">
-                                <div className="font-bold text-lg">{item.grade}</div>
-                                <div className="text-sm text-muted-foreground">{item.score}%</div>
-                              </div>
-                            </div>
-                          ))}
+                        <div>
+                          <FieldLabel>First Name</FieldLabel>
+                          <DarkInput
+                            id="firstName"
+                            value={editedData.firstName}
+                            onChange={(e) => setEditedData(prev => ({ ...prev, firstName: e.target.value }))}
+                          />
                         </div>
-
-                        {/* Learning Goals */}
-                        <div className="space-y-4">
-                          <h4 className="font-medium">Learning Goals</h4>
-                          <div className="space-y-2">
-                            {[
-                              "Complete all Math assignments with 90%+ score",
-                              "Maintain study streak for 30 days",
-                              "Achieve Level 10 by end of semester"
-                            ].map((goal, index) => (
-                              <div key={index} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                              
-                                <span className="text-sm">{goal}</span>
-                              </div>
-                            ))}
-                          </div>
+                        <div>
+                          <FieldLabel>Last Name</FieldLabel>
+                          <DarkInput
+                            id="lastName"
+                            value={editedData.lastName}
+                            onChange={(e) => setEditedData(prev => ({ ...prev, lastName: e.target.value }))}
+                          />
                         </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="preferences" className="space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Preferences</CardTitle>
-                        <CardDescription>Customize your learning experience</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-6">
-                        {/* Notifications */}
-                        <div className="space-y-4">
-                          <h4 className="font-medium flex items-center gap-2">
-                            <Bell className="w-4 h-4" />
-                            Notifications
-                          </h4>
-                          <div className="space-y-3">
-                            {[
-                              { label: "Quiz reminders", description: "Get notified before quiz deadlines" },
-                              { label: "Assignment updates", description: "Receive updates on new assignments" },
-                              { label: "Achievement notifications", description: "Celebrate your accomplishments" },
-                              { label: "Daily study reminders", description: "Stay on track with daily goals" }
-                            ].map((item, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                                <div>
-                                  <div className="font-medium">{item.label}</div>
-                                  <div className="text-sm text-muted-foreground">{item.description}</div>
-                                </div>
-                                <input type="checkbox" defaultChecked className="w-4 h-4" />
-                              </div>
-                            ))}
-                          </div>
+                        <div>
+                          <FieldLabel>Age</FieldLabel>
+                          <DarkInput
+                            id="age"
+                            type="number"
+                            min="10"
+                            max="25"
+                            value={editedData.age}
+                            onChange={(e) => setEditedData(prev => ({ ...prev, age: e.target.value }))}
+                          />
                         </div>
-
-                        {/* Theme */}
-                        <div className="space-y-4">
-                          <h4 className="font-medium flex items-center gap-2">
-                            <Palette className="w-4 h-4" />
-                            Appearance
-                          </h4>
-                          <Select defaultValue="system">
-                            <SelectTrigger className="w-full">
+                        <div>
+                          <FieldLabel>Grade Level</FieldLabel>
+                          <Select
+                            value={editedData.grade}
+                            onValueChange={(value) => setEditedData(prev => ({ ...prev, grade: value }))}
+                          >
+                            <SelectTrigger
+                              className="rounded-xl text-sm"
+                              style={inputStyle}
+                            >
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="light">Light Mode</SelectItem>
-                              <SelectItem value="dark">Dark Mode</SelectItem>
-                              <SelectItem value="system">System Default</SelectItem>
+                              {grades.map((grade) => (
+                                <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-
-                  <TabsContent value="security" className="space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Shield className="w-5 h-5" />
-                          Account Security
-                        </CardTitle>
-                        <CardDescription>Manage your account security settings</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-6">
-                        {/* Password Change */}
-                        <div className="space-y-4">
-                          <h4 className="font-medium">Change Password</h4>
-                          <div className="space-y-3">
-                            <div className="space-y-2">
-                              <Label htmlFor="currentPassword">Current Password</Label>
-                              <Input id="currentPassword" type="password" placeholder="Enter current password" />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="newPassword">New Password</Label>
-                              <Input id="newPassword" type="password" placeholder="Enter new password" />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                              <Input id="confirmPassword" type="password" placeholder="Confirm new password" />
-                            </div>
-                            <Button>Update Password</Button>
-                          </div>
+                        <div className="md:col-span-2">
+                          <FieldLabel>Location</FieldLabel>
+                          <Select
+                            value={editedData.location.split(',')[0]}
+                            onValueChange={(value) => setEditedData(prev => ({ ...prev, location: `${value}, Country` }))}
+                          >
+                            <SelectTrigger
+                              className="rounded-xl text-sm"
+                              style={inputStyle}
+                            >
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {countries.map((country) => (
+                                <SelectItem key={country} value={country}>{country}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
+                      </div>
 
-                        <Separator />
+                      <div>
+                        <FieldLabel>Bio</FieldLabel>
+                        <textarea
+                          id="bio"
+                          className="w-full px-3 py-2.5 text-sm rounded-xl outline-none transition-all resize-none"
+                          style={inputStyle}
+                          rows={3}
+                          value={editedData.bio}
+                          onChange={(e) => setEditedData(prev => ({ ...prev, bio: e.target.value }))}
+                          onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.3)')}
+                          onBlur={e => (e.target.style.boxShadow = 'none')}
+                          placeholder="Tell us about yourself..."
+                        />
+                      </div>
 
-                        {/* Delete Account */}
-                        <div className="space-y-4">
-                          <h4 className="font-medium text-red-600 flex items-center gap-2">
-                            <AlertTriangle className="w-4 h-4" />
-                            Danger Zone
-                          </h4>
-                          <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-                            <div className="space-y-3">
-                              <div>
-                                <div className="font-medium text-red-800">Delete Account</div>
-                                <div className="text-sm text-red-600">
-                                  Permanently delete your account and all associated data. This action cannot be undone.
-                                </div>
-                              </div>
-                              <Button
-                                variant="destructive"
-                                onClick={() => setShowDeleteConfirm(true)}
-                              >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                Delete Account
-                              </Button>
-                            </div>
+                      {/* Save / Cancel bottom */}
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          onClick={handleCancel}
+                          className="flex-1 py-2.5 rounded-xl text-sm font-medium text-slate-400 transition-all"
+                          style={{ background: 'rgba(15,22,41,0.8)', border: '1px solid rgba(99,102,241,0.2)' }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSave}
+                          className="btn-violet flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"
+                        >
+                          <Save className="w-4 h-4" /> Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+
+              {/* ─── SETTINGS TAB ─── */}
+              <TabsContent value="settings" className="space-y-5 animate-fade-in">
+                <div className="card-game p-6 space-y-6">
+
+                  {/* Notifications */}
+                  <div>
+                    <h4 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-cyan-400" /> Notifications
+                    </h4>
+                    <div className="space-y-3">
+                      {[
+                        { label: 'Quiz reminders', desc: 'Get notified before quiz deadlines' },
+                        { label: 'Assignment updates', desc: 'Receive updates on new assignments' },
+                        { label: 'Achievement notifications', desc: 'Celebrate your accomplishments' },
+                        { label: 'Daily study reminders', desc: 'Stay on track with daily goals' },
+                      ].map((item, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between px-4 py-3 rounded-xl"
+                          style={{ background: 'rgba(15,22,41,0.6)', border: '1px solid rgba(99,102,241,0.12)' }}
+                        >
+                          <div>
+                            <div className="text-sm font-medium text-white">{item.label}</div>
+                            <div className="text-xs text-slate-500">{item.desc}</div>
                           </div>
+                          {/* Dark toggle */}
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" defaultChecked className="sr-only peer" />
+                            <div
+                              className="w-10 h-5 rounded-full peer peer-checked:after:translate-x-5 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:transition-all after:bg-white"
+                              style={{
+                                background: 'rgba(99,102,241,0.3)',
+                              }}
+                            >
+                              <style>{`.peer:checked ~ div { background: #7C3AED; }`}</style>
+                            </div>
+                          </label>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                </Tabs>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid rgba(99,102,241,0.12)' }} className="pt-6">
+                    {/* Privacy */}
+                    <h4 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-violet-400" /> Privacy
+                    </h4>
+                    <div
+                      className="flex items-center justify-between px-4 py-3 rounded-xl mb-4"
+                      style={{ background: 'rgba(15,22,41,0.6)', border: '1px solid rgba(99,102,241,0.12)' }}
+                    >
+                      <div>
+                        <div className="text-sm font-medium text-white">Public Profile</div>
+                        <div className="text-xs text-slate-500">Allow others to view your profile and achievements</div>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" defaultChecked className="sr-only peer" />
+                        <div className="w-10 h-5 rounded-full peer peer-checked:bg-violet-600 bg-slate-700 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-5" />
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Appearance */}
+                  <div style={{ borderTop: '1px solid rgba(99,102,241,0.12)' }} className="pt-6">
+                    <h4 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                      <Palette className="w-4 h-4 text-pink-400" /> Appearance
+                    </h4>
+                    <Select defaultValue="dark">
+                      <SelectTrigger className="rounded-xl text-sm" style={inputStyle}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Light Mode</SelectItem>
+                        <SelectItem value="dark">Dark Mode</SelectItem>
+                        <SelectItem value="system">System Default</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Danger Zone */}
+                  <div style={{ borderTop: '1px solid rgba(239,68,68,0.2)' }} className="pt-6">
+                    <h4 className="font-sora font-bold mb-4 flex items-center gap-2" style={{ color: '#FCA5A5' }}>
+                      <AlertTriangle className="w-4 h-4" /> Danger Zone
+                    </h4>
+                    <div
+                      className="p-4 rounded-xl"
+                      style={{ background: 'rgba(239,68,68,0.07)', border: '1px solid rgba(239,68,68,0.25)' }}
+                    >
+                      <div className="mb-3">
+                        <div className="text-sm font-medium" style={{ color: '#FCA5A5' }}>Delete Account</div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          Permanently delete your account and all associated data. This action cannot be undone.
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                        style={{
+                          background: 'rgba(239,68,68,0.15)',
+                          border: '1px solid rgba(239,68,68,0.35)',
+                          color: '#FCA5A5'
+                        }}
+                        onMouseEnter={e => (e.target.style.background = 'rgba(239,68,68,0.25)')}
+                        onMouseLeave={e => (e.target.style.background = 'rgba(239,68,68,0.15)')}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete Account
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* ─── ACHIEVEMENTS TAB ─── */}
+              <TabsContent value="achievements" className="animate-fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {achievements.map(a => (
+                    <div key={a.id} className="card-game p-4 flex flex-col items-center text-center gap-2">
+                      <div className="text-4xl mb-1">{a.icon}</div>
+                      <div className="font-sora font-bold text-white text-sm">{a.title}</div>
+                      <div className="text-xs text-slate-500">{a.description}</div>
+                      <div className="text-xs text-slate-600">{new Date(a.date).toLocaleDateString()}</div>
+                      <span className="badge-xp mt-1">+{a.xp} XP</span>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* ── Delete Confirm Modal ── */}
+          {showDeleteConfirm && (
+            <div
+              className="fixed inset-0 flex items-center justify-center p-4 z-50"
+              style={{ background: 'rgba(0,0,0,0.75)' }}
+            >
+              <div className="card-game w-full max-w-md p-6 animate-bounce-in">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.35)' }}
+                  >
+                    <AlertTriangle className="w-7 h-7" style={{ color: '#FCA5A5' }} />
+                  </div>
+
+                  <div>
+                    <h3 className="font-sora font-bold text-white text-lg">Delete Account?</h3>
+                    <p className="text-slate-400 text-sm mt-1">
+                      This action is irreversible. All your quests, achievements, and progress will be permanently lost.
+                    </p>
+                  </div>
+
+                  <div
+                    className="w-full p-3 rounded-xl"
+                    style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+                  >
+                    <p className="text-xs mb-2" style={{ color: '#FCA5A5' }}>
+                      Type <strong>DELETE</strong> to confirm:
+                    </p>
+                    <input
+                      className="w-full px-3 py-2 text-sm rounded-lg outline-none"
+                      style={{
+                        background: 'rgba(15,22,41,0.8)',
+                        border: '1px solid rgba(239,68,68,0.3)',
+                        color: 'white'
+                      }}
+                      placeholder="Type DELETE to confirm"
+                      onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(239,68,68,0.25)')}
+                      onBlur={e => (e.target.style.boxShadow = 'none')}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 w-full">
+                    <button
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="flex-1 py-2.5 rounded-xl text-sm font-medium text-slate-400 transition-all"
+                      style={{ background: 'rgba(15,22,41,0.8)', border: '1px solid rgba(99,102,241,0.2)' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleDeleteAccount}
+                      className="flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                      style={{
+                        background: 'rgba(239,68,68,0.2)',
+                        border: '1px solid rgba(239,68,68,0.4)',
+                        color: '#FCA5A5'
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.35)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.2)')}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Delete Confirmation Modal */}
-            {showDeleteConfirm && (
-              <div className="fixed inset-0 bg-[#1E293B]/50 flex items-center justify-center p-4 z-50">
-                <Card className="w-full max-w-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-red-600">
-                      <AlertTriangle className="w-5 h-5" />
-                      Confirm Account Deletion
-                    </CardTitle>
-                    <CardDescription>
-                      This action is irreversible. All your data will be permanently deleted.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-sm text-red-800">
-                        Type "<strong>DELETE</strong>" to confirm account deletion:
-                      </p>
-                      <Input className="mt-2" placeholder="Type DELETE to confirm" />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="destructive"
-                        onClick={handleDeleteAccount}
-                        className="flex-1"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete Account
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowDeleteConfirm(false)}
-                        className="flex-1"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

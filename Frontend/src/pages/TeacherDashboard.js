@@ -77,10 +77,24 @@ const TeacherDashboard = () => {
       <SidebarProvider>
         <TeacherSidebar />
         <SidebarInset>
-          <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1D4ED8] mx-auto mb-4"></div>
-              <p className="text-[#64748B]">Loading teacher dashboard...</p>
+          <div
+            className="min-h-screen flex items-center justify-center dot-grid"
+            style={{ background: "#080D1A" }}
+          >
+            <div className="text-center animate-slide-up">
+              <div
+                className="mx-auto mb-6 rounded-full flex items-center justify-center"
+                style={{
+                  width: 64,
+                  height: 64,
+                  background: "linear-gradient(135deg, #10B981, #059669)",
+                  boxShadow: "0 0 32px rgba(16,185,129,0.45)",
+                  animation: "spin 1s linear infinite",
+                }}
+              />
+              <p style={{ color: "#10B981", fontFamily: "Sora, sans-serif", fontWeight: 600, fontSize: 16 }}>
+                Loading teacher dashboard...
+              </p>
             </div>
           </div>
         </SidebarInset>
@@ -93,10 +107,30 @@ const TeacherDashboard = () => {
       <SidebarProvider>
         <TeacherSidebar />
         <SidebarInset>
-          <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-red-500 mb-4">{error}</p>
-              <button onClick={() => window.location.reload()} className="px-4 py-2 bg-[#1D4ED8] text-white rounded-lg text-sm">Try Again</button>
+          <div
+            className="min-h-screen flex items-center justify-center dot-grid"
+            style={{ background: "#080D1A" }}
+          >
+            <div
+              className="glass text-center p-8 rounded-2xl animate-slide-up"
+              style={{ maxWidth: 360 }}
+            >
+              <p style={{ color: "#EC4899", marginBottom: 16, fontWeight: 600 }}>{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                style={{
+                  background: "linear-gradient(135deg, #10B981, #059669)",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "0.5rem",
+                  padding: "8px 20px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "Sora, sans-serif",
+                }}
+              >
+                Try Again
+              </button>
             </div>
           </div>
         </SidebarInset>
@@ -119,232 +153,790 @@ const TeacherDashboard = () => {
     return { grade: 'F', color: 'text-red-600' };
   };
 
+  const getGradeColor = (score) => {
+    if (score >= 90) return "#10B981";
+    if (score >= 80) return "#06B6D4";
+    if (score >= 70) return "#F59E0B";
+    if (score >= 60) return "#F97316";
+    return "#EC4899";
+  };
+
+  const statCards = [
+    {
+      label: "Total Students",
+      value: students.length,
+      sub: `Across ${teacherClasses.length} class${teacherClasses.length !== 1 ? 'es' : ''}`,
+      glow: "rgba(6,182,212,0.35)",
+      accent: "#06B6D4",
+      icon: "👥",
+    },
+    {
+      label: "Active Quizzes",
+      value: quizStats.length,
+      sub: "Available for students",
+      glow: "rgba(16,185,129,0.35)",
+      accent: "#10B981",
+      icon: "⚡",
+    },
+    {
+      label: "Avg. Score",
+      value: `${quizStats.length > 0 ? Math.round(quizStats.reduce((acc, q) => acc + (q.average_score || 0), 0) / quizStats.length) : 0}%`,
+      sub: "Across all quizzes",
+      glow: "rgba(245,158,11,0.35)",
+      accent: "#F59E0B",
+      icon: "🏆",
+    },
+    {
+      label: "Game Activities",
+      value: gamePerformance.length,
+      sub: "Different games played",
+      glow: "rgba(236,72,153,0.35)",
+      accent: "#EC4899",
+      icon: "🎮",
+    },
+  ];
+
+  const tabStyle = (active) => ({
+    background: active
+      ? "linear-gradient(135deg, #10B981, #059669)"
+      : "transparent",
+    color: active ? "#fff" : "rgba(255,255,255,0.5)",
+    border: "none",
+    borderRadius: "0.5rem",
+    padding: "6px 0",
+    fontWeight: active ? 700 : 500,
+    fontFamily: "Sora, sans-serif",
+    fontSize: 14,
+    cursor: "pointer",
+    transition: "all 0.2s",
+    boxShadow: active ? "0 0 16px rgba(16,185,129,0.4)" : "none",
+  });
+
+  const barColors = ["#10B981", "#06B6D4", "#7C3AED", "#F59E0B", "#EC4899"];
+
   return (
     <SidebarProvider>
       <TeacherSidebar />
       <SidebarInset>
-        <div className="min-h-screen bg-[#F8FAFC]">
-          <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div
+          className="min-h-screen dot-grid"
+          style={{ background: "#080D1A" }}
+        >
+          {/* Header */}
+          <header
+            className="sticky top-0 z-50"
+            style={{
+              background: "rgba(8,13,26,0.95)",
+              backdropFilter: "blur(16px)",
+              borderBottom: "1px solid rgba(16,185,129,0.15)",
+            }}
+          >
+            <div
+              className="container mx-auto px-4 py-3 flex items-center justify-between"
+            >
               <div className="flex items-center gap-3">
-                <SidebarTrigger className="md:hidden" />
-                <h1 className="text-lg font-semibold text-[#1E293B] font-jakarta">Teacher Dashboard</h1>
+                <SidebarTrigger className="md:hidden" style={{ color: "#10B981" }} />
+                <h1
+                  style={{
+                    fontFamily: "Sora, sans-serif",
+                    fontWeight: 700,
+                    fontSize: 18,
+                    color: "#fff",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Teacher Dashboard
+                </h1>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#10B981] flex items-center justify-center">
-                  <span className="text-white text-sm font-semibold">{(teacherInfo.name || userName).charAt(0).toUpperCase()}</span>
+              <div className="flex items-center gap-3">
+                <div
+                  className="rounded-full flex items-center justify-center"
+                  style={{
+                    width: 36,
+                    height: 36,
+                    background: "linear-gradient(135deg, #10B981, #059669)",
+                    boxShadow: "0 0 16px rgba(16,185,129,0.5)",
+                    fontWeight: 700,
+                    color: "#fff",
+                    fontFamily: "Sora, sans-serif",
+                    fontSize: 15,
+                  }}
+                >
+                  {(teacherInfo.name || userName).charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-[#1E293B] hidden sm:block">{teacherInfo.name || userName}</span>
-                <span className="text-xs bg-[#F0FDF4] text-[#10B981] border border-[#BBF7D0] px-2 py-0.5 rounded-full font-medium">Teacher</span>
+                <span
+                  className="hidden sm:block"
+                  style={{ color: "#fff", fontWeight: 600, fontSize: 14, fontFamily: "Sora, sans-serif" }}
+                >
+                  {teacherInfo.name || userName}
+                </span>
+                <span
+                  style={{
+                    background: "rgba(16,185,129,0.15)",
+                    color: "#10B981",
+                    border: "1px solid rgba(16,185,129,0.35)",
+                    borderRadius: "9999px",
+                    padding: "2px 10px",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    fontFamily: "Sora, sans-serif",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  Educator
+                </span>
               </div>
             </div>
           </header>
 
           <div className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-[#1E293B] font-jakarta">Teacher Dashboard</h2>
-              <p className="text-[#64748B] mt-1">
-                Managing Classes: {teacherClasses.length > 0 ? teacherClasses.join(', ') : 'No classes assigned'}
-              </p>
+            {/* Welcome Banner */}
+            <div
+              className="card-game mb-8 relative overflow-hidden animate-slide-up"
+              style={{ padding: "28px 32px" }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(5,150,105,0.08) 100%)",
+                  borderRadius: "inherit",
+                  pointerEvents: "none",
+                }}
+              />
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <h2
+                  style={{
+                    fontFamily: "Sora, sans-serif",
+                    fontWeight: 800,
+                    fontSize: 24,
+                    color: "#fff",
+                    marginBottom: 6,
+                  }}
+                >
+                  Welcome back,{" "}
+                  <span style={{ color: "#10B981" }}>{teacherInfo.name || userName}</span>!
+                </h2>
+                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, marginBottom: 20 }}>
+                  Your students are leveling up. Classes taught:{" "}
+                  <span style={{ color: "#10B981", fontWeight: 600 }}>
+                    {teacherClasses.length > 0 ? teacherClasses.join(', ') : 'No classes assigned'}
+                  </span>
+                </p>
+                <div className="flex gap-3 flex-wrap">
+                  <button
+                    style={{
+                      background: "linear-gradient(135deg, #10B981, #059669)",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "0.6rem",
+                      padding: "10px 22px",
+                      fontWeight: 700,
+                      fontFamily: "Sora, sans-serif",
+                      fontSize: 14,
+                      cursor: "pointer",
+                      boxShadow: "0 0 20px rgba(16,185,129,0.4)",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    Create Quiz
+                  </button>
+                  <button
+                    style={{
+                      background: "rgba(15,22,41,0.75)",
+                      backdropFilter: "blur(14px)",
+                      color: "#10B981",
+                      border: "1px solid rgba(16,185,129,0.35)",
+                      borderRadius: "0.6rem",
+                      padding: "10px 22px",
+                      fontWeight: 700,
+                      fontFamily: "Sora, sans-serif",
+                      fontSize: 14,
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    View Analytics
+                  </button>
+                </div>
+              </div>
             </div>
 
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {statCards.map(({ label, value, sub, glow, accent, icon }) => (
+                <div
+                  key={label}
+                  className="card-game animate-slide-up"
+                  style={{
+                    padding: "20px 18px",
+                    boxShadow: `0 0 24px ${glow}`,
+                    borderColor: `${accent}33`,
+                  }}
+                >
+                  <div style={{ fontSize: 22, marginBottom: 6 }}>{icon}</div>
+                  <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
+                    {label}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: "Sora, sans-serif",
+                      fontWeight: 800,
+                      fontSize: 28,
+                      color: accent,
+                      lineHeight: 1.1,
+                      marginBottom: 4,
+                      textShadow: `0 0 16px ${glow}`,
+                    }}
+                  >
+                    {value}
+                  </p>
+                  <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{sub}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Tabs */}
             <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4 bg-[#F1F5F9] rounded-lg p-1">
-                <TabsTrigger value="overview" className="data-[state=active]:bg-white data-[state=active]:text-[#1D4ED8] data-[state=active]:shadow-sm rounded-md text-sm">Overview</TabsTrigger>
-                <TabsTrigger value="students" className="data-[state=active]:bg-white data-[state=active]:text-[#1D4ED8] data-[state=active]:shadow-sm rounded-md text-sm">Students</TabsTrigger>
-                <TabsTrigger value="quizzes" className="data-[state=active]:bg-white data-[state=active]:text-[#1D4ED8] data-[state=active]:shadow-sm rounded-md text-sm">Quizzes</TabsTrigger>
-                <TabsTrigger value="content" className="data-[state=active]:bg-white data-[state=active]:text-[#1D4ED8] data-[state=active]:shadow-sm rounded-md text-sm">Content</TabsTrigger>
+              <TabsList
+                className="grid w-full grid-cols-4"
+                style={{
+                  background: "rgba(15,22,41,0.75)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  borderRadius: "0.75rem",
+                  padding: "4px",
+                }}
+              >
+                {["overview", "students", "quizzes", "content"].map((tab) => (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className="rounded-md text-sm capitalize"
+                    style={{
+                      fontFamily: "Sora, sans-serif",
+                    }}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
+              {/* Overview Tab */}
               <TabsContent value="overview" className="space-y-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {[
-                    { label: "Total Students", value: students.length, sub: `Across ${teacherClasses.length} class${teacherClasses.length !== 1 ? 'es' : ''}`, borderColor: "border-[#1D4ED8]", textColor: "text-[#1D4ED8]" },
-                    { label: "Active Quizzes", value: quizStats.length, sub: "Available for students", borderColor: "border-[#10B981]", textColor: "text-[#10B981]" },
-                    { label: "Avg. Score", value: `${quizStats.length > 0 ? Math.round(quizStats.reduce((acc, q) => acc + (q.average_score || 0), 0) / quizStats.length) : 0}%`, sub: "Across all quizzes", borderColor: "border-[#F59E0B]", textColor: "text-[#F59E0B]" },
-                    { label: "Game Activities", value: gamePerformance.length, sub: "Different games played", borderColor: "border-purple-500", textColor: "text-purple-600" },
-                  ].map(({ label, value, sub, borderColor, textColor }) => (
-                    <div key={label} className={`bg-white rounded-xl border border-[#E2E8F0] border-l-4 ${borderColor} p-4 shadow-sm`}>
-                      <p className="text-xs text-[#64748B] font-medium">{label}</p>
-                      <p className={`text-2xl font-bold mt-1 font-jakarta ${textColor}`}>{value}</p>
-                      <p className="text-xs text-[#64748B] mt-1">{sub}</p>
-                    </div>
-                  ))}
-                </div>
-
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm">
-                    <h3 className="font-semibold text-[#1E293B] font-jakarta mb-4">Class Performance</h3>
-                    <div className="space-y-4">
+                  {/* Class Performance */}
+                  <div className="card-game" style={{ padding: "24px" }}>
+                    <h3
+                      style={{
+                        fontFamily: "Sora, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color: "#fff",
+                        marginBottom: 20,
+                      }}
+                    >
+                      Class Performance
+                    </h3>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                       {quizStats.slice(0, 5).length > 0 ? (
                         quizStats.slice(0, 5).map((quiz, index) => (
-                          <div key={index} className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span className="truncate text-[#1E293B]">{quiz.subject_name} - {quiz.title}</span>
-                              <span className="font-bold text-[#1D4ED8] ml-2">{Math.round(quiz.average_score || 0)}%</span>
+                          <div key={index}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                              <span style={{ color: "rgba(255,255,255,0.8)", fontSize: 13, fontWeight: 500 }}>
+                                {quiz.subject_name} — {quiz.title}
+                              </span>
+                              <span style={{ color: barColors[index % barColors.length], fontWeight: 800, fontSize: 13 }}>
+                                {Math.round(quiz.average_score || 0)}%
+                              </span>
                             </div>
-                            <div className="w-full bg-[#E2E8F0] rounded-full h-2">
-                              <div className="bg-[#10B981] h-2 rounded-full" style={{ width: `${quiz.average_score || 0}%` }} />
+                            <div
+                              style={{
+                                width: "100%",
+                                height: 7,
+                                background: "rgba(255,255,255,0.08)",
+                                borderRadius: 999,
+                                overflow: "hidden",
+                                marginBottom: 4,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: `${quiz.average_score || 0}%`,
+                                  height: "100%",
+                                  background: barColors[index % barColors.length],
+                                  borderRadius: 999,
+                                  boxShadow: `0 0 8px ${barColors[index % barColors.length]}88`,
+                                  transition: "width 0.6s ease",
+                                }}
+                              />
                             </div>
-                            <div className="flex justify-between text-xs text-[#64748B]">
-                              <span>Class {quiz.class_level}</span>
-                              <span>{quiz.completed_attempts || 0} attempts</span>
+                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                              <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 11 }}>Class {quiz.class_level}</span>
+                              <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 11 }}>{quiz.completed_attempts || 0} attempts</span>
                             </div>
                           </div>
                         ))
                       ) : (
-                        <p className="text-[#64748B] text-sm">No quiz data available yet.</p>
+                        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14 }}>No quiz data available yet.</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm">
-                    <h3 className="font-semibold text-[#1E293B] font-jakarta mb-4">Quick Actions</h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button className="h-16 flex-col flex items-center justify-center gap-1 bg-[#1D4ED8] text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                        <span>Create Quiz</span>
+                  {/* Quick Actions */}
+                  <div className="card-game" style={{ padding: "24px" }}>
+                    <h3
+                      style={{
+                        fontFamily: "Sora, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color: "#fff",
+                        marginBottom: 20,
+                      }}
+                    >
+                      Quick Actions
+                    </h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                      <button
+                        style={{
+                          height: 64,
+                          background: "linear-gradient(135deg, #10B981, #059669)",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "0.75rem",
+                          fontWeight: 700,
+                          fontFamily: "Sora, sans-serif",
+                          fontSize: 14,
+                          cursor: "pointer",
+                          boxShadow: "0 0 20px rgba(16,185,129,0.35)",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        Create Quiz
                       </button>
-                      <button className="h-16 flex-col flex items-center justify-center gap-1 border border-[#E2E8F0] text-[#1E293B] rounded-lg hover:bg-[#F8FAFC] transition-colors text-sm font-medium">
-                        <span>Upload Module</span>
-                      </button>
-                      <button className="h-16 flex-col flex items-center justify-center gap-1 border border-[#E2E8F0] text-[#1E293B] rounded-lg hover:bg-[#F8FAFC] transition-colors text-sm font-medium">
-                        <span>View Analytics</span>
-                      </button>
-                      <button className="h-16 flex-col flex items-center justify-center gap-1 border border-[#E2E8F0] text-[#1E293B] rounded-lg hover:bg-[#F8FAFC] transition-colors text-sm font-medium">
-                        <span>Manage Classes</span>
-                      </button>
+                      {["Upload Module", "View Analytics", "Manage Classes"].map((action) => (
+                        <button
+                          key={action}
+                          style={{
+                            height: 64,
+                            background: "rgba(15,22,41,0.75)",
+                            backdropFilter: "blur(14px)",
+                            color: "rgba(255,255,255,0.75)",
+                            border: "1px solid rgba(255,255,255,0.07)",
+                            borderRadius: "0.75rem",
+                            fontWeight: 600,
+                            fontFamily: "Sora, sans-serif",
+                            fontSize: 14,
+                            cursor: "pointer",
+                            transition: "all 0.2s",
+                          }}
+                        >
+                          {action}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
               </TabsContent>
 
+              {/* Students Tab */}
               <TabsContent value="students" className="space-y-6">
-                <div className="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm">
-                  <h3 className="font-semibold text-[#1E293B] font-jakarta mb-1">Student Management</h3>
-                  <p className="text-[#64748B] text-sm mb-4">Monitor student progress and performance across your classes</p>
-                  <div className="space-y-4">
+                <div className="card-game" style={{ padding: "24px" }}>
+                  <h3
+                    style={{
+                      fontFamily: "Sora, sans-serif",
+                      fontWeight: 700,
+                      fontSize: 16,
+                      color: "#fff",
+                      marginBottom: 4,
+                    }}
+                  >
+                    Student Management
+                  </h3>
+                  <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, marginBottom: 20 }}>
+                    Monitor student progress and performance across your classes
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     {studentPerformance.length > 0 ? (
                       studentPerformance.map((student, index) => {
                         const gradeInfo = getGrade(student.average_score || 0);
+                        const gradeColor = getGradeColor(student.average_score || 0);
+                        const initials = student.student_name
+                          ? student.student_name.split(' ').map((n) => n[0]).join('')
+                          : 'S';
                         return (
-                          <div key={index} className="flex items-center justify-between p-4 border border-[#E2E8F0] rounded-lg">
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-[#EFF6FF] flex items-center justify-center">
-                                <span className="text-[#1D4ED8] font-semibold text-sm">
-                                  {student.student_name ? student.student_name.split(' ').map(n => n[0]).join('') : 'S'}
-                                </span>
+                          <div
+                            key={index}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              padding: "14px 18px",
+                              background: "rgba(26,33,64,0.6)",
+                              border: "1px solid rgba(255,255,255,0.07)",
+                              borderRadius: "0.875rem",
+                              gap: 12,
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                              <div
+                                style={{
+                                  width: 42,
+                                  height: 42,
+                                  borderRadius: "50%",
+                                  background: "rgba(16,185,129,0.12)",
+                                  border: "2px solid rgba(16,185,129,0.5)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontWeight: 800,
+                                  color: "#10B981",
+                                  fontSize: 14,
+                                  fontFamily: "Sora, sans-serif",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {initials}
                               </div>
                               <div>
-                                <div className="font-medium text-[#1E293B]">{student.student_name || 'Unknown Student'}</div>
-                                <div className="text-sm text-[#64748B]">
-                                  Class {student.class} • {student.completed_quizzes || 0} quizzes completed
+                                <div style={{ fontWeight: 600, color: "#fff", fontSize: 14, fontFamily: "Sora, sans-serif" }}>
+                                  {student.student_name || 'Unknown Student'}
+                                </div>
+                                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginTop: 2 }}>
+                                  Class {student.class} &bull; {student.completed_quizzes || 0} quizzes completed
                                 </div>
                               </div>
                             </div>
-                            <div className="flex items-center gap-4">
-                              <div className="text-right">
-                                <div className={`font-medium ${gradeInfo.color}`}>Grade: {gradeInfo.grade}</div>
-                                <div className="text-sm text-[#64748B]">{Math.round(student.average_score || 0)}% average</div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                              <div style={{ textAlign: "right" }}>
+                                <div
+                                  style={{
+                                    background: `${gradeColor}22`,
+                                    color: gradeColor,
+                                    border: `1px solid ${gradeColor}55`,
+                                    borderRadius: "9999px",
+                                    padding: "2px 10px",
+                                    fontWeight: 800,
+                                    fontSize: 12,
+                                    fontFamily: "Sora, sans-serif",
+                                    display: "inline-block",
+                                    marginBottom: 4,
+                                  }}
+                                >
+                                  Grade {gradeInfo.grade}
+                                </div>
+                                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>
+                                  {Math.round(student.average_score || 0)}% avg
+                                </div>
                               </div>
-                              <div className="w-20 bg-[#E2E8F0] rounded-full h-2">
-                                <div className="bg-[#10B981] h-2 rounded-full" style={{ width: `${student.average_score || 0}%` }} />
+                              <div
+                                style={{
+                                  width: 72,
+                                  height: 6,
+                                  background: "rgba(255,255,255,0.08)",
+                                  borderRadius: 999,
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: `${student.average_score || 0}%`,
+                                    height: "100%",
+                                    background: gradeColor,
+                                    borderRadius: 999,
+                                    boxShadow: `0 0 6px ${gradeColor}`,
+                                  }}
+                                />
                               </div>
                             </div>
                           </div>
                         );
                       })
                     ) : (
-                      <div className="text-center text-[#64748B] py-8">
-                        <p>No students found for your assigned classes.</p>
+                      <div style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "32px 0" }}>
+                        No students found for your assigned classes.
                       </div>
                     )}
                   </div>
                 </div>
               </TabsContent>
 
+              {/* Quizzes Tab */}
               <TabsContent value="quizzes" className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-[#1E293B] font-jakarta">Quiz Management</h3>
-                  <button className="px-4 py-2 bg-[#1D4ED8] text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Create New Quiz</button>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <h3
+                    style={{
+                      fontFamily: "Sora, sans-serif",
+                      fontWeight: 700,
+                      fontSize: 18,
+                      color: "#fff",
+                    }}
+                  >
+                    Quiz Management
+                  </h3>
+                  <button
+                    style={{
+                      background: "linear-gradient(135deg, #10B981, #059669)",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "0.6rem",
+                      padding: "9px 20px",
+                      fontWeight: 700,
+                      fontFamily: "Sora, sans-serif",
+                      fontSize: 13,
+                      cursor: "pointer",
+                      boxShadow: "0 0 18px rgba(16,185,129,0.4)",
+                    }}
+                  >
+                    Create New Quiz
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {quizStats.length > 0 ? (
-                    quizStats.map((quiz, index) => (
-                      <div key={index} className="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-[#1E293B] text-sm line-clamp-2">{quiz.title}</h4>
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ml-2 flex-shrink-0 ${quiz.quiz_type === 'game' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                            {quiz.quiz_type === 'game' ? 'Game' : 'Quiz'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-[#64748B] mb-3">{quiz.subject_name} • Class {quiz.class_level}</p>
-                        <div className="space-y-1.5 text-sm mb-3">
-                          <div className="flex justify-between">
-                            <span className="text-[#64748B]">Total Attempts:</span>
-                            <span className="font-medium text-[#1E293B]">{quiz.total_attempts || 0}</span>
+                    quizStats.map((quiz, index) => {
+                      const isGame = quiz.quiz_type === 'game';
+                      const typeBadgeBg = isGame ? "rgba(236,72,153,0.15)" : "rgba(16,185,129,0.15)";
+                      const typeBadgeColor = isGame ? "#EC4899" : "#10B981";
+                      const typeBadgeBorder = isGame ? "rgba(236,72,153,0.4)" : "rgba(16,185,129,0.4)";
+                      return (
+                        <div
+                          key={index}
+                          className="card-game animate-slide-up"
+                          style={{ padding: "20px" }}
+                        >
+                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
+                            <h4
+                              style={{
+                                fontWeight: 700,
+                                color: "#fff",
+                                fontSize: 14,
+                                fontFamily: "Sora, sans-serif",
+                                lineHeight: 1.4,
+                                flex: 1,
+                                marginRight: 8,
+                              }}
+                            >
+                              {quiz.title}
+                            </h4>
+                            <span
+                              style={{
+                                background: typeBadgeBg,
+                                color: typeBadgeColor,
+                                border: `1px solid ${typeBadgeBorder}`,
+                                borderRadius: "9999px",
+                                padding: "2px 10px",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                flexShrink: 0,
+                                fontFamily: "Sora, sans-serif",
+                              }}
+                            >
+                              {isGame ? "Game" : "Quiz"}
+                            </span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-[#64748B]">Completed:</span>
-                            <span className="font-medium text-[#1E293B]">{quiz.completed_attempts || 0}</span>
+                          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 14 }}>
+                            {quiz.subject_name} &bull; Class {quiz.class_level}
+                          </p>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 }}>
+                            {[
+                              ["Total Attempts", quiz.total_attempts || 0],
+                              ["Completed", quiz.completed_attempts || 0],
+                              ["Avg Score", `${Math.round(quiz.average_score || 0)}%`],
+                            ].map(([label, val]) => (
+                              <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+                                <span style={{ color: "rgba(255,255,255,0.45)" }}>{label}</span>
+                                <span style={{ fontWeight: 700, color: "#fff" }}>{val}</span>
+                              </div>
+                            ))}
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-[#64748B]">Avg Score:</span>
-                            <span className="font-medium text-[#1E293B]">{Math.round(quiz.average_score || 0)}%</span>
+                          <div
+                            style={{
+                              width: "100%",
+                              height: 5,
+                              background: "rgba(255,255,255,0.08)",
+                              borderRadius: 999,
+                              overflow: "hidden",
+                              marginBottom: 14,
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${quiz.average_score || 0}%`,
+                                height: "100%",
+                                background: barColors[index % barColors.length],
+                                borderRadius: 999,
+                                boxShadow: `0 0 8px ${barColors[index % barColors.length]}88`,
+                              }}
+                            />
+                          </div>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            {["View Details", "Analytics"].map((btn) => (
+                              <button
+                                key={btn}
+                                style={{
+                                  flex: 1,
+                                  padding: "7px 0",
+                                  background: "rgba(15,22,41,0.75)",
+                                  border: "1px solid rgba(255,255,255,0.07)",
+                                  borderRadius: "0.5rem",
+                                  color: "rgba(255,255,255,0.65)",
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: "pointer",
+                                  fontFamily: "Sora, sans-serif",
+                                  transition: "all 0.2s",
+                                }}
+                              >
+                                {btn}
+                              </button>
+                            ))}
                           </div>
                         </div>
-                        <div className="w-full bg-[#E2E8F0] rounded-full h-1.5 mb-3">
-                          <div className="bg-[#10B981] h-1.5 rounded-full" style={{ width: `${quiz.average_score || 0}%` }} />
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="flex-1 py-1.5 border border-[#E2E8F0] text-[#1E293B] text-xs rounded-lg hover:bg-[#F8FAFC] transition-colors">View Details</button>
-                          <button className="flex-1 py-1.5 border border-[#E2E8F0] text-[#1E293B] text-xs rounded-lg hover:bg-[#F8FAFC] transition-colors">Analytics</button>
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
-                    <div className="col-span-full text-center text-[#64748B] py-8">
-                      <p>No quizzes available for your assigned classes.</p>
+                    <div
+                      className="col-span-full"
+                      style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "32px 0" }}
+                    >
+                      No quizzes available for your assigned classes.
                     </div>
                   )}
                 </div>
               </TabsContent>
 
+              {/* Content Tab */}
               <TabsContent value="content" className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-[#1E293B] font-jakarta">Game & Content Performance</h3>
-                  <button className="px-4 py-2 border border-[#E2E8F0] text-[#1E293B] rounded-lg text-sm font-medium hover:bg-[#F8FAFC] transition-colors">View All Content</button>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <h3
+                    style={{
+                      fontFamily: "Sora, sans-serif",
+                      fontWeight: 700,
+                      fontSize: 18,
+                      color: "#fff",
+                    }}
+                  >
+                    Game & Content Performance
+                  </h3>
+                  <button
+                    style={{
+                      background: "rgba(15,22,41,0.75)",
+                      backdropFilter: "blur(14px)",
+                      color: "rgba(255,255,255,0.7)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderRadius: "0.6rem",
+                      padding: "9px 20px",
+                      fontWeight: 600,
+                      fontFamily: "Sora, sans-serif",
+                      fontSize: 13,
+                      cursor: "pointer",
+                    }}
+                  >
+                    View All Content
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm">
-                    <h3 className="font-semibold text-[#1E293B] font-jakarta mb-1">Game Performance</h3>
-                    <p className="text-[#64748B] text-xs mb-4">Educational games played by your students</p>
-                    <div className="space-y-3">
+                  {/* Game Performance */}
+                  <div className="card-game" style={{ padding: "24px" }}>
+                    <h3
+                      style={{
+                        fontFamily: "Sora, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color: "#fff",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Game Performance
+                    </h3>
+                    <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 18 }}>
+                      Educational games played by your students
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                       {gamePerformance.length > 0 ? (
                         gamePerformance.slice(0, 5).map((game, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 border border-[#E2E8F0] rounded-lg">
+                          <div
+                            key={index}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              padding: "12px 14px",
+                              background: "rgba(26,33,64,0.6)",
+                              border: "1px solid rgba(255,255,255,0.07)",
+                              borderRadius: "0.75rem",
+                            }}
+                          >
                             <div>
-                              <span className="font-medium text-[#1E293B] text-sm">{game.game_name}</span>
-                              <div className="text-xs text-[#64748B]">{game.subject_name} • Class {game.class_level}</div>
+                              <span style={{ fontWeight: 600, color: "#fff", fontSize: 13, fontFamily: "Sora, sans-serif" }}>
+                                {game.game_name}
+                              </span>
+                              <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginTop: 2 }}>
+                                {game.subject_name} &bull; Class {game.class_level}
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <span className="text-xs font-semibold bg-[#F0FDF4] text-[#10B981] border border-[#BBF7D0] px-2 py-0.5 rounded-full">{Math.round(game.average_score || 0)}% avg</span>
-                              <div className="text-xs text-[#64748B] mt-1">{game.total_plays || 0} plays</div>
+                            <div style={{ textAlign: "right" }}>
+                              <span
+                                style={{
+                                  background: "rgba(16,185,129,0.15)",
+                                  color: "#10B981",
+                                  border: "1px solid rgba(16,185,129,0.35)",
+                                  borderRadius: "9999px",
+                                  padding: "2px 10px",
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  fontFamily: "Sora, sans-serif",
+                                }}
+                              >
+                                {Math.round(game.average_score || 0)}% avg
+                              </span>
+                              <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, marginTop: 4 }}>
+                                {game.total_plays || 0} plays
+                              </div>
                             </div>
                           </div>
                         ))
                       ) : (
-                        <p className="text-[#64748B] text-sm">No game data available yet.</p>
+                        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14 }}>No game data available yet.</p>
                       )}
-                      <button className="w-full py-2 border border-[#E2E8F0] text-[#1E293B] text-sm rounded-lg hover:bg-[#F8FAFC] transition-colors">View Game Analytics</button>
+                      <button
+                        style={{
+                          width: "100%",
+                          padding: "9px 0",
+                          background: "rgba(15,22,41,0.75)",
+                          border: "1px solid rgba(255,255,255,0.07)",
+                          borderRadius: "0.6rem",
+                          color: "rgba(255,255,255,0.65)",
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          fontFamily: "Sora, sans-serif",
+                          marginTop: 4,
+                        }}
+                      >
+                        View Game Analytics
+                      </button>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-xl border border-[#E2E8F0] p-4 shadow-sm">
-                    <h3 className="font-semibold text-[#1E293B] font-jakarta mb-1">Subject Overview</h3>
-                    <p className="text-[#64748B] text-xs mb-4">Performance across different subjects</p>
-                    <div className="space-y-3">
+                  {/* Subject Overview */}
+                  <div className="card-game" style={{ padding: "24px" }}>
+                    <h3
+                      style={{
+                        fontFamily: "Sora, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 16,
+                        color: "#fff",
+                        marginBottom: 4,
+                      }}
+                    >
+                      Subject Overview
+                    </h3>
+                    <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 18 }}>
+                      Performance across different subjects
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                       {(() => {
                         const subjectStats = quizStats.reduce((acc, quiz) => {
                           if (!acc[quiz.subject_name]) {
@@ -364,22 +956,68 @@ const TeacherDashboard = () => {
 
                         return subjects.length > 0 ? (
                           subjects.map((subject, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 border border-[#E2E8F0] rounded-lg">
+                            <div
+                              key={index}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                padding: "12px 14px",
+                                background: "rgba(26,33,64,0.6)",
+                                border: "1px solid rgba(255,255,255,0.07)",
+                                borderRadius: "0.75rem",
+                              }}
+                            >
                               <div>
-                                <span className="font-medium text-[#1E293B] text-sm">{subject.name}</span>
-                                <div className="text-xs text-[#64748B]">{subject.totalQuizzes} quiz{subject.totalQuizzes !== 1 ? 'es' : ''}</div>
+                                <span style={{ fontWeight: 600, color: "#fff", fontSize: 13, fontFamily: "Sora, sans-serif" }}>
+                                  {subject.name}
+                                </span>
+                                <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginTop: 2 }}>
+                                  {subject.totalQuizzes} quiz{subject.totalQuizzes !== 1 ? 'es' : ''}
+                                </div>
                               </div>
-                              <div className="text-right">
-                                <span className="text-xs font-semibold border border-[#E2E8F0] px-2 py-0.5 rounded-full text-[#1E293B]">{Math.round(subject.avgScore)}%</span>
-                                <div className="text-xs text-[#64748B] mt-1">{subject.totalAttempts} attempts</div>
+                              <div style={{ textAlign: "right" }}>
+                                <span
+                                  style={{
+                                    background: `${barColors[index % barColors.length]}22`,
+                                    color: barColors[index % barColors.length],
+                                    border: `1px solid ${barColors[index % barColors.length]}55`,
+                                    borderRadius: "9999px",
+                                    padding: "2px 10px",
+                                    fontSize: 12,
+                                    fontWeight: 700,
+                                    fontFamily: "Sora, sans-serif",
+                                  }}
+                                >
+                                  {Math.round(subject.avgScore)}%
+                                </span>
+                                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, marginTop: 4 }}>
+                                  {subject.totalAttempts} attempts
+                                </div>
                               </div>
                             </div>
                           ))
                         ) : (
-                          <p className="text-[#64748B] text-sm">No subject data available yet.</p>
+                          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 14 }}>No subject data available yet.</p>
                         );
                       })()}
-                      <button className="w-full py-2 border border-[#E2E8F0] text-[#1E293B] text-sm rounded-lg hover:bg-[#F8FAFC] transition-colors">View Subject Details</button>
+                      <button
+                        style={{
+                          width: "100%",
+                          padding: "9px 0",
+                          background: "rgba(15,22,41,0.75)",
+                          border: "1px solid rgba(255,255,255,0.07)",
+                          borderRadius: "0.6rem",
+                          color: "rgba(255,255,255,0.65)",
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          fontFamily: "Sora, sans-serif",
+                          marginTop: 4,
+                        }}
+                      >
+                        View Subject Details
+                      </button>
                     </div>
                   </div>
                 </div>

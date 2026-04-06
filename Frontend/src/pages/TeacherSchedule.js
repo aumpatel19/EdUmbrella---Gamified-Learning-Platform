@@ -164,9 +164,9 @@ const TeacherSchedule = () => {
   const getTypeColor = (type) => {
     switch (type) {
       case 'class': return 'bg-blue-500';
-      case 'assignment': return 'bg-green-500';
-      case 'meeting': return 'bg-purple-500';
-      default: return 'bg-gray-500';
+      case 'assignment': return 'bg-emerald-500';
+      case 'meeting': return 'bg-violet-500';
+      default: return 'bg-slate-500';
     }
   };
 
@@ -268,264 +268,189 @@ const TeacherSchedule = () => {
     ));
   };
 
+  const typeGlow = { class: "59,130,246", assignment: "16,185,129", meeting: "124,58,237" };
+  const statusStyle = {
+    completed: { color: "#10B981", bg: "rgba(16,185,129,0.15)" },
+    'in-progress': { color: "#F59E0B", bg: "rgba(245,158,11,0.15)" },
+    scheduled: { color: "#06B6D4", bg: "rgba(6,182,212,0.15)" }
+  };
+
   return (
     <SidebarProvider>
       <TeacherSidebar />
       <SidebarInset>
-        <div className="min-h-screen bg-[#F8FAFC]">
+        <div className="min-h-screen" style={{ background: "#080D1A" }}>
+          {/* Dot grid */}
+          <div className="fixed inset-0 pointer-events-none" style={{
+            backgroundImage: "radial-gradient(rgba(16,185,129,0.1) 1px, transparent 1px)",
+            backgroundSize: "30px 30px"
+          }} />
+
           {/* Header */}
-          <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <header className="sticky top-0 z-50" style={{ background: "rgba(8,13,26,0.95)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(16,185,129,0.15)" }}>
+            <div className="px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <SidebarTrigger className="md:hidden" />
-                <div className="w-8 h-8 rounded-full bg-[#1D4ED8] flex items-center justify-center">
-                  <Calendar className="text-lg text-white" />
+                <SidebarTrigger className="text-slate-400 hover:text-white" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
+                    <Calendar className="w-4 h-4 text-white" />
+                  </div>
+                  <h1 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
+                    Schedule <span style={{ background: "linear-gradient(90deg,#10B981,#06B6D4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Management</span>
+                  </h1>
                 </div>
-                <h1 className="text-xl font-bold font-bold text-[#1E293B]">
-                  Schedule Management
-                </h1>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src="/placeholder.svg" />
-                    <AvatarFallback>{userName.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{userName}</span>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
+                  {userName.charAt(0).toUpperCase()}
                 </div>
-                <Button variant="outline" onClick={handleLogout}>
+                <span className="text-slate-300 text-sm">{userName}</span>
+                <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg text-slate-400 border text-sm hover:text-white transition-colors" style={{ borderColor: "rgba(16,185,129,0.3)" }}>
                   Logout
-                </Button>
+                </button>
               </div>
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-8">
-            {/* Schedule Controls */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-3xl font-bold mb-2">📅 Daily Schedule</h2>
-                  <p className="text-muted-foreground">
-                    Manage your classes, assignments, and meetings
-                  </p>
-                </div>
-                <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  Add Schedule Item
-                </Button>
+          <div className="relative z-10 px-6 py-8 max-w-7xl mx-auto">
+            {/* Page header */}
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest">Teacher Portal</span>
+                <h2 className="text-3xl font-bold text-white mt-1" style={{ fontFamily: "Sora, sans-serif" }}>
+                  📅 Daily <span style={{ background: "linear-gradient(90deg,#10B981,#06B6D4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Schedule</span>
+                </h2>
+                <p className="text-slate-400 mt-1">Manage your classes, assignments, and meetings</p>
               </div>
-
-              {/* Date Selector */}
-              <div className="flex items-center gap-4 mb-6">
-                <label className="font-medium">Select Date:</label>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-                />
-                {isToday && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-700">
-                    Today
-                  </Badge>
-                )}
-              </div>
+              <button onClick={() => setShowAddForm(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold transition-all hover:scale-105" style={{ background: "linear-gradient(135deg,#10B981,#059669)", boxShadow: "0 0 20px rgba(16,185,129,0.4)" }}>
+                <Plus className="w-4 h-4" /> Add Item
+              </button>
             </div>
 
-            {/* Schedule Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Classes</p>
-                      <p className="text-2xl font-bold">
-                        {scheduleItems.filter(item => item.type === 'class').length}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <Edit2 className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Assignments</p>
-                      <p className="text-2xl font-bold">
-                        {scheduleItems.filter(item => item.type === 'assignment').length}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Meetings</p>
-                      <p className="text-2xl font-bold">
-                        {scheduleItems.filter(item => item.type === 'meeting').length}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Hours</p>
-                      <p className="text-2xl font-bold">
-                        {scheduleItems.reduce((total, item) => {
-                          const start = new Date(`2000-01-01T${item.startTime}`);
-                          const end = new Date(`2000-01-01T${item.endTime}`);
-                          return total + (end - start) / (1000 * 60 * 60);
-                        }, 0).toFixed(1)}h
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Schedule Timeline */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold mb-4">📋 Schedule for {new Date(selectedDate).toLocaleDateString()}</h3>
-              
-              {scheduleItems.length === 0 ? (
-                <Card>
-                  <CardContent className="p-8 text-center">
-                    <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                    <h3 className="text-lg font-medium mb-2">No schedule items</h3>
-                    <p className="text-muted-foreground mb-4">
-                      You don't have any classes or activities scheduled for this date.
-                    </p>
-                    <Button onClick={() => setShowAddForm(true)}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add First Item
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="space-y-4">
-                  {scheduleItems
-                    .sort((a, b) => a.startTime.localeCompare(b.startTime))
-                    .map((item) => (
-                      <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                        <div className={`h-1 ${getTypeColor(item.type)}`} />
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start gap-4 flex-1">
-                              <div className={`w-12 h-12 rounded-lg ${getTypeColor(item.type)} flex items-center justify-center text-white`}>
-                                {getTypeIcon(item.type)}
-                              </div>
-                              
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h3 className="font-semibold text-lg">{item.title}</h3>
-                                  <Badge variant="outline" className="capitalize">
-                                    {item.type}
-                                  </Badge>
-                                  <div className={`flex items-center gap-1 ${getStatusColor(item.status)}`}>
-                                    {getStatusIcon(item.status)}
-                                    <span className="text-sm capitalize">{item.status}</span>
-                                  </div>
-                                </div>
-                                
-                                <p className="text-muted-foreground mb-3">{item.description}</p>
-                                
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                  <div>
-                                    <span className="text-muted-foreground">Time:</span>
-                                    <p className="font-medium">{item.startTime} - {item.endTime}</p>
-                                  </div>
-                                  <div>
-                                    <span className="text-muted-foreground">Subject:</span>
-                                    <p className="font-medium">{item.subject}</p>
-                                  </div>
-                                  <div>
-                                    <span className="text-muted-foreground">Class:</span>
-                                    <p className="font-medium">{item.class}</p>
-                                  </div>
-                                  <div>
-                                    <span className="text-muted-foreground">Location:</span>
-                                    <p className="font-medium">{item.location}</p>
-                                  </div>
-                                </div>
-
-                                {item.studentCount > 0 && (
-                                  <div className="flex items-center gap-2 mt-3">
-                                    <Users className="w-4 h-4 text-muted-foreground" />
-                                    <span className="text-sm">{item.studentCount} students</span>
-                                  </div>
-                                )}
-
-                                {item.materials && item.materials.length > 0 && (
-                                  <div className="mt-3">
-                                    <span className="text-sm text-muted-foreground">Materials needed:</span>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                      {item.materials.map((material, index) => (
-                                        <Badge key={index} variant="secondary" className="text-xs">
-                                          {material}
-                                        </Badge>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-2 ml-4">
-                              {/* Status Change Dropdown */}
-                              <select
-                                value={item.status}
-                                onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                className="px-2 py-1 text-xs border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <option value="scheduled">Scheduled</option>
-                                <option value="in-progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                              </select>
-                              
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEdit(item)}
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-500 hover:text-red-700"
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
+            {/* Date Selector */}
+            <div className="flex items-center gap-4 mb-6 p-4 rounded-2xl" style={{ background: "rgba(15,22,41,0.75)", border: "1px solid rgba(99,102,241,0.15)" }}>
+              <label className="text-slate-300 font-medium text-sm">Select Date:</label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="px-3 py-2 rounded-lg text-white text-sm focus:outline-none"
+                style={{ background: "rgba(8,13,26,0.8)", border: "1px solid rgba(16,185,129,0.3)", colorScheme: "dark" }}
+              />
+              {isToday && (
+                <span className="text-xs px-2 py-1 rounded-full text-emerald-400" style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)" }}>
+                  Today
+                </span>
               )}
             </div>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                { label: "Classes", icon: <BookOpen className="w-5 h-5" />, color: "59,130,246", value: scheduleItems.filter(i => i.type === 'class').length },
+                { label: "Assignments", icon: <Edit2 className="w-5 h-5" />, color: "16,185,129", value: scheduleItems.filter(i => i.type === 'assignment').length },
+                { label: "Meetings", icon: <Users className="w-5 h-5" />, color: "124,58,237", value: scheduleItems.filter(i => i.type === 'meeting').length },
+                { label: "Total Hours", icon: <Clock className="w-5 h-5" />, color: "245,158,11", value: scheduleItems.reduce((t, i) => {
+                  const s = new Date(`2000-01-01T${i.startTime}`), e = new Date(`2000-01-01T${i.endTime}`);
+                  return t + (e - s) / (1000 * 60 * 60);
+                }, 0).toFixed(1) + "h" }
+              ].map((s, i) => (
+                <div key={i} className="rounded-2xl p-4 transition-all hover:scale-105" style={{ background: "rgba(15,22,41,0.75)", border: "1px solid rgba(99,102,241,0.15)" }}
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 20px rgba(${s.color},0.25)`}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+                >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `rgba(${s.color},0.15)`, color: `rgb(${s.color})` }}>
+                    {s.icon}
+                  </div>
+                  <p className="text-slate-400 text-xs">{s.label}</p>
+                  <p className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{s.value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Timeline */}
+            <h3 className="text-white font-bold mb-4" style={{ fontFamily: "Sora, sans-serif" }}>
+              📋 Schedule for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </h3>
+
+            {scheduleItems.length === 0 ? (
+              <div className="rounded-2xl p-12 text-center" style={{ background: "rgba(15,22,41,0.75)", border: "1px solid rgba(99,102,241,0.15)" }}>
+                <Calendar className="w-16 h-16 mx-auto mb-4 text-slate-600" />
+                <h3 className="text-white font-semibold mb-2">No schedule items</h3>
+                <p className="text-slate-400 mb-6 text-sm">Nothing scheduled for this date yet.</p>
+                <button onClick={() => setShowAddForm(true)} className="flex items-center gap-2 mx-auto px-4 py-2 rounded-xl text-white font-semibold" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
+                  <Plus className="w-4 h-4" /> Add First Item
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {scheduleItems.sort((a, b) => a.startTime.localeCompare(b.startTime)).map((item) => {
+                  const glow = typeGlow[item.type] || "99,102,241";
+                  const ss = statusStyle[item.status] || { color: "#94a3b8", bg: "rgba(148,163,184,0.1)" };
+                  return (
+                    <div key={item.id} className="rounded-2xl overflow-hidden transition-all hover:scale-[1.005]" style={{ background: "rgba(15,22,41,0.75)", border: "1px solid rgba(99,102,241,0.15)" }}
+                      onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 25px rgba(${glow},0.2)`}
+                      onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+                    >
+                      <div className="h-1" style={{ background: `linear-gradient(90deg, rgb(${glow}), transparent)` }} />
+                      <div className="p-5">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-start gap-4 flex-1">
+                            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white flex-shrink-0" style={{ background: `rgba(${glow},0.2)`, border: `1px solid rgba(${glow},0.3)`, color: `rgb(${glow})` }}>
+                              {getTypeIcon(item.type)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <h3 className="text-white font-semibold">{item.title}</h3>
+                                <span className="text-xs px-2 py-0.5 rounded-full capitalize" style={{ background: `rgba(${glow},0.15)`, color: `rgb(${glow})`, border: `1px solid rgba(${glow},0.3)` }}>{item.type}</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full flex items-center gap-1 capitalize" style={{ background: ss.bg, color: ss.color }}>
+                                  {getStatusIcon(item.status)}{item.status}
+                                </span>
+                              </div>
+                              <p className="text-slate-400 text-sm mb-3">{item.description}</p>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                                {[["⏰ Time", `${item.startTime} – ${item.endTime}`], ["📚 Subject", item.subject], ["🏫 Class", item.class], ["📍 Location", item.location]].map(([k,v]) => (
+                                  <div key={k}>
+                                    <span className="text-slate-500">{k}</span>
+                                    <p className="text-slate-200 font-medium mt-0.5">{v}</p>
+                                  </div>
+                                ))}
+                              </div>
+                              {item.studentCount > 0 && (
+                                <div className="flex items-center gap-1 mt-3 text-slate-400 text-sm">
+                                  <Users className="w-4 h-4" />{item.studentCount} students
+                                </div>
+                              )}
+                              {item.materials?.length > 0 && (
+                                <div className="mt-3 flex flex-wrap gap-1">
+                                  {item.materials.map((m, idx) => (
+                                    <span key={idx} className="text-xs px-2 py-0.5 rounded-full text-slate-300" style={{ background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)" }}>{m}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <select
+                              value={item.status}
+                              onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                              className="px-2 py-1 text-xs rounded-lg text-slate-200 focus:outline-none"
+                              style={{ background: "rgba(8,13,26,0.8)", border: "1px solid rgba(99,102,241,0.3)", colorScheme: "dark" }}
+                            >
+                              <option value="scheduled">Scheduled</option>
+                              <option value="in-progress">In Progress</option>
+                              <option value="completed">Completed</option>
+                            </select>
+                            <button onClick={() => handleEdit(item)} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"><Edit2 className="w-4 h-4" /></button>
+                            <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-900/20 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Add/Edit Schedule Item Modal */}

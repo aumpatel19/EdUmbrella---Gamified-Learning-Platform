@@ -395,52 +395,140 @@ const QuizTaking = () => {
 
         const questionId = currentQuestion.id;
         const currentAnswer = answers[questionId];
+        const optionLabels = ['A', 'B', 'C', 'D', 'E'];
 
         switch (currentQuestion.question_type) {
             case 'multiple_choice':
                 return (
-                    <RadioGroup
-                        value={currentAnswer}
-                        onValueChange={(value) => handleMultipleChoice(questionId, value)}
-                        className="space-y-3"
-                    >
-                        {currentQuestion.options?.map((option, index) => (
-                            <div key={index} className="flex items-center space-x-2">
-                                <RadioGroupItem value={option} id={`option-${index}`} />
-                                <Label htmlFor={`option-${index}`} className="flex-1 cursor-pointer">
-                                    {option}
-                                </Label>
-                            </div>
-                        ))}
-                    </RadioGroup>
+                    <div className="space-y-3">
+                        {currentQuestion.options?.map((option, index) => {
+                            const isSelected = currentAnswer === option;
+                            return (
+                                <button
+                                    key={index}
+                                    onClick={() => handleMultipleChoice(questionId, option)}
+                                    className="w-full text-left flex items-center gap-4 p-4 rounded-xl transition-all duration-150"
+                                    style={
+                                        isSelected
+                                            ? {
+                                                background: "rgba(124,58,237,0.2)",
+                                                border: "1px solid rgba(124,58,237,0.6)",
+                                                boxShadow: "0 0 15px rgba(124,58,237,0.25)",
+                                            }
+                                            : {
+                                                background: "rgba(15,22,41,0.6)",
+                                                border: "1px solid rgba(255,255,255,0.07)",
+                                            }
+                                    }
+                                >
+                                    <span
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                                        style={
+                                            isSelected
+                                                ? {
+                                                    background: "rgba(124,58,237,0.5)",
+                                                    border: "1px solid rgba(124,58,237,0.7)",
+                                                    color: "#DDD6FE",
+                                                }
+                                                : {
+                                                    background: "rgba(255,255,255,0.06)",
+                                                    border: "1px solid rgba(255,255,255,0.1)",
+                                                    color: "#94A3B8",
+                                                }
+                                        }
+                                    >
+                                        {optionLabels[index]}
+                                    </span>
+                                    <span
+                                        className="text-sm font-medium"
+                                        style={{ color: isSelected ? "#EDE9FE" : "rgba(255,255,255,0.8)" }}
+                                    >
+                                        {option}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 );
 
             case 'true_false':
                 return (
-                    <RadioGroup
-                        value={currentAnswer}
-                        onValueChange={(value) => handleTrueFalse(questionId, value)}
-                        className="space-y-3"
-                    >
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="true" id="true" />
-                            <Label htmlFor="true" className="cursor-pointer">True</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="false" id="false" />
-                            <Label htmlFor="false" className="cursor-pointer">False</Label>
-                        </div>
-                    </RadioGroup>
+                    <div className="space-y-3">
+                        {[
+                            { value: "true", label: "True", icon: "✓" },
+                            { value: "false", label: "False", icon: "✗" },
+                        ].map(({ value, label, icon }) => {
+                            const isSelected = currentAnswer === value;
+                            return (
+                                <button
+                                    key={value}
+                                    onClick={() => handleTrueFalse(questionId, value)}
+                                    className="w-full text-left flex items-center gap-4 p-4 rounded-xl transition-all duration-150"
+                                    style={
+                                        isSelected
+                                            ? {
+                                                background: value === "true" ? "rgba(16,185,129,0.2)" : "rgba(239,68,68,0.2)",
+                                                border: `1px solid ${value === "true" ? "rgba(16,185,129,0.6)" : "rgba(239,68,68,0.6)"}`,
+                                                boxShadow: value === "true" ? "0 0 12px rgba(16,185,129,0.2)" : "0 0 12px rgba(239,68,68,0.2)",
+                                            }
+                                            : {
+                                                background: "rgba(15,22,41,0.6)",
+                                                border: "1px solid rgba(255,255,255,0.07)",
+                                            }
+                                    }
+                                >
+                                    <span
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold flex-shrink-0"
+                                        style={
+                                            isSelected
+                                                ? {
+                                                    background: value === "true" ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.3)",
+                                                    color: value === "true" ? "#34D399" : "#F87171",
+                                                }
+                                                : {
+                                                    background: "rgba(255,255,255,0.06)",
+                                                    border: "1px solid rgba(255,255,255,0.1)",
+                                                    color: "#94A3B8",
+                                                }
+                                        }
+                                    >
+                                        {icon}
+                                    </span>
+                                    <span
+                                        className="text-sm font-medium"
+                                        style={{ color: isSelected ? "#EDE9FE" : "rgba(255,255,255,0.8)" }}
+                                    >
+                                        {label}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 );
 
             case 'fill_blank':
                 return (
                     <div className="space-y-3">
-                        <Input
+                        <input
+                            type="text"
                             value={currentAnswer || ''}
                             onChange={(e) => handleFillBlank(questionId, e.target.value)}
-                            placeholder="Enter your answer here..."
-                            className="w-full"
+                            placeholder="Type your answer here..."
+                            className="w-full px-4 py-3 rounded-xl text-white placeholder-opacity-40 outline-none transition-all"
+                            style={{
+                                background: "rgba(15,22,41,0.8)",
+                                border: "1px solid rgba(255,255,255,0.07)",
+                                color: "white",
+                                borderRadius: "0.75rem",
+                            }}
+                            onFocus={e => {
+                                e.target.style.border = "1px solid rgba(124,58,237,0.7)";
+                                e.target.style.boxShadow = "0 0 0 3px rgba(124,58,237,0.15)";
+                            }}
+                            onBlur={e => {
+                                e.target.style.border = "1px solid rgba(255,255,255,0.07)";
+                                e.target.style.boxShadow = "none";
+                            }}
                         />
                     </div>
                 );
@@ -448,256 +536,559 @@ const QuizTaking = () => {
             case 'matching':
                 return (
                     <div className="space-y-3">
-                        {currentQuestion.options?.map((option, index) => (
-                            <div key={index} className="flex items-center space-x-2">
-                                <Checkbox
-                                    id={`match-${index}`}
-                                    checked={currentAnswer?.includes(option) || false}
-                                    onCheckedChange={(checked) => handleCheckboxChange(questionId, option, checked)}
-                                />
-                                <Label htmlFor={`match-${index}`} className="cursor-pointer">
-                                    {option}
-                                </Label>
-                            </div>
-                        ))}
+                        {currentQuestion.options?.map((option, index) => {
+                            const isChecked = currentAnswer?.includes(option) || false;
+                            return (
+                                <button
+                                    key={index}
+                                    onClick={() => handleCheckboxChange(questionId, option, !isChecked)}
+                                    className="w-full text-left flex items-center gap-4 p-4 rounded-xl transition-all duration-150"
+                                    style={
+                                        isChecked
+                                            ? {
+                                                background: "rgba(124,58,237,0.2)",
+                                                border: "1px solid rgba(124,58,237,0.6)",
+                                                boxShadow: "0 0 15px rgba(124,58,237,0.2)",
+                                            }
+                                            : {
+                                                background: "rgba(15,22,41,0.6)",
+                                                border: "1px solid rgba(255,255,255,0.07)",
+                                            }
+                                    }
+                                >
+                                    <span
+                                        className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
+                                        style={
+                                            isChecked
+                                                ? { background: "#7C3AED", border: "1px solid #7C3AED" }
+                                                : { background: "transparent", border: "1px solid rgba(148,163,184,0.25)" }
+                                        }
+                                    >
+                                        {isChecked && <span style={{ color: "white", fontSize: "0.65rem" }}>✓</span>}
+                                    </span>
+                                    <span
+                                        className="text-sm font-medium"
+                                        style={{ color: isChecked ? "#EDE9FE" : "rgba(255,255,255,0.8)" }}
+                                    >
+                                        {option}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 );
 
             default:
-                return <div>Unsupported question type</div>;
+                return (
+                    <div style={{ color: "rgba(148,163,184,0.55)", textAlign: "center", padding: "1rem" }}>
+                        Unsupported question type
+                    </div>
+                );
         }
     };
 
-    // Loading state
+    // ── LOADING STATE ──
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p>Loading quiz...</p>
+            <div
+                className="min-h-screen flex items-center justify-center dot-grid"
+                style={{ background: "#080D1A" }}
+            >
+                <div className="text-center animate-slide-up">
+                    <div
+                        className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-glow"
+                        style={{
+                            background: "rgba(6,182,212,0.1)",
+                            border: "1px solid rgba(6,182,212,0.3)",
+                        }}
+                    >
+                        <div
+                            className="w-10 h-10 rounded-full border-2 border-transparent animate-spin"
+                            style={{ borderTopColor: "#06B6D4", borderRightColor: "#7C3AED" }}
+                        />
+                    </div>
+                    <p
+                        className="text-lg font-semibold tracking-widest uppercase"
+                        style={{ color: "#94A3B8", fontFamily: "Sora, sans-serif" }}
+                    >
+                        Loading Quiz Arena...
+                    </p>
+                    <p style={{ color: "rgba(148,163,184,0.45)", fontSize: "0.85rem", marginTop: "0.4rem" }}>
+                        Fetching your questions
+                    </p>
                 </div>
             </div>
         );
     }
 
-    // Error state
+    // ── ERROR STATE ──
     if (error) {
         return (
-            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-                <Card className="w-full max-w-md">
-                    <CardContent className="p-6">
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                        <Button
-                            onClick={() => navigate('/quizzes')}
-                            className="w-full mt-4"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Quizzes
-                        </Button>
-                    </CardContent>
-                </Card>
+            <div
+                className="min-h-screen flex items-center justify-center dot-grid p-4"
+                style={{ background: "#080D1A" }}
+            >
+                <div
+                    className="glass text-center p-10 animate-slide-up"
+                    style={{ maxWidth: 420, width: "100%" }}
+                >
+                    <div
+                        className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+                        style={{ background: "rgba(236,72,153,0.15)", border: "1px solid rgba(236,72,153,0.35)" }}
+                    >
+                        <AlertCircle className="h-8 w-8" style={{ color: "#EC4899" }} />
+                    </div>
+                    <p className="font-bold mb-2" style={{ color: "#F9A8D4", fontSize: "1.1rem", fontFamily: "Sora" }}>
+                        Failed to Load Quiz
+                    </p>
+                    <p style={{ color: "rgba(249,168,212,0.55)", fontSize: "0.9rem", marginBottom: "1.75rem" }}>
+                        {error}
+                    </p>
+                    <button
+                        onClick={() => navigate('/quizzes')}
+                        className="btn-violet w-full py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to Quizzes
+                    </button>
+                </div>
             </div>
         );
     }
 
-    // Results screen
+    // ── RESULTS SCREEN ──
     if (showResults && quizResult) {
+        const xpEarned = Math.round((quizResult.score / 100) * (totalQuestions * 15));
+        const wrongAnswers = totalQuestions - quizResult.correct_answers;
+        const scoreColor =
+            quizResult.score >= 80 ? "#10B981"
+            : quizResult.score >= 60 ? "#F59E0B"
+            : "#F87171";
+        const scoreGlow =
+            quizResult.score >= 80 ? "rgba(16,185,129,0.25)"
+            : quizResult.score >= 60 ? "rgba(245,158,11,0.25)"
+            : "rgba(239,68,68,0.25)";
+        const scoreLabel =
+            quizResult.score >= 90 ? "LEGENDARY!" :
+            quizResult.score >= 80 ? "EXCELLENT!" :
+            quizResult.score >= 60 ? "WELL DONE!" : "KEEP TRYING!";
+
         return (
-            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
-                <Card className="w-full max-w-2xl">
-                    <CardHeader className="text-center">
-                        <div className="mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                            <Trophy className="w-8 h-8 text-green-600" />
+            <div
+                className="min-h-screen flex items-center justify-center dot-grid p-4"
+                style={{ background: "#080D1A" }}
+            >
+                <div
+                    className="glass animate-slide-up w-full"
+                    style={{ maxWidth: 600, borderRadius: "1.25rem" }}
+                >
+                    {/* Score hero */}
+                    <div
+                        className="text-center py-10 px-6"
+                        style={{
+                            background: `radial-gradient(circle at 50% 0%, ${scoreGlow}, transparent 60%)`,
+                            borderBottom: "1px solid rgba(255,255,255,0.07)",
+                        }}
+                    >
+                        <div
+                            className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4"
+                            style={{
+                                background: `rgba(${quizResult.score >= 80 ? "16,185,129" : quizResult.score >= 60 ? "245,158,11" : "239,68,68"},0.15)`,
+                                border: `2px solid ${scoreColor}`,
+                                boxShadow: `0 0 30px ${scoreGlow}`,
+                            }}
+                        >
+                            <Trophy className="w-12 h-12" style={{ color: scoreColor }} />
                         </div>
-                        <CardTitle className="text-2xl">Quiz Completed!</CardTitle>
-                        <p className="text-muted-foreground">{quiz.title}</p>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="text-center p-4 bg-blue-50 rounded-lg">
-                                <div className="text-3xl font-bold text-blue-600">{quizResult.score}%</div>
-                                <div className="text-sm text-muted-foreground">Final Score</div>
+
+                        <p
+                            className="text-sm font-bold tracking-widest uppercase mb-1"
+                            style={{ color: "rgba(148,163,184,0.7)" }}
+                        >
+                            {scoreLabel}
+                        </p>
+                        <h2
+                            className="text-6xl font-black mb-1"
+                            style={{
+                                color: scoreColor,
+                                fontFamily: "Sora, sans-serif",
+                                textShadow: `0 0 20px ${scoreGlow}`,
+                            }}
+                        >
+                            {quizResult.score}%
+                        </h2>
+                        <p style={{ color: "rgba(148,163,184,0.6)", fontSize: "0.9rem" }}>
+                            {quiz?.title}
+                        </p>
+
+                        {/* XP badge */}
+                        <div className="mt-4 inline-flex items-center gap-2 badge-xp text-base px-4 py-1.5">
+                            ⚡ +{xpEarned} XP earned
+                        </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="p-6">
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div
+                                className="text-center p-4 rounded-xl"
+                                style={{ background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)" }}
+                            >
+                                <CheckCircle2 className="w-6 h-6 mx-auto mb-2" style={{ color: "#10B981" }} />
+                                <p className="text-2xl font-bold" style={{ color: "#10B981", fontFamily: "Sora" }}>
+                                    {quizResult.correct_answers}
+                                </p>
+                                <p style={{ color: "rgba(52,211,153,0.6)", fontSize: "0.75rem" }}>Correct</p>
                             </div>
-                            <div className="text-center p-4 bg-green-50 rounded-lg">
-                                <div className="text-3xl font-bold text-green-600">{quizResult.correct_answers}/{totalQuestions}</div>
-                                <div className="text-sm text-muted-foreground">Correct Answers</div>
+                            <div
+                                className="text-center p-4 rounded-xl"
+                                style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}
+                            >
+                                <XCircle className="w-6 h-6 mx-auto mb-2" style={{ color: "#F87171" }} />
+                                <p className="text-2xl font-bold" style={{ color: "#F87171", fontFamily: "Sora" }}>
+                                    {wrongAnswers}
+                                </p>
+                                <p style={{ color: "rgba(248,113,113,0.6)", fontSize: "0.75rem" }}>Wrong</p>
+                            </div>
+                            <div
+                                className="text-center p-4 rounded-xl"
+                                style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)" }}
+                            >
+                                <Flag className="w-6 h-6 mx-auto mb-2" style={{ color: "#F59E0B" }} />
+                                <p className="text-2xl font-bold" style={{ color: "#F59E0B", fontFamily: "Sora" }}>
+                                    {flaggedQuestions.size}
+                                </p>
+                                <p style={{ color: "rgba(245,158,11,0.6)", fontSize: "0.75rem" }}>Flagged</p>
                             </div>
                         </div>
 
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <div className="text-lg font-semibold">Time Spent</div>
-                            <div className="text-sm text-muted-foreground">{Math.round(quizResult.time_spent_minutes)} minutes</div>
+                        <div
+                            className="flex items-center justify-between p-3 rounded-xl mb-6"
+                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                        >
+                            <span style={{ color: "rgba(148,163,184,0.7)", fontSize: "0.9rem" }}>
+                                <Clock className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+                                Time spent
+                            </span>
+                            <span className="font-bold text-white">
+                                {Math.round(quizResult.time_spent_minutes)} min
+                            </span>
                         </div>
 
                         <div className="flex gap-3">
-                            <Button
+                            <button
                                 onClick={() => navigate('/quizzes')}
-                                className="flex-1"
+                                className="flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
+                                style={{
+                                    background: "rgba(255,255,255,0.05)",
+                                    border: "1px solid rgba(255,255,255,0.1)",
+                                    color: "#94A3B8",
+                                }}
                             >
-                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                <ArrowLeft className="w-4 h-4" />
                                 Back to Quizzes
-                            </Button>
-                            <Button
-                                onClick={() => navigate('/student-dashboard')}
-                                variant="outline"
-                                className="flex-1"
+                            </button>
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="btn-violet flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
                             >
-                                Dashboard
-                            </Button>
+                                🎮 Play Again
+                            </button>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    // Quiz taking interface
+    // ── MAIN QUIZ INTERFACE ──
+    const isLowTime = timeRemaining < 60;
+    const answeredCount = Object.values(answers).filter(a => Array.isArray(a) ? a.length > 0 : a !== '').length;
+    const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
+
     return (
-        <div className="min-h-screen bg-[#F8FAFC]">
-            {/* Header */}
-            <div className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button variant="ghost" onClick={() => navigate('/quizzes')}>
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back to Quizzes
-                            </Button>
-                            <div>
-                                <h1 className="text-xl font-bold">{quiz?.title}</h1>
-                                <p className="text-sm text-muted-foreground">
-                                    Question {currentQuestionIndex + 1} of {totalQuestions}
-                                </p>
-                            </div>
+        <div
+            className="min-h-screen dot-grid"
+            style={{ background: "#080D1A" }}
+        >
+            {/* Sticky Top Bar */}
+            <header
+                className="sticky top-0 z-50"
+                style={{
+                    background: "rgba(8,13,26,0.95)",
+                    backdropFilter: "blur(16px)",
+                    borderBottom: "1px solid rgba(255,255,255,0.07)",
+                }}
+            >
+                <div className="container mx-auto px-4 py-3">
+                    <div className="flex items-center justify-between gap-4">
+                        {/* Left: back + title */}
+                        <div className="flex items-center gap-3 min-w-0">
+                            <button
+                                onClick={() => navigate('/quizzes')}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex-shrink-0"
+                                style={{
+                                    background: "rgba(255,255,255,0.05)",
+                                    border: "1px solid rgba(255,255,255,0.1)",
+                                    color: "#94A3B8",
+                                }}
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                <span className="hidden sm:inline">Back</span>
+                            </button>
+                            <h1
+                                className="gradient-text-violet font-bold text-base truncate"
+                                style={{ fontFamily: "Sora, sans-serif" }}
+                            >
+                                {quiz?.title}
+                            </h1>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 text-sm">
-                                <Clock className="w-4 h-4" />
-                                <span className={timeRemaining < 300 ? 'text-red-600 font-semibold' : ''}>
-                                    {formatTime(timeRemaining)}
-                                </span>
-                            </div>
-                            <Badge variant="outline">
-                                {quiz?.difficulty}
-                            </Badge>
+                        {/* Right: timer + question count */}
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                            <span
+                                className="text-xs font-semibold"
+                                style={{ color: "rgba(148,163,184,0.7)" }}
+                            >
+                                Q {currentQuestionIndex + 1}/{totalQuestions}
+                            </span>
+
+                            {/* Timer pill */}
+                            <span
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold tabular-nums"
+                                style={
+                                    isLowTime
+                                        ? {
+                                            background: "rgba(239,68,68,0.2)",
+                                            border: "1px solid rgba(239,68,68,0.4)",
+                                            color: "#FCA5A5",
+                                            boxShadow: "0 0 10px rgba(239,68,68,0.3)",
+                                            animation: "pulse 1s ease-in-out infinite",
+                                        }
+                                        : {
+                                            background: "rgba(6,182,212,0.12)",
+                                            border: "1px solid rgba(6,182,212,0.3)",
+                                            color: "#67E8F9",
+                                        }
+                                }
+                            >
+                                <Clock className="w-3.5 h-3.5" />
+                                {formatTime(timeRemaining)}
+                            </span>
                         </div>
                     </div>
 
                     {/* Progress bar */}
-                    <div className="mt-4">
-                        <Progress value={progress} className="h-2" />
+                    <div className="mt-3">
+                        <div
+                            className="xp-bar"
+                            style={{ height: 4, borderRadius: 9999 }}
+                        >
+                            <div
+                                className="xp-bar-fill"
+                                style={{
+                                    width: `${progress}%`,
+                                    transition: "width 0.3s ease",
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
             <div className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    {/* Main content */}
-                    <div className="lg:col-span-3">
-                        <Card>
-                            <CardHeader>
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <CardTitle className="text-lg mb-2">
-                                            {currentQuestion?.question_text}
-                                        </CardTitle>
-                                        {currentQuestion?.explanation && (
-                                            <p className="text-sm text-muted-foreground">
-                                                {currentQuestion.explanation}
-                                            </p>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+
+                    {/* ── MAIN QUESTION CARD ── */}
+                    <div className="lg:col-span-3 space-y-5">
+                        <div className="card-game animate-slide-up">
+                            {/* Question header */}
+                            <div className="flex items-start justify-between gap-4 mb-6">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <span className="badge-xp text-xs">
+                                            Q {currentQuestionIndex + 1}
+                                        </span>
+                                        {currentQuestion?.points && (
+                                            <span
+                                                className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                                                style={{ background: "rgba(245,158,11,0.15)", border: "1px solid rgba(245,158,11,0.3)", color: "#FCD34D" }}
+                                            >
+                                                {currentQuestion.points} pt{currentQuestion.points > 1 ? "s" : ""}
+                                            </span>
                                         )}
                                     </div>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => toggleFlag(currentQuestion?.id)}
-                                        className={flaggedQuestions.has(currentQuestion?.id) ? 'bg-yellow-100' : ''}
+                                    <h2
+                                        className="text-xl font-bold text-white leading-snug"
+                                        style={{ fontFamily: "Sora, sans-serif" }}
                                     >
-                                        <Flag className="w-4 h-4" />
-                                    </Button>
+                                        {currentQuestion?.question_text}
+                                    </h2>
                                 </div>
-                            </CardHeader>
-                            <CardContent>
-                                {renderQuestion()}
-                            </CardContent>
-                        </Card>
 
-                        {/* Navigation */}
-                        <div className="flex justify-between mt-6">
-                            <Button
-                                variant="outline"
+                                {/* Flag button */}
+                                <button
+                                    onClick={() => toggleFlag(currentQuestion?.id)}
+                                    className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+                                    style={
+                                        flaggedQuestions.has(currentQuestion?.id)
+                                            ? {
+                                                background: "rgba(245,158,11,0.2)",
+                                                border: "1px solid rgba(245,158,11,0.5)",
+                                                color: "#F59E0B",
+                                            }
+                                            : {
+                                                background: "rgba(255,255,255,0.04)",
+                                                border: "1px solid rgba(255,255,255,0.08)",
+                                                color: "rgba(148,163,184,0.55)",
+                                            }
+                                    }
+                                    title="Flag this question"
+                                >
+                                    <Flag className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            {/* Answer options */}
+                            {renderQuestion()}
+                        </div>
+
+                        {/* Navigation buttons */}
+                        <div className="flex items-center justify-between">
+                            <button
                                 onClick={goToPrevious}
                                 disabled={currentQuestionIndex === 0}
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all"
+                                style={
+                                    currentQuestionIndex === 0
+                                        ? { opacity: 0.35, cursor: "not-allowed", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#94A3B8" }
+                                        : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "#94A3B8" }
+                                }
                             >
-                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                <ArrowLeft className="w-4 h-4" />
                                 Previous
-                            </Button>
+                            </button>
 
-                            <div className="flex gap-2">
-                                {currentQuestionIndex === totalQuestions - 1 ? (
-                                    <Button
-                                        onClick={handleSubmitQuiz}
-                                        disabled={isSubmitting}
-                                        className="bg-green-600 hover:bg-green-700"
-                                    >
-                                        {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
-                                    </Button>
-                                ) : (
-                                    <Button onClick={goToNext}>
-                                        Next
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                )}
-                            </div>
+                            {isLastQuestion ? (
+                                <button
+                                    onClick={handleSubmitQuiz}
+                                    disabled={isSubmitting}
+                                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all"
+                                    style={{
+                                        background: "linear-gradient(135deg,#F59E0B,#D97706)",
+                                        color: "#1C1009",
+                                        boxShadow: "0 0 20px rgba(245,158,11,0.4)",
+                                        opacity: isSubmitting ? 0.7 : 1,
+                                    }}
+                                >
+                                    <Trophy className="w-4 h-4" />
+                                    {isSubmitting ? "Submitting..." : "Submit Quiz ⚡"}
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={goToNext}
+                                    className="btn-violet flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm"
+                                >
+                                    Next
+                                    <ArrowRight className="w-4 h-4" />
+                                </button>
+                            )}
                         </div>
                     </div>
 
-                    {/* Sidebar */}
+                    {/* ── QUESTION NAVIGATOR SIDEBAR ── */}
                     <div className="lg:col-span-1">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-lg">Question Navigator</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-5 gap-2">
-                                    {questions.map((question, index) => (
-                                        <Button
+                        <div
+                            className="glass p-4"
+                            style={{ position: "sticky", top: 90 }}
+                        >
+                            <p
+                                className="text-xs font-bold uppercase tracking-widest mb-4"
+                                style={{ color: "rgba(148,163,184,0.7)" }}
+                            >
+                                Question Map
+                            </p>
+
+                            {/* Mini dot grid */}
+                            <div className="grid grid-cols-5 gap-2 mb-5">
+                                {questions.map((question, index) => {
+                                    const isCurrent = index === currentQuestionIndex;
+                                    const isAnswered = Array.isArray(answers[question.id])
+                                        ? answers[question.id]?.length > 0
+                                        : answers[question.id] !== '';
+                                    const isFlagged = flaggedQuestions.has(question.id);
+
+                                    return (
+                                        <button
                                             key={question.id}
-                                            variant={index === currentQuestionIndex ? "default" :
-                                                answers[question.id] ? "secondary" : "outline"}
-                                            size="sm"
                                             onClick={() => goToQuestion(index)}
-                                            className={`relative ${flaggedQuestions.has(question.id) ? 'ring-2 ring-yellow-400' : ''
-                                                }`}
+                                            className="relative w-9 h-9 rounded-lg text-xs font-bold flex items-center justify-center transition-all"
+                                            style={
+                                                isCurrent
+                                                    ? {
+                                                        background: "linear-gradient(135deg,#06B6D4,#0891B2)",
+                                                        color: "white",
+                                                        boxShadow: "0 0 10px rgba(6,182,212,0.5)",
+                                                    }
+                                                    : isFlagged
+                                                    ? {
+                                                        background: "rgba(245,158,11,0.2)",
+                                                        border: "1px solid rgba(245,158,11,0.5)",
+                                                        color: "#F59E0B",
+                                                    }
+                                                    : isAnswered
+                                                    ? {
+                                                        background: "rgba(16,185,129,0.2)",
+                                                        border: "1px solid rgba(16,185,129,0.4)",
+                                                        color: "#10B981",
+                                                    }
+                                                    : {
+                                                        background: "rgba(15,22,41,0.6)",
+                                                        border: "1px solid rgba(255,255,255,0.07)",
+                                                        color: "rgba(148,163,184,0.55)",
+                                                    }
+                                            }
+                                            title={`Question ${index + 1}`}
                                         >
                                             {index + 1}
-                                            {flaggedQuestions.has(question.id) && (
-                                                <Flag className="w-3 h-3 absolute -top-1 -right-1 text-yellow-600" />
+                                            {isFlagged && (
+                                                <Flag
+                                                    className="w-2.5 h-2.5 absolute -top-1 -right-1"
+                                                    style={{ color: "#F59E0B" }}
+                                                />
                                             )}
-                                        </Button>
-                                    ))}
-                                </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
 
-                                <div className="mt-4 space-y-2 text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-primary rounded"></div>
-                                        <span>Current</span>
+                            {/* Legend */}
+                            <div className="space-y-2 text-xs">
+                                {[
+                                    { color: "linear-gradient(135deg,#06B6D4,#0891B2)", label: "Current", textColor: "#67E8F9" },
+                                    { color: "rgba(16,185,129,0.3)", label: "Answered", textColor: "#6EE7B7" },
+                                    { color: "rgba(245,158,11,0.3)", label: "Flagged", textColor: "#FCD34D" },
+                                    { color: "rgba(255,255,255,0.05)", label: "Unanswered", textColor: "rgba(148,163,184,0.55)" },
+                                ].map(({ color, label, textColor }) => (
+                                    <div key={label} className="flex items-center gap-2">
+                                        <div
+                                            className="w-4 h-4 rounded"
+                                            style={{ background: color }}
+                                        />
+                                        <span style={{ color: textColor }}>{label}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-secondary rounded"></div>
-                                        <span>Answered</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                                        <span>Flagged</span>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                                ))}
+                            </div>
+
+                            {/* Progress summary */}
+                            <div
+                                className="mt-5 p-3 rounded-xl text-xs text-center"
+                                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                            >
+                                <span style={{ color: "#10B981", fontWeight: 700 }}>{answeredCount}</span>
+                                <span style={{ color: "rgba(148,163,184,0.55)" }}> / {totalQuestions} answered</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

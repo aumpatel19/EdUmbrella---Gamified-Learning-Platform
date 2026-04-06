@@ -306,142 +306,237 @@ const SubjectLectures = () => {
     <SidebarProvider>
       <StudentSidebar />
       <SidebarInset>
-        <div className="min-h-screen bg-[#F8FAFC]">
-          {/* Header */}
-          <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <SidebarTrigger className="md:hidden" />
-                <Button variant="ghost" size="sm" onClick={() => navigate('/lectures')}>
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Lectures
-                </Button>
-                <div className="w-8 h-8 rounded-full bg-[#1D4ED8] flex items-center justify-center">
-                  <span className="text-lg">{subject.icon}</span>
+        <div
+          className="min-h-screen dot-grid"
+          style={{ background: "#080D1A" }}
+        >
+          {/* Sticky Header */}
+          <header
+            className="sticky top-0 z-50"
+            style={{
+              background: "rgba(8,13,26,0.95)",
+              backdropFilter: "blur(16px)",
+              borderBottom: "1px solid rgba(124,58,237,0.15)",
+            }}
+          >
+            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="md:hidden text-slate-400 hover:text-white" />
+                <button
+                  onClick={() => navigate('/lectures')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                  style={{
+                    background: "rgba(15,22,41,0.75)",
+                    backdropFilter: "blur(14px)",
+                    border: "1px solid rgba(99,102,241,0.18)",
+                  }}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </button>
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-xl"
+                  style={{
+                    background: "rgba(124,58,237,0.18)",
+                    border: "1px solid rgba(124,58,237,0.3)",
+                  }}
+                >
+                  {subject.icon}
                 </div>
-                <h1 className="text-xl font-bold text-[#1E293B] font-jakarta">
+                <h1
+                  className="text-xl font-bold gradient-text-violet"
+                  style={{ fontFamily: "'Sora', sans-serif" }}
+                >
                   {subject.title} Lectures
                 </h1>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src="/placeholder.svg" />
-                    <AvatarFallback>{userName.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{userName}</span>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                  style={{ background: "linear-gradient(135deg,#7C3AED,#06B6D4)", color: "#fff" }}
+                >
+                  {userName.charAt(0).toUpperCase()}
                 </div>
-                <Button variant="outline" onClick={handleLogout}>
+                <span className="text-sm font-medium text-slate-300 hidden sm:block">{userName}</span>
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                  style={{
+                    border: "1px solid rgba(99,102,241,0.25)",
+                    background: "rgba(15,22,41,0.6)",
+                  }}
+                >
                   Logout
-                </Button>
+                </button>
               </div>
             </div>
           </header>
 
           <div className="container mx-auto px-4 py-8">
-            {/* Subject Info */}
-            <div className="mb-8">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="text-4xl">{subject.icon}</div>
+            {/* Subject Info + Progress */}
+            <div className="mb-8 animate-slide-up">
+              <div className="flex items-start gap-4 mb-5">
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shrink-0"
+                  style={{
+                    background: "rgba(15,22,41,0.85)",
+                    border: "1px solid rgba(99,102,241,0.25)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  {subject.icon}
+                </div>
                 <div className="flex-1">
-                  <h2 className="text-3xl font-bold mb-2">{subject.title}</h2>
-                  <p className="text-muted-foreground mb-4">{subject.description}</p>
-                  <div className="flex items-center gap-4">
+                  <h2
+                    className="text-3xl font-bold mb-1"
+                    style={{ color: "#fff", fontFamily: "'Sora', sans-serif" }}
+                  >
+                    {subject.title}
+                  </h2>
+                  <p className="text-slate-400 mb-3">{subject.description}</p>
+                  <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-2">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={subject.teacherAvatar} />
-                        <AvatarFallback className="text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                          {subject.teacher.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
+                        style={{ background: "linear-gradient(135deg,#7C3AED,#06B6D4)", color: "#fff" }}
+                      >
+                        {subject.teacher.split(' ').map(n => n[0]).join('')}
+                      </div>
                       <div>
-                        <p className="text-sm font-medium">{subject.teacher}</p>
-                        <p className="text-xs text-muted-foreground">Instructor</p>
+                        <p className="text-sm font-medium text-slate-200">{subject.teacher}</p>
+                        <p className="text-xs text-slate-500">Instructor</p>
                       </div>
                     </div>
-                    <Badge variant="secondary">
-                      {completedLectures}/{lectures.length} Completed
-                    </Badge>
+                    <span className="badge-xp">{completedLectures}/{lectures.length} Completed</span>
                   </div>
                 </div>
               </div>
 
-              {/* Progress Bar */}
-              <Card className="mb-6">
-                <CardContent className="p-4">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span>Course Progress</span>
-                    <span className="font-medium">{progressPercentage}% Complete</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div
-                      className={`bg-gradient-to-r ${subject.color} h-3 rounded-full transition-all`}
-                      style={{ width: `${progressPercentage}%` }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Progress bar */}
+              <div
+                className="p-4 rounded-xl"
+                style={{
+                  background: "rgba(15,22,41,0.75)",
+                  backdropFilter: "blur(14px)",
+                  border: "1px solid rgba(99,102,241,0.18)",
+                }}
+              >
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-slate-300">Course Progress</span>
+                  <span
+                    className="font-semibold"
+                    style={{ color: "#7C3AED" }}
+                  >
+                    {progressPercentage}% Complete
+                  </span>
+                </div>
+                <div className="xp-bar">
+                  <div
+                    className={`xp-bar-fill bg-gradient-to-r ${subject.color}`}
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* YouTube-like Grid View Modal */}
+            {/* Video Modal */}
             {isGridView && selectedLecture && (
-              <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-                <div className="w-full max-w-7xl h-full max-h-[90vh] bg-background rounded-lg overflow-hidden">
-                  {/* Header */}
-                  <div className="flex items-center justify-between p-4 border-b">
-                    <div className="flex items-center gap-2">
-                      <div className="text-2xl">{subject.icon}</div>
-                      <h2 className="text-xl font-semibold">{selectedLecture.title}</h2>
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                style={{ background: "rgba(0,0,0,0.9)" }}
+              >
+                <div
+                  className="w-full max-w-7xl h-full max-h-[90vh] rounded-xl overflow-hidden flex flex-col"
+                  style={{
+                    background: "#0F1629",
+                    border: "1px solid rgba(124,58,237,0.25)",
+                  }}
+                >
+                  {/* Modal Header */}
+                  <div
+                    className="flex items-center justify-between px-5 py-3 shrink-0"
+                    style={{ borderBottom: "1px solid rgba(99,102,241,0.18)" }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{subject.icon}</span>
+                      <h2
+                        className="text-lg font-semibold text-white"
+                        style={{ fontFamily: "'Sora', sans-serif" }}
+                      >
+                        {selectedLecture.title}
+                      </h2>
+                      <span className={`badge-xp text-xs`}>
+                        {selectedLecture.isCompleted ? "✓ Completed" : "New"}
+                      </span>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={closeGridView}>
+                    <button
+                      onClick={closeGridView}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                      style={{ background: "rgba(26,33,64,0.8)" }}
+                    >
                       <X className="w-4 h-4" />
-                    </Button>
+                    </button>
                   </div>
 
-                  {/* 50-50 Video Grid */}
-                  <div className="grid grid-cols-2 gap-1 h-[calc(100%-80px)]">
-                    {/* Main Video (Left 50%) */}
-                    <div className="relative bg-gray-900 flex flex-col">
-                      <div className="relative flex-1 bg-gradient-to-br from-gray-800 to-gray-900">
+                  {/* 50-50 Grid */}
+                  <div className="grid grid-cols-2 gap-0 flex-1 overflow-hidden">
+                    {/* Left: Video */}
+                    <div
+                      className="flex flex-col"
+                      style={{ borderRight: "1px solid rgba(99,102,241,0.12)" }}
+                    >
+                      <div className="relative flex-1" style={{ background: "#000" }}>
                         {selectedLecture.videoUrl.includes('.mp4') ? (
                           <div className="relative w-full h-full">
-                            {/* YouTube-like Audio Track Menu */}
+                            {/* Audio Track Button */}
                             {selectedLecture.hasMultiLanguageAudio && (
-                              <div className="absolute top-4 right-4 z-20 audio-menu">
+                              <div className="absolute top-3 right-3 z-20 audio-menu">
                                 <div className="relative">
-                                  {/* Audio Track Button */}
                                   <button
                                     onClick={() => setShowAudioMenu(!showAudioMenu)}
-                                    className="bg-black/80 hover:bg-black/90 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white transition-colors"
+                                    style={{ background: "rgba(0,0,0,0.75)", border: "1px solid rgba(6,182,212,0.3)" }}
                                   >
-                                    <Globe className="w-4 h-4" />
-                                    <span className="text-sm">
+                                    <Globe className="w-4 h-4 text-cyan-400" />
+                                    <span>
                                       {audioTracks.find(t => t.code === selectedLanguage)?.flag}{' '}
                                       {audioTracks.find(t => t.code === selectedLanguage)?.name}
                                     </span>
-                                    <span className="ml-1">{showAudioMenu ? '▲' : '▼'}</span>
+                                    <span className="text-slate-400">{showAudioMenu ? '▲' : '▼'}</span>
                                   </button>
-
-                                  {/* Dropdown Menu */}
                                   {showAudioMenu && (
-                                    <div className="absolute top-full right-0 mt-2 bg-black/95 rounded-lg shadow-xl border border-gray-600 overflow-hidden min-w-[240px] max-h-80 overflow-y-auto">
-                                      <div className="p-3 border-b border-gray-600 bg-gray-800/50">
-                                        <span className="text-white text-sm font-medium">🎵 Audio Track</span>
+                                    <div
+                                      className="absolute top-full right-0 mt-2 rounded-xl shadow-2xl overflow-hidden min-w-[240px] max-h-80 overflow-y-auto"
+                                      style={{
+                                        background: "rgba(8,13,26,0.97)",
+                                        border: "1px solid rgba(99,102,241,0.25)",
+                                        backdropFilter: "blur(16px)",
+                                      }}
+                                    >
+                                      <div
+                                        className="px-4 py-3"
+                                        style={{ borderBottom: "1px solid rgba(99,102,241,0.18)" }}
+                                      >
+                                        <span className="text-sm font-semibold text-white">🎵 Audio Track</span>
                                       </div>
                                       {audioTracks.map((track) => (
                                         <button
                                           key={track.code}
                                           onClick={() => switchAudioTrack(track.code)}
-                                          className={`w-full text-left px-4 py-3 hover:bg-gray-700/50 transition-all duration-200 flex items-center gap-3 ${selectedLanguage === track.code ? 'bg-blue-600/80' : ''
-                                            }`}
+                                          className="w-full text-left px-4 py-3 flex items-center gap-3 transition-colors hover:bg-white/5"
+                                          style={
+                                            selectedLanguage === track.code
+                                              ? { background: "rgba(6,182,212,0.18)" }
+                                              : {}
+                                          }
                                         >
                                           <span className="text-xl">{track.flag}</span>
                                           <div className="flex-1">
-                                            <div className="text-white text-sm font-medium">{track.name}</div>
-                                            <div className="text-gray-400 text-xs">{track.description}</div>
+                                            <div className="text-sm font-medium text-white">{track.name}</div>
+                                            <div className="text-xs text-slate-500">{track.description}</div>
                                           </div>
                                           {selectedLanguage === track.code && (
-                                            <span className="text-blue-300 font-bold">✓</span>
+                                            <span className="text-cyan-400 font-bold">✓</span>
                                           )}
                                         </button>
                                       ))}
@@ -450,12 +545,9 @@ const SubjectLectures = () => {
                                 </div>
                               </div>
                             )}
-
-                            {/* Video Player */}
                             <video
                               ref={(ref) => {
                                 setVideoRef(ref);
-                                // Clean up any existing audio sync on unmount
                                 if (ref) {
                                   ref.addEventListener('beforeunload', () => {
                                     if (ref.cleanupAudio) {
@@ -467,10 +559,8 @@ const SubjectLectures = () => {
                               className="w-full h-full object-contain"
                               controls
                               poster={selectedLecture.thumbnail}
-                              onLoadedData={() => {
-                                console.log('Video loaded');
-                              }}
-                              onClick={() => setShowAudioMenu(false)} // Close menu when clicking video
+                              onLoadedData={() => { console.log('Video loaded'); }}
+                              onClick={() => setShowAudioMenu(false)}
                             >
                               <source src={selectedLecture.videoUrl} type="video/mp4" />
                               Your browser does not support the video tag.
@@ -478,81 +568,73 @@ const SubjectLectures = () => {
                           </div>
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <div className="text-center text-white">
-                              <Play className="w-16 h-16 mx-auto mb-4 opacity-80" />
-                              <h3 className="text-lg font-semibold mb-2">{selectedLecture.title}</h3>
-                              <p className="text-sm opacity-80 mb-4">{selectedLecture.description}</p>
-                              <div className="flex items-center justify-center gap-4 text-sm opacity-60">
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-4 h-4" />
-                                  {selectedLecture.duration}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Eye className="w-4 h-4" />
-                                  {selectedLecture.views} views
-                                </span>
+                            <div className="text-center">
+                              <div
+                                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+                                style={{ background: "rgba(124,58,237,0.18)", border: "1px solid rgba(124,58,237,0.3)" }}
+                              >
+                                <Play className="w-10 h-10 text-violet-400" />
+                              </div>
+                              <h3 className="text-lg font-semibold text-white mb-2">{selectedLecture.title}</h3>
+                              <p className="text-sm text-slate-400 mb-4">{selectedLecture.description}</p>
+                              <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
+                                <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{selectedLecture.duration}</span>
+                                <span className="flex items-center gap-1"><Eye className="w-4 h-4" />{selectedLecture.views} views</span>
                               </div>
                             </div>
                           </div>
                         )}
-                        <Button
-                          className="absolute top-4 right-4"
-                          size="sm"
-                          onClick={() => {
-                            if (selectedLecture.videoUrl.includes('.mp4')) {
-                              if (videoRef && videoRef.requestFullscreen) {
-                                videoRef.requestFullscreen();
-                              }
-                            } else {
+                        {/* Fullscreen button — only shown when NOT an MP4 (for MP4 the audio-menu already occupies top-right) */}
+                        {!selectedLecture.videoUrl.includes('.mp4') && (
+                          <button
+                            className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                            style={{ background: "rgba(124,58,237,0.7)", border: "1px solid rgba(124,58,237,0.4)" }}
+                            onClick={() => {
                               window.open(selectedLecture.videoUrl, '_blank');
-                            }
-                          }}
-                        >
-                          <Maximize2 className="w-4 h-4 mr-1" />
-                          Full Screen
-                        </Button>
+                            }}
+                          >
+                            <Maximize2 className="w-3 h-3" />
+                            Open
+                          </button>
+                        )}
                       </div>
 
-                      {/* Video Info Panel */}
-                      <div className="p-4 bg-gray-900 text-white">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1">
-                            <h4 className="font-medium mb-1">{selectedLecture.title}</h4>
-                            <p className="text-sm opacity-80 mb-2">{selectedLecture.description}</p>
+                      {/* Video info panel */}
+                      <div
+                        className="p-4 shrink-0"
+                        style={{ background: "#0F1629", borderTop: "1px solid rgba(99,102,241,0.12)" }}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1 mr-3">
+                            <h4 className="font-semibold text-white text-sm mb-1">{selectedLecture.title}</h4>
+                            <p className="text-xs text-slate-400 line-clamp-2">{selectedLecture.description}</p>
                           </div>
-                          <Badge variant="secondary" className="ml-2">
-                            {selectedLecture.isCompleted ? "Completed" : "New"}
-                          </Badge>
                         </div>
-
-                        <div className="flex items-center gap-4 text-xs opacity-70 mb-3">
+                        <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
                           <span>{selectedLecture.duration}</span>
-                          <span>•</span>
+                          <span>·</span>
                           <span>{selectedLecture.views} views</span>
-                          <span>•</span>
+                          <span>·</span>
                           <span>{new Date(selectedLecture.uploadDate).toLocaleDateString()}</span>
                         </div>
-
                         <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            className="flex-1"
+                          <button
+                            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all"
+                            style={{ background: "linear-gradient(135deg,#06B6D4,#7C3AED)" }}
                             onClick={() => {
                               if (selectedLecture.videoUrl.includes('.mp4')) {
-                                if (videoRef) {
-                                  videoRef.play();
-                                }
+                                if (videoRef) videoRef.play();
                               } else {
                                 window.open(selectedLecture.videoUrl, '_blank');
                               }
                             }}
                           >
-                            <Play className="w-4 h-4 mr-1" />
+                            <Play className="w-4 h-4" />
                             Watch Now
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
+                          </button>
+                          <button
+                            className="px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:text-white transition-colors"
+                            style={{ border: "1px solid rgba(99,102,241,0.25)", background: "rgba(26,33,64,0.6)" }}
                             onClick={() => {
                               if (selectedLecture.videoUrl.includes('.mp4')) {
                                 const link = document.createElement('a');
@@ -563,149 +645,138 @@ const SubjectLectures = () => {
                             }}
                           >
                             <Download className="w-4 h-4" />
-                          </Button>
+                          </button>
                         </div>
                       </div>
                     </div>
 
-                    {/* Circuit Content (Right 50%) - Only for Mathematics */}
-                    <div className="relative bg-gray-800 flex flex-col p-4 gap-4">
+                    {/* Right: Game / Related */}
+                    <div
+                      className="flex flex-col p-4 gap-4 overflow-y-auto"
+                      style={{ background: "#1A2140" }}
+                    >
                       {subjectId === 'math' ? (
                         <>
                           {/* Circuit Builder Game Card */}
-                          <div className="flex-1 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-lg p-4 hover:from-blue-600/30 hover:to-purple-600/30 transition-all duration-300">
+                          <div
+                            className="flex-1 rounded-xl p-4 transition-all duration-300 cursor-pointer hover:scale-[1.01]"
+                            style={{
+                              background: "rgba(124,58,237,0.12)",
+                              border: "1px solid rgba(124,58,237,0.25)",
+                            }}
+                          >
                             <div className="flex items-center gap-3 mb-3">
-                              <img
-                                src={circuitGameImage}
-                                alt="Circuit Builder Game"
-                                className="w-12 h-12 rounded-lg object-cover"
-                              />
+                              <img src={circuitGameImage} alt="Circuit Builder Game" className="w-12 h-12 rounded-xl object-cover" />
                               <div className="flex-1">
-                                <h4 className="text-base font-medium text-white mb-1">Circuit Builder Game</h4>
-                                <p className="text-sm text-white/70">Build and test electrical circuits interactively</p>
+                                <h4 className="text-base font-semibold text-white mb-0.5">Circuit Builder Game</h4>
+                                <p className="text-xs text-slate-400">Build and test electrical circuits interactively</p>
                               </div>
                             </div>
-
-                            <div className="flex items-center gap-3 text-xs text-white/60 mb-3">
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                15-20 min
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Brain className="w-3 h-3" />
-                                Interactive
-                              </span>
+                            <div className="flex items-center gap-3 text-xs text-slate-500 mb-4">
+                              <span className="flex items-center gap-1"><Clock className="w-3 h-3" />15-20 min</span>
+                              <span className="flex items-center gap-1"><Brain className="w-3 h-3" />Interactive</span>
                             </div>
-
-                            <Button
-                              size="sm"
-                              className="w-full"
-                              variant="secondary"
-                              onClick={() => {
-                                console.log('Navigating to games...');
-                                navigate('/games');
-                              }}
+                            <button
+                              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+                              style={{ background: "linear-gradient(135deg,#7C3AED,#EC4899)" }}
+                              onClick={() => { console.log('Navigating to games...'); navigate('/games'); }}
                             >
-                              <Gamepad2 className="w-3 h-3 mr-1" />
+                              <Gamepad2 className="w-4 h-4" />
                               Play Game
-                            </Button>
+                            </button>
                           </div>
 
                           {/* Circuit Quiz Card */}
-                          <div className="flex-1 bg-gradient-to-br from-green-600/20 to-teal-600/20 rounded-lg p-4 hover:from-green-600/30 hover:to-teal-600/30 transition-all duration-300">
+                          <div
+                            className="flex-1 rounded-xl p-4 transition-all duration-300 cursor-pointer hover:scale-[1.01]"
+                            style={{
+                              background: "rgba(16,185,129,0.10)",
+                              border: "1px solid rgba(16,185,129,0.25)",
+                            }}
+                          >
                             <div className="flex items-center gap-3 mb-3">
-                              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center">
+                              <div
+                                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                style={{ background: "linear-gradient(135deg,#10B981,#06B6D4)" }}
+                              >
                                 <Brain className="w-6 h-6 text-white" />
                               </div>
                               <div className="flex-1">
-                                <h4 className="text-base font-medium text-white mb-1">Circuit Knowledge Quiz</h4>
-                                <p className="text-sm text-white/70">Test your understanding of electrical circuits and components</p>
+                                <h4 className="text-base font-semibold text-white mb-0.5">Circuit Knowledge Quiz</h4>
+                                <p className="text-xs text-slate-400">Test your understanding of electrical circuits</p>
                               </div>
                             </div>
-
-                            <div className="flex items-center gap-3 text-xs text-white/60 mb-3">
-                              <span>10 questions</span>
-                              <span>•</span>
-                              <span>5-10 min</span>
+                            <div className="flex items-center gap-3 text-xs text-slate-500 mb-4">
+                              <span>10 questions</span><span>·</span><span>5-10 min</span>
                             </div>
-
-                            <Button
-                              size="sm"
-                              className="w-full"
-                              variant="secondary"
-                              onClick={() => {
-                                console.log('Navigating to circuit quiz...');
-                                navigate('/quiz/14/attempt/1');
-                              }}
+                            <button
+                              className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+                              style={{ background: "linear-gradient(135deg,#10B981,#06B6D4)" }}
+                              onClick={() => { console.log('Navigating to circuit quiz...'); navigate('/quiz/14/attempt/1'); }}
                             >
-                              <Brain className="w-3 h-3 mr-1" />
+                              <Brain className="w-4 h-4" />
                               Take Quiz
-                            </Button>
+                            </button>
                           </div>
                         </>
                       ) : (
-                        <>
-                          {/* Default Related Video for other subjects */}
-                          {(() => {
-                            const relatedVideo = getRelatedVideo(selectedLecture);
-                            return (
-                              <>
-                                <div className="relative flex-1 bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                                  <div className="text-center text-white">
-                                    <Play className="w-12 h-12 mx-auto mb-3 opacity-70" />
-                                    <h4 className="text-base font-medium mb-2">{relatedVideo.title}</h4>
-                                    <p className="text-sm opacity-70 mb-3">{relatedVideo.description}</p>
-                                    <div className="flex items-center justify-center gap-3 text-xs opacity-60">
-                                      <span className="flex items-center gap-1">
-                                        <Clock className="w-3 h-3" />
-                                        {relatedVideo.duration}
-                                      </span>
-                                      <span className="flex items-center gap-1">
-                                        <Eye className="w-3 h-3" />
-                                        {relatedVideo.views} views
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <Button
-                                    className="absolute top-3 right-3"
-                                    size="sm"
-                                    variant="secondary"
-                                    onClick={() => {
-                                      setSelectedLecture(relatedVideo);
-                                    }}
+                        (() => {
+                          const relatedVideo = getRelatedVideo(selectedLecture);
+                          return (
+                            <>
+                              <div
+                                className="flex-1 rounded-xl p-4 flex flex-col items-center justify-center relative"
+                                style={{
+                                  background: "rgba(124,58,237,0.08)",
+                                  border: "1px solid rgba(99,102,241,0.18)",
+                                }}
+                              >
+                                <div className="text-center">
+                                  <div
+                                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                                    style={{ background: "rgba(124,58,237,0.18)" }}
                                   >
-                                    <Play className="w-3 h-3 mr-1" />
-                                    Switch
-                                  </Button>
-                                </div>
-
-                                {/* Related Video Info Panel */}
-                                <div className="p-4 bg-gray-800 text-white">
-                                  <div className="mb-2">
-                                    <h5 className="font-medium text-sm mb-1">Next: {relatedVideo.title}</h5>
-                                    <p className="text-xs opacity-70 mb-2 line-clamp-2">{relatedVideo.description}</p>
+                                    <Play className="w-8 h-8 text-violet-400" />
                                   </div>
-
-                                  <div className="flex items-center gap-3 text-xs opacity-60 mb-3">
-                                    <span>{relatedVideo.duration}</span>
-                                    <span>•</span>
-                                    <span>{relatedVideo.views} views</span>
+                                  <h4 className="text-base font-semibold text-white mb-2">{relatedVideo.title}</h4>
+                                  <p className="text-xs text-slate-400 mb-3">{relatedVideo.description}</p>
+                                  <div className="flex items-center justify-center gap-3 text-xs text-slate-500">
+                                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{relatedVideo.duration}</span>
+                                    <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{relatedVideo.views} views</span>
                                   </div>
-
-                                  <Button
-                                    size="sm"
-                                    className="w-full"
-                                    variant="secondary"
-                                    onClick={() => setSelectedLecture(relatedVideo)}
-                                  >
-                                    <Play className="w-3 h-3 mr-1" />
-                                    Watch Next
-                                  </Button>
                                 </div>
-                              </>
-                            );
-                          })()}
-                        </>
+                                <button
+                                  className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-white"
+                                  style={{ background: "rgba(124,58,237,0.5)", border: "1px solid rgba(124,58,237,0.3)" }}
+                                  onClick={() => setSelectedLecture(relatedVideo)}
+                                >
+                                  <Play className="w-3 h-3" />Switch
+                                </button>
+                              </div>
+
+                              <div
+                                className="rounded-xl p-4 shrink-0"
+                                style={{
+                                  background: "rgba(15,22,41,0.75)",
+                                  border: "1px solid rgba(99,102,241,0.15)",
+                                }}
+                              >
+                                <h5 className="font-semibold text-sm text-white mb-1">Next: {relatedVideo.title}</h5>
+                                <p className="text-xs text-slate-400 mb-2 line-clamp-2">{relatedVideo.description}</p>
+                                <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
+                                  <span>{relatedVideo.duration}</span><span>·</span><span>{relatedVideo.views} views</span>
+                                </div>
+                                <button
+                                  className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold text-white"
+                                  style={{ background: "linear-gradient(135deg,#06B6D4,#7C3AED)" }}
+                                  onClick={() => setSelectedLecture(relatedVideo)}
+                                >
+                                  <Play className="w-3 h-3" />Watch Next
+                                </button>
+                              </div>
+                            </>
+                          );
+                        })()
                       )}
                     </div>
                   </div>
@@ -713,72 +784,101 @@ const SubjectLectures = () => {
               </div>
             )}
 
-            {/* YouTube-style Video Grid */}
-            <div className="space-y-6">
-              <h3 className="text-xl font-semibold mb-4">📹 Video Lectures</h3>
+            {/* Lecture Grid */}
+            <div>
+              <h3
+                className="text-xl font-bold mb-5"
+                style={{ color: "#fff", fontFamily: "'Sora', sans-serif" }}
+              >
+                📹 Video Lectures
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {lectures.map((lecture, index) => (
-                  <Card
+                {lectures.map((lecture) => (
+                  <div
                     key={lecture.id}
-                    className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group hover:scale-[1.02]"
+                    className="group cursor-pointer overflow-hidden rounded-2xl transition-all duration-300"
+                    style={{
+                      background: "rgba(15,22,41,0.75)",
+                      backdropFilter: "blur(14px)",
+                      border: "1px solid rgba(99,102,241,0.18)",
+                    }}
                     onClick={() => handleVideoClick(lecture)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "scale(1.02)";
+                      e.currentTarget.style.boxShadow = "0 0 20px rgba(124,58,237,0.3)";
+                      e.currentTarget.style.borderColor = "rgba(124,58,237,0.4)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = "";
+                      e.currentTarget.style.borderColor = "rgba(99,102,241,0.18)";
+                    }}
                   >
-                    <div className="relative">
-                      {/* YouTube-style Thumbnail */}
-                      <div className="w-full aspect-video rounded-t-lg overflow-hidden relative group">
-                        <img
-                          src={lecture.thumbnail}
-                          alt={lecture.title}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        {/* Dark overlay on hover */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
-
-                        {/* Play button overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className="w-16 h-16 bg-black/60 rounded-full flex items-center justify-center backdrop-blur-sm">
-                            <Play className="w-8 h-8 text-white ml-1" />
-                          </div>
+                    {/* Thumbnail */}
+                    <div className="relative w-full aspect-video overflow-hidden">
+                      <img
+                        src={lecture.thumbnail}
+                        alt={lecture.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300" />
+                      {/* Play overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div
+                          className="w-14 h-14 rounded-full flex items-center justify-center"
+                          style={{ background: "rgba(124,58,237,0.75)", backdropFilter: "blur(8px)" }}
+                        >
+                          <Play className="w-7 h-7 text-white ml-0.5" />
                         </div>
-
-                        {/* Duration overlay */}
-                        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
-                          {lecture.duration}
-                        </div>
-                        {/* Multi-language badge */}
-                        {lecture.hasMultiLanguageAudio && (
-                          <div className="absolute top-2 left-2">
-                            <div className="bg-blue-600/90 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                              <Globe className="w-3 h-3" />
-                              Multi-Lang
-                            </div>
-                          </div>
-                        )}
-                        {/* Completion badge */}
-                        {lecture.isCompleted && (
-                          <div className="absolute top-2 right-2">
-                            <CheckCircle className="w-5 h-5 text-green-500 bg-white rounded-full shadow-sm" />
-                          </div>
-                        )}
                       </div>
+                      {/* Duration chip */}
+                      <div
+                        className="absolute bottom-2 right-2 text-xs px-2 py-0.5 rounded font-medium text-white"
+                        style={{ background: "rgba(0,0,0,0.78)" }}
+                      >
+                        {lecture.duration}
+                      </div>
+                      {/* Multi-lang badge */}
+                      {lecture.hasMultiLanguageAudio && (
+                        <div className="absolute top-2 left-2">
+                          <span
+                            className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium"
+                            style={{ background: "rgba(6,182,212,0.85)", color: "#fff" }}
+                          >
+                            <Globe className="w-3 h-3" />
+                            Multi-Lang
+                          </span>
+                        </div>
+                      )}
+                      {/* Completed badge */}
+                      {lecture.isCompleted && (
+                        <div className="absolute top-2 right-2">
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center"
+                            style={{ background: "#10B981" }}
+                          >
+                            <CheckCircle className="w-4 h-4 text-white" />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    <CardContent className="p-4">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-base group-hover:text-primary transition-colors line-clamp-2">
-                          {lecture.title}
-                        </h4>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {lecture.description}
-                        </p>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{lecture.views} views</span>
-                          <span>•</span>
-                          <span>{new Date(lecture.uploadDate).toLocaleDateString()}</span>
-                        </div>
+                    {/* Card body */}
+                    <div className="p-4">
+                      <h4
+                        className="font-semibold text-sm line-clamp-2 mb-1 group-hover:text-violet-400 transition-colors"
+                        style={{ color: "#e2e8f0", fontFamily: "'Sora', sans-serif" }}
+                      >
+                        {lecture.title}
+                      </h4>
+                      <p className="text-xs text-slate-500 line-clamp-2 mb-2">{lecture.description}</p>
+                      <div className="flex items-center gap-2 text-xs text-slate-600">
+                        <span>{lecture.views} views</span>
+                        <span>·</span>
+                        <span>{new Date(lecture.uploadDate).toLocaleDateString()}</span>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

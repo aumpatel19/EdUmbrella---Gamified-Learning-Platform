@@ -113,10 +113,10 @@ const Games = () => {
             <SidebarProvider>
                 <StudentSidebar />
                 <SidebarInset>
-                    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+                    <div className="min-h-screen flex items-center justify-center" style={{ background: '#080D1A' }}>
                         <div className="text-center">
-                            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-[#1D4ED8]" />
-                            <p className="text-[#64748B]">Loading games...</p>
+                            <Loader2 className="h-10 w-10 animate-spin mx-auto mb-4 text-cyan-400" />
+                            <p className="text-slate-400 font-grotesk text-sm tracking-wide">Loading the arcade...</p>
                         </div>
                     </div>
                 </SidebarInset>
@@ -129,11 +129,14 @@ const Games = () => {
             <SidebarProvider>
                 <StudentSidebar />
                 <SidebarInset>
-                    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-                        <div className="text-center">
-                            <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
-                            <p className="text-red-600">{error}</p>
-                            <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-[#1D4ED8] text-white rounded-lg text-sm">
+                    <div className="min-h-screen flex items-center justify-center" style={{ background: '#080D1A' }}>
+                        <div className="text-center glass rounded-2xl p-8 max-w-sm mx-4">
+                            <AlertCircle className="h-10 w-10 text-pink-400 mx-auto mb-4" />
+                            <p className="text-slate-300 mb-4 font-grotesk">{error}</p>
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="btn-cyan px-5 py-2 text-sm font-semibold"
+                            >
                                 Retry
                             </button>
                         </div>
@@ -143,227 +146,290 @@ const Games = () => {
         );
     }
 
+    // Subject → accent color map
+    const getSubjectColor = (subject = '') => {
+        const s = subject.toLowerCase();
+        if (s.includes('math')) return { text: 'text-violet-400', border: 'border-violet-500/50', dot: '#7C3AED' };
+        if (s.includes('science') || s.includes('biology') || s.includes('photo')) return { text: 'text-cyan-400', border: 'border-cyan-500/50', dot: '#06B6D4' };
+        if (s.includes('physics') || s.includes('circuit')) return { text: 'text-green-400', border: 'border-green-500/50', dot: '#10B981' };
+        return { text: 'text-pink-400', border: 'border-pink-500/50', dot: '#EC4899' };
+    };
+
+    const getDifficultyBadge = (difficulty) => {
+        switch ((difficulty || '').toLowerCase()) {
+            case 'easy':   return 'bg-green-500/15 text-green-400 border border-green-500/30';
+            case 'medium': return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
+            case 'hard':   return 'bg-pink-500/15 text-pink-400 border border-pink-500/30';
+            default:       return 'bg-slate-500/15 text-slate-400 border border-slate-500/30';
+        }
+    };
+
+    const getGameImage = (game) => {
+        const cls = "w-full h-full object-cover";
+        if (game.game_component === 'circuit')
+            return <img src={circuitGameImage} alt="Circuit Designer Game" className={cls} />;
+        if (game.game_component === 'nutrition')
+            return <img src={nutritionGameImage} alt="Nutrition Quest Game" className={cls} />;
+        if (game.game_component === 'pizza')
+            return <img src={pizzaGameImage} alt="Pizza Fraction Fun Game" className={cls} />;
+        if (game.game_component === 'photosynthesis')
+            return <img src={photosynthesisGameImage} alt="Photosynthesis Explorer Game" className={cls} />;
+        if (game.game_component === 'equation' || game.game_component === 'equation-unlock')
+            return <img src={equationGameImage} alt="Equation Unlock Challenge Game" className={cls} />;
+        return (
+            <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'rgba(6,182,212,0.15)' }}>
+                {game.category_icon || "🎮"}
+            </div>
+        );
+    };
+
     return (
         <SidebarProvider>
             <StudentSidebar />
             <SidebarInset>
-                <div className="min-h-screen bg-[#F8FAFC]">
-                    {/* Header */}
-                    <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-50">
-                        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+                <div className="min-h-screen dot-grid" style={{ background: '#080D1A' }}>
+
+                    {/* ── Sticky Header ── */}
+                    <header
+                        className="sticky top-0 z-50 border-b"
+                        style={{
+                            background: 'rgba(8,13,26,0.95)',
+                            backdropFilter: 'blur(20px)',
+                            WebkitBackdropFilter: 'blur(20px)',
+                            borderColor: 'rgba(6,182,212,0.2)',
+                        }}
+                    >
+                        <div className="mx-auto px-4 py-3 flex items-center justify-between max-w-7xl">
                             <div className="flex items-center gap-3">
-                                <SidebarTrigger className="md:hidden" />
-                                <h1 className="text-lg font-semibold text-[#1E293B] font-jakarta">Games</h1>
+                                <SidebarTrigger className="md:hidden text-slate-400 hover:text-white" />
+                                <h1 className="text-lg font-bold font-sora gradient-text-cyan">
+                                    🎮 Game Arcade
+                                </h1>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-[#1D4ED8] flex items-center justify-center">
-                                    <span className="text-white text-sm font-semibold">{userName.charAt(0).toUpperCase()}</span>
+                            <div className="flex items-center gap-3">
+                                <span className="badge-xp hidden sm:inline-flex">⚡ XP: {studentProgress?.overall_stats?.total_xp || 0}</span>
+                                <div
+                                    className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
+                                    style={{
+                                        background: 'linear-gradient(135deg,#7C3AED,#06B6D4)',
+                                        boxShadow: '0 0 0 2px rgba(124,58,237,0.5)',
+                                    }}
+                                >
+                                    {userName.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-sm font-medium text-[#1E293B] hidden sm:block">{userName}</span>
+                                <span className="text-sm font-medium text-slate-300 hidden sm:block">{userName}</span>
                             </div>
                         </div>
                     </header>
 
-                    <div className="container mx-auto px-4 py-8">
-                        <div className="mb-8">
-                            <h2 className="text-2xl font-bold text-[#1E293B] font-jakarta">Educational Games - Class {studentClass}</h2>
-                            <p className="text-[#64748B] mt-1">
-                                Learn through interactive games designed for your class level
+                    <div className="mx-auto px-4 py-8 max-w-7xl">
+
+                        {/* ── Page Title Section ── */}
+                        <div className="mb-8 animate-slide-up">
+                            <div className="flex flex-wrap items-center gap-3 mb-2">
+                                <h2 className="text-3xl font-bold font-sora text-white">Game Arcade</h2>
+                                <span
+                                    className="text-xs font-semibold px-3 py-1 rounded-full"
+                                    style={{
+                                        background: 'rgba(6,182,212,0.12)',
+                                        border: '1px solid rgba(6,182,212,0.3)',
+                                        color: '#67E8F9',
+                                    }}
+                                >
+                                    Class {studentClass}
+                                </span>
+                            </div>
+                            <p className="text-slate-400 font-grotesk">
+                                Earn XP by playing educational games designed for your class level
                             </p>
                         </div>
 
-                        {/* Stats Overview */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                            <div className="bg-white border border-[#E2E8F0] border-l-4 border-l-[#1D4ED8] rounded-xl p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                                        <Gamepad2 className="w-5 h-5 text-purple-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-[#64748B] font-medium">Total Games</p>
-                                        <p className="text-2xl font-bold text-[#1D4ED8] font-jakarta">{gameQuizzes.length}</p>
-                                    </div>
+                        {/* ── Stats Row ── */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                            {/* Total Games */}
+                            <div className="card-game p-5 flex items-center gap-4">
+                                <div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(6,182,212,0.15)', border: '1px solid rgba(6,182,212,0.3)' }}
+                                >
+                                    <Gamepad2 className="w-6 h-6 text-cyan-400" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 font-grotesk uppercase tracking-wider mb-0.5">Total Games</p>
+                                    <p className="text-3xl font-bold font-sora gradient-text-cyan">{gameQuizzes.length}</p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-[#E2E8F0] border-l-4 border-l-[#10B981] rounded-xl p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                                        <CheckCircle2 className="w-5 h-5 text-green-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-[#64748B] font-medium">Completed</p>
-                                        <p className="text-2xl font-bold text-[#10B981] font-jakarta">
-                                            {studentProgress?.overall_stats?.completed_quizzes || 0}
-                                        </p>
-                                    </div>
+
+                            {/* Completed */}
+                            <div className="card-game p-5 flex items-center gap-4">
+                                <div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)' }}
+                                >
+                                    <CheckCircle2 className="w-6 h-6 text-green-400" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 font-grotesk uppercase tracking-wider mb-0.5">Completed</p>
+                                    <p className="text-3xl font-bold font-sora text-green-400">
+                                        {studentProgress?.overall_stats?.completed_quizzes || 0}
+                                    </p>
                                 </div>
                             </div>
-                            <div className="bg-white border border-[#E2E8F0] border-l-4 border-l-[#F59E0B] rounded-xl p-4 shadow-sm">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                                        <Star className="w-5 h-5 text-orange-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-[#64748B] font-medium">Best Score</p>
-                                        <p className="text-2xl font-bold text-[#F59E0B] font-jakarta">
-                                            {Math.round(studentProgress?.overall_stats?.best_score || 0)}%
-                                        </p>
-                                    </div>
+
+                            {/* Best Score */}
+                            <div className="card-game p-5 flex items-center gap-4">
+                                <div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)' }}
+                                >
+                                    <Star className="w-6 h-6 text-amber-400" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-slate-500 font-grotesk uppercase tracking-wider mb-0.5">Best Score</p>
+                                    <p className="text-3xl font-bold font-sora gradient-text-gold">
+                                        {Math.round(studentProgress?.overall_stats?.best_score || 0)}%
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Games List */}
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-[#1E293B] font-jakarta">Available Games</h3>
-                            <div className="space-y-4">
-                                {gameQuizzes.map((game) => (
-                                    <div key={game.id} className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-sm hover:shadow-md transition-shadow group">
-                                        <div className="flex items-start gap-6">
-                                            {/* Game Image/Icon - Left Side */}
-                                            <div className="flex-shrink-0">
-                                                {game.game_component === 'circuit' ? (
-                                                    <div className="w-20 h-20 rounded-lg overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
-                                                        <img
-                                                            src={circuitGameImage}
-                                                            alt="Circuit Designer Game"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : game.game_component === 'nutrition' ? (
-                                                    <div className="w-20 h-20 rounded-lg overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
-                                                        <img
-                                                            src={nutritionGameImage}
-                                                            alt="Nutrition Quest Game"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : game.game_component === 'pizza' ? (
-                                                    <div className="w-20 h-20 rounded-lg overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
-                                                        <img
-                                                            src={pizzaGameImage}
-                                                            alt="Pizza Fraction Fun Game"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : game.game_component === 'photosynthesis' ? (
-                                                    <div className="w-20 h-20 rounded-lg overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
-                                                        <img
-                                                            src={photosynthesisGameImage}
-                                                            alt="Photosynthesis Explorer Game"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : (game.game_component === 'equation' || game.game_component === 'equation-unlock') ? (
-                                                    <div className="w-20 h-20 rounded-lg overflow-hidden shadow-md group-hover:shadow-lg transition-shadow">
-                                                        <img
-                                                            src={equationGameImage}
-                                                            alt="Equation Unlock Challenge Game"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-20 h-20 rounded-lg bg-purple-100 flex items-center justify-center text-4xl shadow-md group-hover:shadow-lg transition-shadow">
-                                                        {game.category_icon || "🎮"}
-                                                    </div>
-                                                )}
-                                            </div>
+                        {/* ── Available Games Heading ── */}
+                        <div className="flex items-center gap-3 mb-6">
+                            <span
+                                className="w-2.5 h-2.5 rounded-full animate-pulse-glow flex-shrink-0"
+                                style={{ background: '#06B6D4' }}
+                            />
+                            <h3 className="text-lg font-bold font-sora text-white">Available Games</h3>
+                        </div>
 
-                                            {/* Game Information - Right Side */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-start justify-between mb-3">
-                                                    <div className="flex-1">
-                                                        <h4 className="font-semibold text-[#1E293B] text-lg flex items-center gap-2 group-hover:text-[#1D4ED8] transition-colors mb-1">
+                        {/* ── Games Grid ── */}
+                        {gameQuizzes.length > 0 ? (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-12">
+                                {gameQuizzes.map((game) => {
+                                    const accent = getSubjectColor(game.subject_name || game.game_component || '');
+                                    return (
+                                        <div
+                                            key={game.id}
+                                            className="card-game group relative overflow-hidden"
+                                            style={{ borderTop: `2px solid ${accent.dot}40` }}
+                                        >
+                                            {/* subtle top color stripe */}
+                                            <div
+                                                className="absolute top-0 left-0 right-0 h-0.5"
+                                                style={{ background: `linear-gradient(90deg, ${accent.dot}, transparent)` }}
+                                            />
+
+                                            <div className="p-5 flex items-start gap-5">
+                                                {/* ── Game Image ── */}
+                                                <div className="flex-shrink-0 relative">
+                                                    <div className="w-20 h-20 rounded-xl overflow-hidden relative group-hover:scale-105 transition-transform"
+                                                        style={{ border: `1px solid ${accent.dot}30` }}>
+                                                        {getGameImage(game)}
+                                                    </div>
+                                                    {/* Difficulty badge on top-right of image */}
+                                                    <span
+                                                        className={`absolute -top-2 -right-2 text-xs px-2 py-0.5 rounded-full font-semibold font-grotesk ${getDifficultyBadge(game.difficulty)}`}
+                                                    >
+                                                        {game.difficulty}
+                                                    </span>
+                                                </div>
+
+                                                {/* ── Game Info ── */}
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-start justify-between gap-2 mb-1">
+                                                        <h4 className="font-bold text-white font-sora text-base leading-snug group-hover:text-cyan-300 transition-colors">
                                                             {game.title}
-                                                            <Gamepad2 className="w-5 h-5 text-purple-600" />
                                                         </h4>
-                                                        <p className="text-sm text-[#64748B] mb-2">{game.subject_name}</p>
-                                                        <p className="text-sm text-[#64748B] leading-relaxed">{game.description}</p>
+                                                        <span className="badge-xp flex-shrink-0">⚡ +{game.xp_reward || 150} XP</span>
                                                     </div>
-                                                    <div className="flex items-center gap-2 ml-4">
-                                                        <Badge variant="outline" className="bg-purple-100 text-purple-800">
-                                                            Interactive
-                                                        </Badge>
-                                                        <Badge
-                                                            variant="outline"
-                                                            className={getDifficultyColor(game.difficulty)}
-                                                        >
-                                                            {game.difficulty}
-                                                        </Badge>
-                                                    </div>
-                                                </div>
 
-                                                {/* Game Stats */}
-                                                <div className="flex items-center gap-6 text-sm text-[#64748B] mb-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <Clock className="w-4 h-4" />
-                                                        <span>{game.duration_minutes} minutes</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <Zap className="w-4 h-4" />
-                                                        <span>Interactive Learning</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <Target className="w-4 h-4" />
-                                                        <span>{game.difficulty} Level</span>
-                                                    </div>
-                                                </div>
+                                                    <p className={`text-xs font-semibold mb-2 font-grotesk uppercase tracking-wider ${accent.text}`}>
+                                                        {game.subject_name}
+                                                    </p>
 
-                                                {/* Play Button */}
-                                                <div className="flex justify-end">
+                                                    <p className="text-sm text-slate-400 leading-relaxed mb-3 font-grotesk line-clamp-2">
+                                                        {game.description}
+                                                    </p>
+
+                                                    {/* Stats row */}
+                                                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 mb-4 font-grotesk">
+                                                        <span className="flex items-center gap-1">
+                                                            <Clock className="w-3.5 h-3.5 text-slate-500" />
+                                                            {game.duration_minutes} min
+                                                        </span>
+                                                        <span className="flex items-center gap-1">
+                                                            <Zap className="w-3.5 h-3.5 text-amber-400" />
+                                                            XP: +{game.xp_reward || 200}
+                                                        </span>
+                                                        <span className="flex items-center gap-1">
+                                                            <Target className="w-3.5 h-3.5 text-slate-500" />
+                                                            {game.difficulty} Level
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Play button */}
                                                     <button
-                                                        className="bg-[#1D4ED8] hover:bg-blue-700 text-white transition-colors px-6 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                                                        className="btn-cyan px-5 py-2 text-sm flex items-center gap-2"
                                                         onClick={() => handleGameStart(game)}
                                                     >
                                                         <Gamepad2 className="w-4 h-4" />
-                                                        Play Game
+                                                        Play Now
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="text-center py-16">
+                                <Gamepad2
+                                    className="h-16 w-16 mx-auto mb-4"
+                                    style={{ color: 'rgba(6,182,212,0.4)' }}
+                                />
+                                <h3 className="text-lg font-bold text-white font-sora mb-2">No Games Available</h3>
+                                <p className="text-slate-500 font-grotesk">
+                                    No educational games are available for Class {studentClass} at the moment.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* ── Game Categories Info ── */}
+                        <div className="card-game p-6">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Trophy className="h-5 w-5 text-amber-400" />
+                                <h3 className="font-bold font-sora text-white">Game Categories</h3>
+                            </div>
+                            <p className="text-xs text-slate-500 mb-5 font-grotesk">Different types of educational games available</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                {[
+                                    { icon: "🧮", label: "Mathematics", desc: "Fractions, equations, and more", color: '#7C3AED' },
+                                    { icon: "🔬", label: "Science", desc: "Biology, chemistry, physics", color: '#06B6D4' },
+                                    { icon: "⚡", label: "Electronics", desc: "Circuit building and design", color: '#10B981' },
+                                    { icon: "🍎", label: "Health & Nutrition", desc: "Healthy eating habits", color: '#F97316' },
+                                    { icon: "🌱", label: "Biology", desc: "Plant life and ecosystems", color: '#06B6D4' },
+                                    { icon: "🔓", label: "Problem Solving", desc: "Logic and critical thinking", color: '#EC4899' },
+                                ].map(({ icon, label, desc, color }) => (
+                                    <div
+                                        key={label}
+                                        className="flex items-center gap-3 p-3 rounded-xl transition-colors hover:bg-white/5"
+                                        style={{ border: `1px solid rgba(99,102,241,0.12)` }}
+                                    >
+                                        <div
+                                            className="w-9 h-9 rounded-lg flex items-center justify-center text-lg flex-shrink-0"
+                                            style={{ background: `${color}18`, border: `1px solid ${color}30` }}
+                                        >
+                                            {icon}
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-slate-200 text-sm font-sora">{label}</div>
+                                            <div className="text-xs text-slate-500 font-grotesk">{desc}</div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
-
-                            {gameQuizzes.length === 0 && (
-                                <div className="text-center py-12">
-                                    <Gamepad2 className="h-16 w-16 mx-auto text-[#64748B] mb-4" />
-                                    <h3 className="text-lg font-semibold text-[#1E293B] mb-2">No Games Available</h3>
-                                    <p className="text-[#64748B]">
-                                        No educational games are available for Class {studentClass} at the moment.
-                                    </p>
-                                </div>
-                            )}
                         </div>
 
-                        {/* Game Categories Info */}
-                        <div className="mt-12">
-                            <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-sm">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Trophy className="h-5 w-5 text-[#1D4ED8]" />
-                                    <h3 className="font-semibold text-[#1E293B] font-jakarta">Game Categories</h3>
-                                </div>
-                                <p className="text-xs text-[#64748B] mb-4">Different types of educational games available</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {[
-                                        { icon: "🧮", label: "Mathematics", desc: "Fractions, equations, and more" },
-                                        { icon: "🔬", label: "Science", desc: "Biology, chemistry, physics" },
-                                        { icon: "⚡", label: "Electronics", desc: "Circuit building and design" },
-                                        { icon: "🍎", label: "Health & Nutrition", desc: "Healthy eating habits" },
-                                        { icon: "🌱", label: "Biology", desc: "Plant life and ecosystems" },
-                                        { icon: "🔓", label: "Problem Solving", desc: "Logic and critical thinking" },
-                                    ].map(({ icon, label, desc }) => (
-                                        <div key={label} className="flex items-center gap-3 p-3 border border-[#E2E8F0] rounded-lg">
-                                            <div className="text-2xl">{icon}</div>
-                                            <div>
-                                                <div className="font-medium text-[#1E293B] text-sm">{label}</div>
-                                                <div className="text-xs text-[#64748B]">{desc}</div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </SidebarInset>

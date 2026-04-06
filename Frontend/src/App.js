@@ -19,7 +19,7 @@ import QuizTaking from "./pages/QuizTaking";
 import Games from "./pages/Games";
 import Calendar from "./pages/Calendar";
 import Leaderboards from "./pages/Leaderboards";
-import Profile from "./pages/ProfileFixed";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import CircuitBoard from "./pages/games/circuit";
 import CircuitGame from "./pages/games/CircuitGame";
