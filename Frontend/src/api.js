@@ -35,6 +35,30 @@ class ApiService {
     return { message: 'Login successful', user: { id: profile.id, username: profile.email, name: profile.name, class: profile.class } };
   }
 
+  async signUp(email, password, name, role, studentClass) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, role, class: studentClass || '' },
+      },
+    });
+    if (error) throw new Error(error.message);
+
+    // The trigger creates the users row; update it with full details
+    const authId = data.user?.id;
+    if (authId) {
+      await supabase.from('users').upsert({
+        auth_id: authId,
+        email,
+        name,
+        role,
+        class: studentClass || '',
+      }, { onConflict: 'email' });
+    }
+    return { message: 'Account created!', user: { name, email, role, class: studentClass } };
+  }
+
   async logout() {
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
