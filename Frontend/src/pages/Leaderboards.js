@@ -1,235 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/simplebutton";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import {
-  Trophy,
-  Medal,
-  Crown,
-  Star,
-  TrendingUp,
-  Calendar,
-  BookOpen,
-  Gamepad2,
-  Users,
-  Target,
-  Zap
-} from "lucide-react";
+import { Trophy, Medal, Crown, Star, Target, Zap } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar";
 import ApiService from "../api";
 
 const Leaderboards = () => {
-  const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "Student";
-  const userEmail = localStorage.getItem("userEmail") || "";
   const studentClass = localStorage.getItem("studentClass") || "6";
   const [loading, setLoading] = useState(true);
   const [leaderboardData, setLeaderboardData] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState("week");
 
-  const handleLogout = () => {
-    localStorage.removeItem("userType");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("studentClass");
-    navigate("/");
-  };
-
   useEffect(() => {
-    const loadLeaderboardData = () => {
+    const loadLeaderboardData = async () => {
       setLoading(true);
-
-      // Use mock data directly for instant loading
-      setLeaderboardData({
-        overall_leaderboard: [
-          {
-            id: 1,
-            name: "Alex Chen",
-            email: "alex@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 3200,
-            total_xp: 4500,
-            level: 8,
-            class: "10",
-            badges: 12,
-            streak: 15,
-            completed_quizzes: 45,
-            completed_games: 18
-          },
-          {
-            id: 2,
-            name: "Sarah Kim",
-            email: "sarah@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 2850,
-            total_xp: 4100,
-            level: 7,
-            class: "9",
-            badges: 10,
-            streak: 12,
-            completed_quizzes: 38,
-            completed_games: 15
-          },
-          {
-            id: 3,
-            name: userName,
-            email: userEmail,
-            avatar: "/placeholder.svg",
-            total_score: 2450,
-            total_xp: 3600,
-            level: 6,
-            class: studentClass,
-            badges: 8,
-            streak: 7,
-            completed_quizzes: 32,
-            completed_games: 12
-          },
-          {
-            id: 4,
-            name: "Mike Rodriguez",
-            email: "mike@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 2200,
-            total_xp: 3200,
-            level: 5,
-            class: "8",
-            badges: 6,
-            streak: 5,
-            completed_quizzes: 28,
-            completed_games: 10
-          },
-          {
-            id: 5,
-            name: "Emma Wilson",
-            email: "emma@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 1950,
-            total_xp: 2800,
-            level: 5,
-            class: "7",
-            badges: 7,
-            streak: 8,
-            completed_quizzes: 25,
-            completed_games: 9
-          },
-          {
-            id: 6,
-            name: "David Park",
-            email: "david@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 1800,
-            total_xp: 2500,
-            level: 4,
-            class: "9",
-            badges: 5,
-            streak: 3,
-            completed_quizzes: 22,
-            completed_games: 8
-          },
-          {
-            id: 7,
-            name: "Lisa Johnson",
-            email: "lisa@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 1650,
-            total_xp: 2200,
-            level: 4,
-            class: "8",
-            badges: 4,
-            streak: 6,
-            completed_quizzes: 20,
-            completed_games: 7
-          },
-          {
-            id: 8,
-            name: "Tom Brown",
-            email: "tom@email.com",
-            avatar: "/placeholder.svg",
-            total_score: 1500,
-            total_xp: 2000,
-            level: 3,
-            class: "7",
-            badges: 3,
-            streak: 4,
-            completed_quizzes: 18,
-            completed_games: 6
-          }
-        ],
-        class_leaderboard: [
-          {
-            id: 1,
-            name: userName,
-            email: userEmail,
-            total_score: 2450,
-            total_xp: 3600,
-            level: 6,
-            badges: 8,
-            streak: 7,
-            completed_quizzes: 32,
-            completed_games: 12
-          },
-          {
-            id: 2,
-            name: "Class Mate 1",
-            email: "mate1@email.com",
-            total_score: 2100,
-            total_xp: 3000,
-            level: 5,
-            badges: 6,
-            streak: 5,
-            completed_quizzes: 28,
-            completed_games: 10
-          },
-          {
-            id: 3,
-            name: "Class Mate 2",
-            email: "mate2@email.com",
-            total_score: 1850,
-            total_xp: 2600,
-            level: 4,
-            badges: 5,
-            streak: 4,
-            completed_quizzes: 24,
-            completed_games: 8
-          }
-        ],
-        game_leaderboard: [
-          {
-            id: 1,
-            name: "Gaming Pro",
-            game_name: "Circuit Builder",
-            high_score: 95,
-            completion_time: "2:45",
-            level_reached: 10
-          },
-          {
-            id: 2,
-            name: userName,
-            game_name: "Nutrition Match",
-            high_score: 88,
-            completion_time: "3:12",
-            level_reached: 8
-          },
-          {
-            id: 3,
-            name: "Game Master",
-            game_name: "Pizza Fractions",
-            high_score: 92,
-            completion_time: "4:20",
-            level_reached: 9
-          }
-        ]
-      });
-
-      setLoading(false);
+      try {
+        const { leaderboard } = await ApiService.getLeaderboard();
+        const classFiltered = leaderboard.filter(p => p.class === studentClass);
+        setLeaderboardData({
+          overall_leaderboard: leaderboard,
+          class_leaderboard: classFiltered,
+          game_leaderboard: [],
+        });
+      } catch (err) {
+        console.error('Failed to load leaderboard:', err);
+        setLeaderboardData({ overall_leaderboard: [], class_leaderboard: [], game_leaderboard: [] });
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadLeaderboardData();
-  }, [userEmail, userName, studentClass]);
+  }, [studentClass]);
 
   const getRankIcon = (rank) => {
     switch(rank) {

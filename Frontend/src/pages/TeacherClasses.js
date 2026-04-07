@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/simplebutton";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
 import TeacherSidebar from "../components/TeacherSidebar";
 import { Users, BookOpen, Clock, Calendar } from "lucide-react";
@@ -16,92 +13,35 @@ const TeacherClasses = () => {
     fetchClasses();
   }, []);
 
-  const fetchClasses = () => {
+  const fetchClasses = async () => {
     setLoading(true);
+    try {
+      const email = localStorage.getItem("userEmail") || "";
+      const { teacher, students, classes: teacherClasses } = await ApiService.getTeacherDashboard(email);
 
-    // Use mock data directly for instant loading
-    setClasses([
-      {
-        id: 6,
-        grade: "6th Grade",
-        subject: "Mathematics",
-        studentCount: 28,
-        schedule: "Mon, Wed, Fri - 9:00 AM",
-        nextClass: new Date(Date.now() + 86400000).toISOString(),
-        progress: 65
-      },
-      {
-        id: 7,
-        grade: "7th Grade",
-        subject: "Science",
-        studentCount: 32,
-        schedule: "Tue, Thu - 10:30 AM",
-        nextClass: new Date(Date.now() + 172800000).toISOString(),
-        progress: 72
-      },
-      {
-        id: 8,
-        grade: "8th Grade",
-        subject: "English",
-        studentCount: 25,
-        schedule: "Mon, Wed, Fri - 2:00 PM",
-        nextClass: new Date(Date.now() + 86400000).toISOString(),
-        progress: 58
-      },
-      {
-        id: 9,
-        grade: "9th Grade",
-        subject: "Mathematics",
-        studentCount: 30,
-        schedule: "Daily - 11:00 AM",
-        nextClass: new Date(Date.now() + 43200000).toISOString(),
-        progress: 80
-      },
-      {
-        id: 10,
-        grade: "10th Grade",
-        subject: "Physics",
-        studentCount: 22,
-        schedule: "Tue, Thu, Sat - 1:00 PM",
-        nextClass: new Date(Date.now() + 172800000).toISOString(),
-        progress: 45
-      },
-      {
-        id: 11,
-        grade: "11th Grade",
-        subject: "Chemistry",
-        studentCount: 18,
-        schedule: "Mon, Wed, Fri - 3:30 PM",
-        nextClass: new Date(Date.now() + 86400000).toISOString(),
-        progress: 67
-      },
-      {
-        id: 12,
-        grade: "12th Grade",
-        subject: "Biology",
-        studentCount: 20,
-        schedule: "Tue, Thu - 2:30 PM",
-        nextClass: new Date(Date.now() + 172800000).toISOString(),
-        progress: 90
-      }
-    ]);
-
-    setError(null);
-    setLoading(false);
+      // Build one card per class the teacher owns
+      const ordinalMap = { 6:'6th',7:'7th',8:'8th',9:'9th',10:'10th',11:'11th',12:'12th' };
+      const built = teacherClasses.map(cl => {
+        const num = parseInt(cl);
+        const studentCount = students.filter(s => s.class === cl).length;
+        return {
+          id: num,
+          grade: `${ordinalMap[num] || cl} Grade`,
+          subject: teacher?.subject || "All Subjects",
+          studentCount,
+          schedule: "See timetable",
+          progress: studentCount > 0 ? Math.min(100, studentCount * 5) : 0,
+        };
+      });
+      setClasses(built);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getGradeColor = (grade) => {
-    const gradeNum = parseInt(grade);
-    if (gradeNum <= 8) return "bg-blue-100 text-blue-800";
-    if (gradeNum <= 10) return "bg-green-100 text-green-800";
-    return "bg-purple-100 text-purple-800";
-  };
-
-  const getProgressColor = (progress) => {
-    if (progress >= 80) return "text-green-600";
-    if (progress >= 60) return "text-yellow-600";
-    return "text-red-600";
-  };
 
   const getProgressAccent = (progress) => {
     if (progress >= 80) return "#10B981";

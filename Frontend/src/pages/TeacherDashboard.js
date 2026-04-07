@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
@@ -6,7 +5,6 @@ import TeacherSidebar from "../components/TeacherSidebar";
 import ApiService from "../api";
 
 const TeacherDashboard = () => {
-  const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "Teacher";
   const userEmail = localStorage.getItem("userEmail") || "";
 
@@ -14,54 +12,19 @@ const TeacherDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem("userType");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    navigate("/");
-  };
 
   useEffect(() => {
-    const fetchDashboardData = () => {
+    const fetchDashboardData = async () => {
       setLoading(true);
-
-      // Use mock data directly for instant loading
-      const mockData = {
-        teacher: {
-          id: 1,
-          name: userName,
-          email: userEmail,
-          classes: ['6', '7', '8']
-        },
-        classes: ['6', '7', '8'],
-        students: [
-          { id: 1, student_name: 'Alice Johnson', class: '6', completed_quizzes: 5, average_score: 88 },
-          { id: 2, student_name: 'Bob Smith', class: '6', completed_quizzes: 3, average_score: 75 },
-          { id: 3, student_name: 'Charlie Brown', class: '7', completed_quizzes: 7, average_score: 92 },
-          { id: 4, student_name: 'Diana Ross', class: '8', completed_quizzes: 4, average_score: 85 },
-        ],
-        student_performance: [
-          { student_name: 'Alice Johnson', class: '6', completed_quizzes: 5, average_score: 88 },
-          { student_name: 'Bob Smith', class: '6', completed_quizzes: 3, average_score: 75 },
-          { student_name: 'Charlie Brown', class: '7', completed_quizzes: 7, average_score: 92 },
-          { student_name: 'Diana Ross', class: '8', completed_quizzes: 4, average_score: 85 },
-        ],
-        quiz_statistics: [
-          { title: 'Basic Math Quiz', subject_name: 'Mathematics', class_level: '6', quiz_type: 'traditional', total_attempts: 15, completed_attempts: 12, average_score: 85 },
-          { title: 'Science Basics', subject_name: 'Science', class_level: '7', quiz_type: 'traditional', total_attempts: 10, completed_attempts: 8, average_score: 78 },
-          { title: 'Physics Fundamentals', subject_name: 'Physics', class_level: '8', quiz_type: 'traditional', total_attempts: 12, completed_attempts: 10, average_score: 82 },
-          { title: 'Circuit Game', subject_name: 'Physics', class_level: '8', quiz_type: 'game', total_attempts: 20, completed_attempts: 18, average_score: 88 },
-        ],
-        game_performance: [
-          { game_name: 'Circuit Designer', subject_name: 'Physics', class_level: '8', average_score: 88, total_plays: 20 },
-          { game_name: 'Pizza Fractions', subject_name: 'Mathematics', class_level: '6', average_score: 85, total_plays: 15 },
-          { game_name: 'Nutrition Game', subject_name: 'Science', class_level: '7', average_score: 80, total_plays: 12 },
-        ]
-      };
-
-      setDashboardData(mockData);
-      setError(null);
-      setLoading(false);
+      try {
+        const data = await ApiService.getTeacherDashboard(userEmail);
+        setDashboardData(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (userEmail) {
@@ -196,21 +159,6 @@ const TeacherDashboard = () => {
     },
   ];
 
-  const tabStyle = (active) => ({
-    background: active
-      ? "linear-gradient(135deg, #10B981, #059669)"
-      : "transparent",
-    color: active ? "#fff" : "rgba(255,255,255,0.5)",
-    border: "none",
-    borderRadius: "0.5rem",
-    padding: "6px 0",
-    fontWeight: active ? 700 : 500,
-    fontFamily: "Sora, sans-serif",
-    fontSize: 14,
-    cursor: "pointer",
-    transition: "all 0.2s",
-    boxShadow: active ? "0 0 16px rgba(16,185,129,0.4)" : "none",
-  });
 
   const barColors = ["#10B981", "#06B6D4", "#7C3AED", "#F59E0B", "#EC4899"];
 

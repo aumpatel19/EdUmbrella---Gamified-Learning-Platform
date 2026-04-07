@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import ApiService from "../api";
 import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
 import StudentSidebar from "../components/StudentSidebar";
@@ -98,41 +99,26 @@ const StudentDashboard = () => {
   };
 
   useEffect(() => {
-    const fetchDashboardData = () => {
+    const fetchDashboardData = async () => {
       setLoading(true);
-      const mockData = {
-        student: { id: 1, name: userName, email: userEmail, class: studentClass },
-        overall_stats: {
-          total_quiz_attempts: 12,
-          completed_quizzes: 8,
-          average_score: 85.5,
-          best_score: 95.0,
-          total_time_spent: 240
-        },
-        subject_progress: [
-          { name: 'Mathematics', icon: '🧮', completed_content: 5, total_content: 10, average_score: 88 },
-          { name: 'Science', icon: '🔬', completed_content: 3, total_content: 8, average_score: 82 },
-          { name: 'Physics', icon: '⚛️', completed_content: 2, total_content: 6, average_score: 90 },
-          { name: 'English', icon: '📖', completed_content: 4, total_content: 7, average_score: 78 },
-        ],
-        recent_activity: [
-          { activity_name: 'Basic Math Quiz', subject_name: 'Mathematics', subject_icon: '🧮', class_level: studentClass, score: 95, activity_date: new Date().toISOString() },
-          { activity_name: 'Science Basics', subject_name: 'Science', subject_icon: '🔬', class_level: studentClass, score: 82, activity_date: new Date(Date.now() - 86400000).toISOString() },
-          { activity_name: 'Pizza Game', subject_name: 'Mathematics', subject_icon: 'game', class_level: studentClass, score: 88, activity_date: new Date(Date.now() - 172800000).toISOString() },
-        ]
-      };
-      setDashboardData(mockData);
-      setError(null);
-      setLoading(false);
+      try {
+        const data = await ApiService.getStudentDashboard(userEmail);
+        setDashboardData(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     if (userEmail) {
       fetchDashboardData();
     } else {
       setLoading(false);
-      setError('No user email found');
+      setError('No user email found. Please log in again.');
     }
-  }, [userEmail, userName, studentClass]);
+  }, [userEmail]);
 
   if (loading) {
     return (

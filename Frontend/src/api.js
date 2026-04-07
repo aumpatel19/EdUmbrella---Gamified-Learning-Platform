@@ -5,7 +5,7 @@ class ApiService {
   // ============ AUTH ============
 
   async loginStudent(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(error.message);
 
     // Verify role is student
@@ -21,7 +21,7 @@ class ApiService {
   }
 
   async loginTeacher(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(error.message);
 
     const { data: profile, error: profileError } = await supabase
@@ -382,6 +382,49 @@ class ApiService {
     return { student, overall_stats, organized_content, recent_activity, subject_progress };
   }
 
+  // ============ LEADERBOARD ============
+
+  async getLeaderboard() {
+    // Aggregate per-student: total quiz score + game scores
+    const { data: quizAgg } = await supabase
+      .from('quiz_attempts')
+      .select('student_id, score, is_completed')
+      .eq('is_completed', true);
+
+    const { data: gameAgg } = await supabase
+      .from('game_scores')
+      .select('student_id, score');
+
+    const { data: allUsers } = await supabase
+      .from('users')
+      .select('id, name, email, class')
+      .eq('role', 'student');
+
+    const map = {};
+    for (const u of (allUsers || [])) {
+      map[u.id] = { id: u.id, name: u.name || u.email, email: u.email, class: u.class, quiz_score: 0, quiz_count: 0, game_score: 0, game_count: 0 };
+    }
+    for (const a of (quizAgg || [])) {
+      if (map[a.student_id]) { map[a.student_id].quiz_score += Number(a.score); map[a.student_id].quiz_count++; }
+    }
+    for (const g of (gameAgg || [])) {
+      if (map[g.student_id]) { map[g.student_id].game_score += Number(g.score); map[g.student_id].game_count++; }
+    }
+
+    const leaderboard = Object.values(map).map((u) => ({
+      ...u,
+      total_xp: u.quiz_score * 15 + u.game_score * 10,
+      completed_quizzes: u.quiz_count,
+      completed_games: u.game_count,
+      average_score: u.quiz_count ? Math.round(u.quiz_score / u.quiz_count) : 0,
+      level: Math.floor((u.quiz_score * 15 + u.game_score * 10) / 500) + 1,
+      streak: 0,
+      badges: u.quiz_count + u.game_count,
+    })).sort((a, b) => b.total_xp - a.total_xp);
+
+    return { leaderboard };
+  }
+
   async getTeacherClasses(email) {
     const { data, error } = await supabase
       .from('users').select('class').eq('email', email).eq('role', 'teacher').single();
@@ -400,7 +443,47 @@ class ApiService {
     if (teacherClasses.length) studentsQuery = studentsQuery.in('class', teacherClasses);
     const { data: students } = await studentsQuery;
 
-    return { teacher, students: students || [], classes: teacherClasses };
+    const studentIds = (students || []).map(s => s.id);
+
+    // Student performance
+    const student_performance = await Promise.all((students || []).map(async s => {
+      const { data: attempts } = await supabase
+        .from('quiz_attempts').select('score, is_completed').eq('student_id', s.id).eq('is_completed', true);
+      const avg = attempts?.length ? Math.round(attempts.reduce((sum, a) => sum + Number(a.score), 0) / attempts.length) : 0;
+      return { student_name: s.name || s.email, email: s.email, class: s.class, completed_quizzes: attempts?.length || 0, average_score: avg };
+    }));
+
+    // Quiz stats
+    let quizzesQuery = supabase.from('quizzes').select('id, title, class_level, quiz_type, subjects(name)').eq('is_active', true);
+    if (teacherClasses.length) quizzesQuery = quizzesQuery.in('class_level', teacherClasses);
+    const { data: quizzes } = await quizzesQuery;
+
+    const quiz_statistics = await Promise.all((quizzes || []).map(async q => {
+      const { data: attempts } = await supabase.from('quiz_attempts').select('score, is_completed').eq('quiz_id', q.id);
+      const completed = attempts?.filter(a => a.is_completed) || [];
+      const avg = completed.length ? Math.round(completed.reduce((s, a) => s + Number(a.score), 0) / completed.length) : 0;
+      return { title: q.title, subject_name: q.subjects?.name, class_level: q.class_level, quiz_type: q.quiz_type, total_attempts: attempts?.length || 0, completed_attempts: completed.length, average_score: avg };
+    }));
+
+    // Game performance
+    let gameQuery = supabase.from('game_scores').select('game_name, class_level, subject_name, score, completed');
+    if (studentIds.length) gameQuery = gameQuery.in('student_id', studentIds);
+    const { data: gameScores } = await gameQuery;
+
+    const gameMap = {};
+    for (const g of (gameScores || [])) {
+      const key = `${g.game_name}-${g.class_level}`;
+      if (!gameMap[key]) gameMap[key] = { game_name: g.game_name, class_level: g.class_level, subject_name: g.subject_name, scores: [], completed: 0 };
+      gameMap[key].scores.push(Number(g.score));
+      if (g.completed) gameMap[key].completed++;
+    }
+    const game_performance = Object.values(gameMap).map(g => ({
+      game_name: g.game_name, class_level: g.class_level, subject_name: g.subject_name,
+      total_plays: g.scores.length, completed_games: g.completed,
+      average_score: g.scores.length ? Math.round(g.scores.reduce((a, b) => a + b, 0) / g.scores.length) : 0,
+    }));
+
+    return { teacher, students: students || [], classes: teacherClasses, student_performance, quiz_statistics, game_performance };
   }
 
   // ============ TEACHER QUIZ API (kept for compatibility) ============

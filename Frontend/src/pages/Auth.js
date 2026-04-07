@@ -7,58 +7,23 @@ const Auth = () => {
   const [isTeacher, setIsTeacher] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [studentClass, setStudentClass] = useState("6");
   const navigate = useNavigate();
 
   const handleAuth = async (e) => {
     e.preventDefault();
-
-    const demoCredentials = {
-      students: [
-        { email: 'student6a@school.com', password: 'student123', name: 'Alice Johnson', class: '6' },
-        { email: 'student7a@school.com', password: 'student123', name: 'Charlie Brown', class: '7' },
-        { email: 'student8a@school.com', password: 'student123', name: 'Diana Ross', class: '8' },
-        { email: 'student10a@school.com', password: 'student123', name: 'Eve Wilson', class: '10' },
-        { email: 'student12a@school.com', password: 'student123', name: 'Frank Miller', class: '12' },
-        { email: 'student@edumbrella.com', password: 'student123', name: 'John Doe', class: '10' },
-      ],
-      teachers: [
-        { email: 'teacher6@school.com', password: 'teacher123', name: 'Ms. Anderson' },
-        { email: 'teacher8@school.com', password: 'teacher123', name: 'Mr. Thompson' },
-        { email: 'teacher10@school.com', password: 'teacher123', name: 'Dr. Williams' },
-        { email: 'teacher@edumbrella.com', password: 'teacher123', name: 'Jane Smith' },
-      ]
-    };
-
     try {
-      const userList = isTeacher ? demoCredentials.teachers : demoCredentials.students;
-      const demoUser = userList.find(u => u.email === email && u.password === password);
-
-      if (demoUser) {
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("userName", name || demoUser.name || "User");
-        localStorage.setItem("userType", isTeacher ? "teacher" : "student");
-        if (!isTeacher) {
-          localStorage.setItem("studentClass", demoUser.class || studentClass);
-        }
-        navigate(isTeacher ? "/teacher-dashboard" : "/student-dashboard");
-        return;
-      }
-
       const data = isTeacher
         ? await ApiService.loginTeacher(email, password)
         : await ApiService.loginStudent(email, password);
 
       localStorage.setItem("userEmail", email);
-      localStorage.setItem("userName", name || data.user?.username || "User");
+      localStorage.setItem("userName", data.user?.name || data.user?.username || email);
       localStorage.setItem("userType", isTeacher ? "teacher" : "student");
-      if (!isTeacher) {
-        localStorage.setItem("studentClass", studentClass);
-      }
+      localStorage.setItem("studentClass", data.user?.class || studentClass);
       navigate(isTeacher ? "/teacher-dashboard" : "/student-dashboard");
     } catch (error) {
-      alert("Login failed! Please use demo credentials:\nStudent: student@edumbrella.com / student123\nTeacher: teacher@edumbrella.com / teacher123");
+      alert("Login failed. Check your credentials.\n\nDemo:\nStudent: student@edumbrella.com / student123\nTeacher: teacher@edumbrella.com / teacher123");
     }
   };
 
