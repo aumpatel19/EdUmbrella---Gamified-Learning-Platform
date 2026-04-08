@@ -7,6 +7,7 @@ import ApiService from "../api";
 
 const Leaderboards = () => {
   const userName = localStorage.getItem("userName") || "Student";
+  const userEmail = localStorage.getItem("userEmail") || "";
   const studentClass = localStorage.getItem("studentClass") || "6";
   const [loading, setLoading] = useState(true);
   const [leaderboardData, setLeaderboardData] = useState(null);
@@ -16,7 +17,8 @@ const Leaderboards = () => {
     const loadLeaderboardData = async () => {
       setLoading(true);
       try {
-        const { leaderboard } = await ApiService.getLeaderboard();
+        const currentUser = userEmail ? { name: userName, email: userEmail, class: studentClass } : null;
+        const { leaderboard } = await ApiService.getLeaderboard(currentUser);
         const classFiltered = leaderboard.filter(p => p.class === studentClass);
         setLeaderboardData({
           overall_leaderboard: leaderboard,

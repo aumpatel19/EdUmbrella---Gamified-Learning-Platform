@@ -102,7 +102,7 @@ const StudentDashboard = () => {
     const fetchDashboardData = async () => {
       setLoading(true);
       try {
-        const data = await ApiService.getStudentDashboard(userEmail);
+        const data = await ApiService.getStudentDashboard(userEmail, studentClass);
         setDashboardData(data);
         setError(null);
       } catch (err) {

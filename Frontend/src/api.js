@@ -48,13 +48,19 @@ class ApiService {
     // The trigger creates the users row; update it with full details
     const authId = data.user?.id;
     if (authId) {
-      await supabase.from('users').upsert({
+      const { error: upsertError } = await supabase.from('users').upsert({
         auth_id: authId,
         email,
         name,
         role,
         class: studentClass || '',
       }, { onConflict: 'email' });
+      if (upsertError) {
+        console.error('Failed to create user profile:', upsertError.message);
+        // Don't throw — the auth account exists and the DB trigger may still
+        // create the row asynchronously. Surface a warning instead.
+        return { message: 'Account created (profile sync pending)', user: { name, email, role, class: studentClass }, profileSyncWarning: upsertError.message };
+      }
     }
     return { message: 'Account created!', user: { name, email, role, class: studentClass } };
   }
@@ -354,10 +360,59 @@ class ApiService {
 
   // ============ DASHBOARDS ============
 
-  async getStudentDashboard(email) {
-    const { data: student } = await supabase
-      .from('users').select('id, name, email, class').eq('email', email).eq('role', 'student').single();
-    if (!student) throw new Error('Student not found');
+  async getStudentDashboard(email, fallbackClass = null) {
+    const { data: student, error: studentError } = await supabase
+      .from('users').select('id, name, email, class').eq('email', email).eq('role', 'student').maybeSingle();
+
+    // New accounts may not have a users row yet (trigger pending or RLS blocked upsert).
+    // Still load real subject/content data using the class we know from signup.
+    if (studentError || !student) {
+      console.warn('getStudentDashboard: user row not found for', email, studentError?.message);
+      const cls = fallbackClass ? parseInt(fallbackClass) : null;
+
+      // Load class content so quizzes/games tabs work
+      let quizQuery = supabase
+        .from('quizzes')
+        .select('*, subjects(name, icon, color), quiz_categories(name, icon)')
+        .eq('is_active', true);
+      if (cls) quizQuery = quizQuery.eq('class_level', cls);
+      const { data: classContent } = await quizQuery.order('quiz_type').order('title');
+
+      const organized_content = {};
+      for (const item of (classContent || [])) {
+        const lvl = item.class_level;
+        const sub = item.subjects?.name || 'General';
+        if (!organized_content[lvl]) organized_content[lvl] = {};
+        if (!organized_content[lvl][sub]) organized_content[lvl][sub] = { games: [], quizzes: [] };
+        const mapped = { ...item, subject_name: sub, subject_icon: item.subjects?.icon, subject_color: item.subjects?.color, category_name: item.quiz_categories?.name };
+        if (item.quiz_type === 'game') organized_content[lvl][sub].games.push(mapped);
+        else organized_content[lvl][sub].quizzes.push(mapped);
+      }
+
+      // Load subjects with zero progress
+      const { data: subjects } = await supabase.from('subjects').select('*').order('name');
+      const subject_progress = await Promise.all((subjects || []).map(async s => {
+        let q = supabase.from('quizzes').select('id').eq('subject_id', s.id).eq('is_active', true);
+        if (cls) q = q.eq('class_level', cls);
+        const { data: subQuizzes } = await q;
+        const ids = subQuizzes?.map(q => q.id) || [];
+        return {
+          name: s.name, icon: s.icon, color: s.color,
+          total_content: ids.length,
+          completed_content: 0,
+          average_score: 0,
+        };
+      }));
+
+      return {
+        student: { name: '', email, class: fallbackClass },
+        overall_stats: { total_quiz_attempts: 0, completed_quizzes: 0, average_score: 0, best_score: 0, total_time_spent: 0 },
+        organized_content,
+        recent_activity: [],
+        subject_progress,
+        isNewAccount: true,
+      };
+    }
 
     const studentId = student.id;
     const studentClass = student.class ? parseInt(student.class) : null;
@@ -444,7 +499,7 @@ class ApiService {
 
   // ============ LEADERBOARD ============
 
-  async getLeaderboard() {
+  async getLeaderboard(currentUser = null) {
     // Aggregate per-student: total quiz score + game scores
     const { data: quizAgg } = await supabase
       .from('quiz_attempts')
@@ -469,6 +524,21 @@ class ApiService {
     }
     for (const g of (gameAgg || [])) {
       if (map[g.student_id]) { map[g.student_id].game_score += Number(g.score); map[g.student_id].game_count++; }
+    }
+
+    // Inject current user if their DB row doesn't exist yet (brand-new account)
+    if (currentUser?.email) {
+      const alreadyPresent = Object.values(map).some(u => u.email === currentUser.email);
+      if (!alreadyPresent) {
+        const tempId = `new_${currentUser.email}`;
+        map[tempId] = {
+          id: tempId,
+          name: currentUser.name || currentUser.email,
+          email: currentUser.email,
+          class: currentUser.class || '',
+          quiz_score: 0, quiz_count: 0, game_score: 0, game_count: 0,
+        };
+      }
     }
 
     const leaderboard = Object.values(map).map((u) => ({
