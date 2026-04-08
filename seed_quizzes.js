@@ -1,6 +1,13 @@
 const https = require('https');
-const PROJECT_REF = 'awupegzmggkigoruoqus';
-const ACCESS_TOKEN = 'sbp_792c6920c08cd196711912b10bb46b1dc83986f7';
+require('dotenv').config();
+
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
+const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
+
+if (!PROJECT_REF || !ACCESS_TOKEN) {
+  console.error('❌ Missing SUPABASE_PROJECT_REF or SUPABASE_ACCESS_TOKEN in .env');
+  process.exit(1);
+}
 
 function runSQL(sql, label) {
   return new Promise((resolve, reject) => {
