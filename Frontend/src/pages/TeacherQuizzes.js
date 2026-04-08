@@ -24,7 +24,6 @@ import {
   Eye
 } from "lucide-react";
 import ApiService from "../api";
-import { mockPrebuiltQuizzes } from "../data/mockData";
 
 const TeacherQuizzes = () => {
   const [activeTab, setActiveTab] = useState("prebuilt");
@@ -47,10 +46,11 @@ const TeacherQuizzes = () => {
   const fetchPrebuiltQuizzes = async () => {
     try {
       setLoading(true);
-      // Use shared mock data
-      setPrebuiltQuizzes(mockPrebuiltQuizzes);
+      const response = await ApiService.getTeacherQuizzes();
+      setPrebuiltQuizzes(response || []);
     } catch (error) {
       console.error("Error fetching prebuilt quizzes:", error);
+      setPrebuiltQuizzes([]);
     } finally {
       setLoading(false);
     }

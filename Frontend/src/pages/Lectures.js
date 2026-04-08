@@ -1,151 +1,56 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/simplebutton";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
-import { Play, Clock, Users, BookOpen } from "lucide-react";
+import { BookOpen, Loader2, Play, Clock, Users } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar";
+import ApiService from "../api";
+
+const subjectMeta = {
+  'Mathematics':    { icon: '🧮', color: 'from-blue-500 to-blue-700',    glow: 'rgba(59,130,246,0.35)' },
+  'Science':        { icon: '🔬', color: 'from-green-500 to-green-700',   glow: 'rgba(16,185,129,0.35)' },
+  'Physics':        { icon: '⚡', color: 'from-purple-500 to-purple-700', glow: 'rgba(124,58,237,0.35)' },
+  'Chemistry':      { icon: '🧪', color: 'from-yellow-500 to-yellow-700', glow: 'rgba(234,179,8,0.35)'  },
+  'Biology':        { icon: '🌿', color: 'from-emerald-500 to-emerald-700', glow: 'rgba(16,185,129,0.35)' },
+  'English':        { icon: '📖', color: 'from-red-500 to-red-700',       glow: 'rgba(239,68,68,0.35)'  },
+  'Hindi':          { icon: '🇮🇳', color: 'from-pink-500 to-pink-700',    glow: 'rgba(236,72,153,0.35)' },
+  'Social Science': { icon: '🌍', color: 'from-amber-500 to-amber-700',   glow: 'rgba(245,158,11,0.35)' },
+  'History':        { icon: '🏛️', color: 'from-orange-500 to-orange-700', glow: 'rgba(249,115,22,0.35)' },
+  'Geography':      { icon: '🗺️', color: 'from-teal-500 to-teal-700',    glow: 'rgba(6,182,212,0.35)'  },
+};
 
 const Lectures = () => {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "Student";
-  const studentClass = localStorage.getItem("studentClass") || "6"; // Default to class 6
+  const studentClass = localStorage.getItem("studentClass") || "6";
+  const [subjects, setSubjects] = useState([]);
+  const [lectureCounts, setLectureCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const { subjects: subs } = await ApiService.getSubjectsByClass(parseInt(studentClass));
+        const { lectures } = await ApiService.getLectures(parseInt(studentClass));
+        const counts = {};
+        for (const l of lectures) {
+          counts[l.subject_id] = (counts[l.subject_id] || 0) + 1;
+        }
+        setSubjects(subs || []);
+        setLectureCounts(counts);
+      } catch (err) {
+        console.error('Failed to load lectures:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [studentClass]);
 
   const handleLogout = () => {
     localStorage.removeItem("userType");
     localStorage.removeItem("userName");
-    localStorage.removeItem("studentClass");
     navigate("/");
   };
-
-  const allSubjects = [
-    {
-      id: "math",
-      title: "Mathematics",
-      description: "Basic arithmetic and number operations",
-      icon: "🧮",
-      color: "from-blue-500 to-blue-700",
-      lectureCount: 8,
-      duration: "6h 30m",
-      students: 145,
-      teacher: "Mrs. Sarah Wilson",
-      teacherAvatar: "/placeholder.svg",
-      progress: 75,
-      lastUpdated: "2 days ago",
-      classes: ["6", "7", "8"]
-    },
-    {
-      id: "science",
-      title: "Science",
-      description: "Biology, chemistry fundamentals and laboratory experiments",
-      icon: "🔬",
-      color: "from-green-500 to-green-700",
-      lectureCount: 10,
-      duration: "8h 45m",
-      students: 132,
-      teacher: "Prof. Michael Chen",
-      teacherAvatar: "/placeholder.svg",
-      progress: 60,
-      lastUpdated: "1 day ago",
-      classes: ["6", "7", "8", "9", "10"]
-    },
-    {
-      id: "physics",
-      title: "Physics",
-      description: "Basic mechanics and properties of matter",
-      icon: "⚛️",
-      color: "from-purple-500 to-purple-700",
-      lectureCount: 12,
-      duration: "9h 15m",
-      students: 98,
-      teacher: "Dr. Emily Rodriguez",
-      teacherAvatar: "/placeholder.svg",
-      progress: 45,
-      lastUpdated: "3 days ago",
-      classes: ["9", "10", "11", "12"]
-    },
-    {
-      id: "history",
-      title: "History",
-      description: "Ancient civilizations and historical timeline studies",
-      icon: "🌍",
-      color: "from-orange-500 to-orange-700",
-      lectureCount: 8,
-      duration: "5h 20m",
-      students: 167,
-      teacher: "Dr. James Thompson",
-      teacherAvatar: "/placeholder.svg",
-      progress: 85,
-      lastUpdated: "4 hours ago",
-      classes: ["6", "7", "8", "9"]
-    },
-    {
-      id: "english",
-      title: "English",
-      description: "Grammar, vocabulary, and basic literature",
-      icon: "📖",
-      color: "from-indigo-500 to-indigo-700",
-      lectureCount: 12,
-      duration: "8h 00m",
-      students: 180,
-      teacher: "Ms. Lisa Brown",
-      teacherAvatar: "/placeholder.svg",
-      progress: 70,
-      lastUpdated: "1 day ago",
-      classes: ["6", "7", "8", "9", "10"]
-    },
-    {
-      id: "geography",
-      title: "Geography",
-      description: "Physical and political geography basics",
-      icon: "🗺️",
-      color: "from-teal-500 to-teal-700",
-      lectureCount: 10,
-      duration: "7h 30m",
-      students: 120,
-      teacher: "Mr. David Kumar",
-      teacherAvatar: "/placeholder.svg",
-      progress: 55,
-      lastUpdated: "2 days ago",
-      classes: ["6", "7", "8"]
-    },
-    {
-      id: "chemistry",
-      title: "Chemistry",
-      description: "Chemical reactions and periodic table",
-      icon: "⚗️",
-      color: "from-red-500 to-red-700",
-      lectureCount: 15,
-      duration: "11h 45m",
-      students: 85,
-      teacher: "Dr. Priya Sharma",
-      teacherAvatar: "/placeholder.svg",
-      progress: 40,
-      lastUpdated: "1 day ago",
-      classes: ["9", "10", "11", "12"]
-    },
-    {
-      id: "biology",
-      title: "Biology",
-      description: "Life processes and human body systems",
-      icon: "🧬",
-      color: "from-emerald-500 to-emerald-700",
-      lectureCount: 14,
-      duration: "10h 20m",
-      students: 92,
-      teacher: "Prof. Rajesh Gupta",
-      teacherAvatar: "/placeholder.svg",
-      progress: 65,
-      lastUpdated: "3 days ago",
-      classes: ["9", "10", "11", "12"]
-    }
-  ];
-
-  // Filter subjects based on student's class
-  const subjects = allSubjects.filter(subject => 
-    subject.classes.includes(studentClass)
-  );
 
   const handleSubjectClick = (subjectId) => {
     navigate(`/lectures/${subjectId}`);
@@ -160,6 +65,9 @@ const Lectures = () => {
     "from-teal-500 to-teal-700": "rgba(6,182,212,0.35)",
     "from-red-500 to-red-700": "rgba(236,72,153,0.35)",
     "from-emerald-500 to-emerald-700": "rgba(16,185,129,0.35)",
+    "from-yellow-500 to-yellow-700": "rgba(234,179,8,0.35)",
+    "from-pink-500 to-pink-700": "rgba(236,72,153,0.35)",
+    "from-amber-500 to-amber-700": "rgba(245,158,11,0.35)",
   };
 
   return (
@@ -254,7 +162,7 @@ const Lectures = () => {
                 {
                   icon: <Play className="w-5 h-5" />,
                   label: "Total Lectures",
-                  value: subjects.reduce((sum, subject) => sum + subject.lectureCount, 0),
+                  value: Object.values(lectureCounts).reduce((a, b) => a + b, 0),
                   iconBg: "rgba(16,185,129,0.18)",
                   iconColor: "#34d399",
                 },
@@ -294,9 +202,16 @@ const Lectures = () => {
             </div>
 
             {/* Subject Cards Grid */}
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-10 w-10 animate-spin text-violet-400" />
+              </div>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {subjects.map((subject) => {
-                const glowColor = subjectGlowColors[subject.color] || "rgba(124,58,237,0.25)";
+                const meta = subjectMeta[subject.name] || { icon: '📚', color: 'from-indigo-500 to-indigo-700', glow: 'rgba(99,102,241,0.35)' };
+                const glowColor = meta.glow;
+                const lectureCount = lectureCounts[subject.id] || 0;
                 return (
                   <div
                     key={subject.id}
@@ -313,7 +228,7 @@ const Lectures = () => {
                     }}
                   >
                     {/* Color accent bar */}
-                    <div className={`h-1 bg-gradient-to-r ${subject.color} w-full`} />
+                    <div className={`h-1 bg-gradient-to-r ${meta.color} w-full`} />
 
                     <div className="p-5">
                       {/* Subject header */}
@@ -326,7 +241,7 @@ const Lectures = () => {
                             backdropFilter: "blur(8px)",
                           }}
                         >
-                          {subject.icon}
+                          {meta.icon}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3
@@ -336,26 +251,26 @@ const Lectures = () => {
                               fontFamily: "'Sora', sans-serif",
                             }}
                           >
-                            {subject.title}
+                            {subject.name}
                           </h3>
                           <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">
-                            {subject.description}
+                            {subject.description || `CBSE Class ${studentClass} ${subject.name}`}
                           </p>
                         </div>
                         <span
                           className="badge-xp shrink-0 text-xs"
                           style={{ whiteSpace: "nowrap" }}
                         >
-                          {subject.progress}%
+                          Class {studentClass}
                         </span>
                       </div>
 
                       {/* Stats row */}
                       <div className="grid grid-cols-3 gap-2 mb-4">
                         {[
-                          { label: "Lectures", val: subject.lectureCount },
-                          { label: "Duration", val: subject.duration },
-                          { label: "Students", val: subject.students },
+                          { label: "Lectures", val: lectureCount },
+                          { label: "Duration", val: `${lectureCount * 30}m` },
+                          { label: "CBSE", val: "✓" },
                         ].map((s) => (
                           <div
                             key={s.label}
@@ -371,32 +286,19 @@ const Lectures = () => {
                         ))}
                       </div>
 
-                      {/* Progress bar */}
-                      <div className="mb-4">
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-slate-400">Progress</span>
-                          <span className="text-slate-500">Updated {subject.lastUpdated}</span>
-                        </div>
-                        <div className="xp-bar">
-                          <div
-                            className={`xp-bar-fill bg-gradient-to-r ${subject.color}`}
-                            style={{ width: `${subject.progress}%` }}
-                          />
-                        </div>
-                      </div>
-
                       {/* CTA button */}
                       <button
                         className="btn-violet w-full flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold"
                       >
-                        <Play className="w-4 h-4" />
-                        Enter Subject →
+                        <BookOpen className="w-4 h-4" />
+                        View Chapters →
                       </button>
                     </div>
                   </div>
                 );
               })}
             </div>
+            )}
           </div>
         </div>
       </SidebarInset>

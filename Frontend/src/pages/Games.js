@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar";
 import ApiService from "../api";
-import { mockGameQuizzes, mockStudentProgress, filterByClass, deduplicateByID } from "../data/mockData";
 // Game images
 import circuitGameImage from "../assets/circuit-game-image.png";
 import nutritionGameImage from "../assets/nutrition-game-image.png";
@@ -33,8 +32,6 @@ const Games = () => {
     const [studentProgress, setStudentProgress] = useState(null);
     const [error, setError] = useState(null);
 
-    console.log('Games component rendered, gameQuizzes length:', gameQuizzes.length);
-
     const handleLogout = () => {
         localStorage.removeItem("userType");
         localStorage.removeItem("userName");
@@ -50,24 +47,18 @@ const Games = () => {
                 setLoading(true);
                 setError(null);
 
-                // Use mock data directly without filtering or deduplication
-                console.log('Using mock data directly for games');
-                console.log('Mock Games count:', mockGameQuizzes.length);
-                console.log('Mock Games data:', mockGameQuizzes);
+                const response = await ApiService.getQuizzes({ type: 'game', class_level: parseInt(studentClass) });
+                setGameQuizzes(response.quizzes || []);
 
-                // Ensure we have unique games by ID
-                const uniqueGames = mockGameQuizzes.filter((game, index, self) =>
-                    index === self.findIndex(g => g.id === game.id)
-                );
-                console.log('Unique Games count:', uniqueGames.length);
-                console.log('Unique Games data:', uniqueGames);
-
-                setGameQuizzes(uniqueGames);
-                setStudentProgress(mockStudentProgress);
-
-            } catch (error) {
-                console.error('Failed to load game data:', error);
-                // Don't show error, fallback handled above
+                if (userEmail) {
+                    try {
+                        const progress = await ApiService.getStudentProgress(userEmail);
+                        setStudentProgress(progress);
+                    } catch (_) {}
+                }
+            } catch (err) {
+                console.error('Failed to load game data:', err);
+                setError('Failed to load games. Please try again.');
             } finally {
                 setLoading(false);
             }

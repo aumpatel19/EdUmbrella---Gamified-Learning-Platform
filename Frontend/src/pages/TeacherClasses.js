@@ -216,9 +216,6 @@ const TeacherClasses = () => {
                 <p style={{ color: "#EC4899", fontWeight: 600, fontSize: 14 }}>
                   Error loading classes: {error}
                 </p>
-                <p style={{ color: "rgba(236,72,153,0.6)", fontSize: 12, marginTop: 4 }}>
-                  Showing mock data for demonstration
-                </p>
               </div>
             )}
 

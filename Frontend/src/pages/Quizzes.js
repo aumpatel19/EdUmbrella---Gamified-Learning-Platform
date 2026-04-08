@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar";
 import ApiService from "../api";
-import { mockTraditionalQuizzes, mockStudentProgress, filterByClass, getSubjectProgressByClass, deduplicateBySubject, deduplicateByID } from "../data/mockData";
 
 const Quizzes = () => {
   const navigate = useNavigate();
@@ -38,24 +37,27 @@ const Quizzes = () => {
     navigate("/");
   };
 
-  // Load data directly from mock for instant loading
   useEffect(() => {
-    const loadData = () => {
-      setLoading(true);
-      setError(null);
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Use mock data directly for instant loading
-      const mockQuizzes = filterByClass(mockTraditionalQuizzes, studentClass);
-      const deduplicatedMockQuizzes = deduplicateByID(mockQuizzes);
-      const subjectProgress = getSubjectProgressByClass(studentClass);
+        const response = await ApiService.getQuizzes({ type: 'traditional', class_level: parseInt(studentClass) });
+        setQuizzes(response.quizzes || []);
 
-      setQuizzes(deduplicatedMockQuizzes);
-      setStudentProgress({
-        ...mockStudentProgress,
-        subject_progress: subjectProgress
-      });
-
-      setLoading(false);
+        if (userEmail) {
+          try {
+            const progress = await ApiService.getStudentProgress(userEmail);
+            setStudentProgress(progress);
+          } catch (_) {}
+        }
+      } catch (err) {
+        console.error('Failed to load quizzes:', err);
+        setError('Failed to load quizzes. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadData();

@@ -66,6 +66,41 @@ class ApiService {
 
   // ============ SUBJECTS ============
 
+  async getSubjectsByClass(classLevel) {
+    const { data, error } = await supabase
+      .from('class_level_subjects')
+      .select('display_order, subjects(id, name, description, icon, color)')
+      .eq('class_level', classLevel)
+      .order('display_order');
+    if (error) throw new Error(error.message);
+    return { subjects: data.map(r => r.subjects) };
+  }
+
+  async getLectures(classLevel, subjectId = null) {
+    let query = supabase
+      .from('lectures')
+      .select('*, subjects(name, icon, color)')
+      .eq('class_level', classLevel)
+      .eq('is_active', true)
+      .order('display_order');
+    if (subjectId) query = query.eq('subject_id', subjectId);
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return { lectures: data };
+  }
+
+  async getLecturesBySubject(subjectId, classLevel) {
+    const { data, error } = await supabase
+      .from('lectures')
+      .select('*, subjects(name, icon, color)')
+      .eq('subject_id', subjectId)
+      .eq('class_level', classLevel)
+      .eq('is_active', true)
+      .order('display_order');
+    if (error) throw new Error(error.message);
+    return { lectures: data };
+  }
+
   async getSubjects() {
     const { data, error } = await supabase
       .from('subjects')
@@ -103,6 +138,7 @@ class ApiService {
     if (filters.subject_id) query = query.eq('subject_id', filters.subject_id);
     if (filters.category_id) query = query.eq('category_id', filters.category_id);
     if (filters.type && filters.type !== 'all') query = query.eq('quiz_type', filters.type);
+    if (filters.class_level) query = query.eq('class_level', filters.class_level);
 
     const { data, error } = await query;
     if (error) throw new Error(error.message);
