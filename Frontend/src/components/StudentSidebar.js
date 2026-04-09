@@ -50,6 +50,7 @@ const StudentSidebar = () => {
   const xpPercent = Math.round((xp / xpMax) * 100);
 
   return (
+    <>
     <Sidebar style={{background: '#070B17'}} className="border-r border-[#1E2D4A]">
       <SidebarHeader className="p-4" style={{background: '#070B17'}}>
         <div className="flex items-center gap-3">
@@ -137,6 +138,7 @@ const StudentSidebar = () => {
       </SidebarFooter>
     </Sidebar>
     <MobileNav />
+    </>
   );
 };
 export default StudentSidebar;
