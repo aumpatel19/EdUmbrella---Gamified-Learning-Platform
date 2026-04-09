@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/
 import { BookOpen, Loader2, Play, Clock, Users } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar";
 import ApiService from "../api";
+import SubjectIcon from "../components/SubjectIcon";
 
 const subjectMeta = {
   'Mathematics':    { icon: '🧮', color: 'from-blue-500 to-blue-700',    glow: 'rgba(59,130,246,0.35)' },
@@ -233,15 +234,8 @@ const Lectures = () => {
                     <div className="p-5">
                       {/* Subject header */}
                       <div className="flex items-start gap-3 mb-4">
-                        <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                          style={{
-                            background: "rgba(15,22,41,0.85)",
-                            border: "1px solid rgba(99,102,241,0.25)",
-                            backdropFilter: "blur(8px)",
-                          }}
-                        >
-                          {meta.icon}
+                        <div className="shrink-0 rounded-xl overflow-hidden">
+                          <SubjectIcon name={subject.name} size={48} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3

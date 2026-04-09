@@ -4,6 +4,7 @@ import { Play, Clock, Eye, Download, ArrowLeft, CheckCircle, X, Maximize2, Globe
 import StudentSidebar from "../components/StudentSidebar";
 import { useState, useEffect } from "react";
 import ApiService from "../api";
+import SubjectIcon from "../components/SubjectIcon";
 
 // Import thumbnail images
 import sci1 from "../assets/sci1.png";
@@ -256,14 +257,8 @@ const SubjectLectures = () => {
                   <ArrowLeft className="w-4 h-4" />
                   Back
                 </button>
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-xl"
-                  style={{
-                    background: "rgba(124,58,237,0.18)",
-                    border: "1px solid rgba(124,58,237,0.3)",
-                  }}
-                >
-                  {meta.icon}
+                <div className="rounded-xl overflow-hidden shrink-0">
+                  <SubjectIcon name={subjectInfo?.name} size={36} />
                 </div>
                 <h1
                   className="text-xl font-bold gradient-text-violet"
@@ -304,15 +299,8 @@ const SubjectLectures = () => {
                 {/* Subject Info + Progress */}
                 <div className="mb-8 animate-slide-up">
                   <div className="flex items-start gap-4 mb-5">
-                    <div
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shrink-0"
-                      style={{
-                        background: "rgba(15,22,41,0.85)",
-                        border: "1px solid rgba(99,102,241,0.25)",
-                        backdropFilter: "blur(8px)",
-                      }}
-                    >
-                      {meta.icon}
+                    <div className="rounded-2xl overflow-hidden shrink-0">
+                      <SubjectIcon name={subjectInfo?.name} size={64} />
                     </div>
                     <div className="flex-1">
                       <h2
@@ -385,7 +373,7 @@ const SubjectLectures = () => {
                         style={{ borderBottom: "1px solid rgba(99,102,241,0.18)" }}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{meta.icon}</span>
+                          <div className="rounded-lg overflow-hidden shrink-0"><SubjectIcon name={subjectInfo?.name} size={28} /></div>
                           <h2
                             className="text-lg font-semibold text-white"
                             style={{ fontFamily: "'Sora', sans-serif" }}

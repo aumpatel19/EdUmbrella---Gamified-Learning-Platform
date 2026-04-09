@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SubjectIcon from "../components/SubjectIcon";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/simplebutton";
@@ -398,10 +399,8 @@ const Quizzes = () => {
                         <div className="p-5">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
-                              {/* Colored icon box */}
-                              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                                style={{ background: sc.light, border: `1px solid ${sc.border}` }}>
-                                {subject.icon}
+                              <div className="rounded-xl overflow-hidden shrink-0">
+                                <SubjectIcon name={subject.name} size={48} />
                               </div>
                               <div>
                                 <h3 className="font-bold text-white text-base" style={{ fontFamily: "Sora, sans-serif" }}>
@@ -593,7 +592,7 @@ const Quizzes = () => {
                         return (
                         <div key={subject.id}>
                           <div className="flex justify-between items-center text-sm mb-1.5">
-                            <span className="flex items-center gap-2 text-slate-300"><span>{subject.icon}</span>{subject.name}</span>
+                            <span className="flex items-center gap-2 text-slate-300"><span className="rounded overflow-hidden inline-flex"><SubjectIcon name={subject.name} size={18} /></span>{subject.name}</span>
                             <span className="font-bold" style={{ color: sc.a }}>{Math.round(subject.average_score)}%</span>
                           </div>
                           <div className="h-2 rounded-full" style={{ background: "rgba(255,255,255,0.06)" }}>

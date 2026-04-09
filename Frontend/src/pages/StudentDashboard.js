@@ -3,6 +3,7 @@ import ApiService from "../api";
 import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
 import StudentSidebar from "../components/StudentSidebar";
+import SubjectIcon from "../components/SubjectIcon";
 import { Zap, Trophy, Flame, Clock, Target, Gamepad2, BookOpen, ChevronRight, Star } from "lucide-react";
 
 const StatCard = ({ label, value, icon, color, glow, sub }) => (
@@ -30,8 +31,7 @@ const StatCard = ({ label, value, icon, color, glow, sub }) => (
 
 const SubjectCard = ({ subject }) => {
   const progress = subject.total_content ? (subject.completed_content / subject.total_content) * 100 : 0;
-  const glowColors = { '🧮': '99,102,241', '🔬': '6,182,212', '⚛️': '16,185,129', '📖': '245,158,11' };
-  const glow = glowColors[subject.icon] || '99,102,241';
+  const glow = '99,102,241';
 
   return (
     <div
@@ -42,8 +42,8 @@ const SubjectCard = ({ subject }) => {
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl" style={{background: `rgba(${glow},0.12)`, border: `1px solid rgba(${glow},0.3)`}}>
-            {subject.icon || '📚'}
+          <div className="rounded-xl overflow-hidden shrink-0">
+            <SubjectIcon name={subject.name} size={44} />
           </div>
           <div>
             <p className="font-semibold text-white">{subject.name}</p>
