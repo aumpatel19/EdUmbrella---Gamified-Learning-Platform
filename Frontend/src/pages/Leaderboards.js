@@ -137,8 +137,8 @@ const Leaderboards = () => {
   return (
     <SidebarProvider>
       <StudentSidebar />
-      <SidebarInset>
-        <div className="min-h-screen dot-grid" style={{ background: '#080D1A' }}>
+      <SidebarInset className="overflow-x-hidden">
+        <div className="min-h-screen w-full overflow-x-hidden dot-grid" style={{ background: '#080D1A' }}>
 
           {/* ── Sticky Header ── */}
           <header
@@ -150,16 +150,16 @@ const Leaderboards = () => {
               borderColor: 'rgba(245,158,11,0.2)',
             }}
           >
-            <div className="mx-auto px-4 py-3 flex items-center justify-between max-w-7xl">
-              <div className="flex items-center gap-3">
-                <SidebarTrigger className="md:hidden text-slate-400 hover:text-white" />
-                <h1 className="text-lg font-bold font-sora gradient-text-gold">
+            <div className="w-full px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0">
+                <SidebarTrigger className="md:hidden text-slate-400 hover:text-white shrink-0" />
+                <h1 className="text-base sm:text-lg font-bold font-sora gradient-text-gold truncate">
                   🏆 Battle Rankings
                 </h1>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 shrink-0">
                 <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
+                  className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white shrink-0"
                   style={{
                     background: 'linear-gradient(135deg,#F59E0B,#FBBF24)',
                     boxShadow: '0 0 0 2px rgba(245,158,11,0.5)',

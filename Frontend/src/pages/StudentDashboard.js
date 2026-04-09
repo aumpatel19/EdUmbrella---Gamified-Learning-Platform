@@ -8,7 +8,7 @@ import { Trophy, Flame, Clock, Target, Gamepad2, BookOpen, ChevronRight, Star } 
 
 const StatCard = ({ label, value, icon, color, glow, sub }) => (
   <div
-    className="relative rounded-2xl p-5 border overflow-hidden group hover:scale-[1.02] transition-all duration-300"
+    className="relative rounded-2xl p-4 sm:p-5 border overflow-hidden group hover:scale-[1.02] transition-all duration-300"
     style={{
       background: 'linear-gradient(135deg, rgba(15,22,41,0.9) 0%, rgba(10,15,30,0.95) 100%)',
       borderColor: `rgba(${glow},0.2)`,
@@ -16,14 +16,14 @@ const StatCard = ({ label, value, icon, color, glow, sub }) => (
     onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 0 25px rgba(${glow},0.25), 0 0 50px rgba(${glow},0.1)`; }}
     onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
   >
-    <div className="flex items-start justify-between mb-3">
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{background: `rgba(${glow},0.15)`, border: `1px solid rgba(${glow},0.3)`}}>
+    <div className="flex items-start justify-between mb-2 sm:mb-3">
+      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center" style={{background: `rgba(${glow},0.15)`, border: `1px solid rgba(${glow},0.3)`}}>
         <span style={{color}}>{icon}</span>
       </div>
       <div className="w-2 h-2 rounded-full animate-pulse" style={{background: color}} />
     </div>
-    <p className="text-2xl font-bold text-white font-jakarta mb-0.5">{value}</p>
-    <p className="text-xs text-[#64748B]">{label}</p>
+    <p className="text-xl sm:text-2xl font-bold text-white font-jakarta mb-0.5">{value}</p>
+    <p className="text-xs text-[#64748B] leading-tight">{label}</p>
     {sub && <p className="text-xs mt-1" style={{color}}>{sub}</p>}
     <div className="absolute -bottom-6 -right-6 w-16 h-16 rounded-full blur-2xl opacity-30" style={{background: `radial-gradient(circle, rgba(${glow},1), transparent)`}} />
   </div>
@@ -169,74 +169,74 @@ const StudentDashboard = () => {
   return (
     <SidebarProvider>
       <StudentSidebar />
-      <SidebarInset style={{background: '#080D1A'}}>
-        <div className="min-h-screen" style={{background: '#080D1A'}}>
+      <SidebarInset style={{background: '#080D1A'}} className="overflow-x-hidden">
+        <div className="min-h-screen w-full overflow-x-hidden" style={{background: '#080D1A'}}>
           {/* Header */}
           <header className="sticky top-0 z-50 border-b" style={{background: 'rgba(8,13,26,0.95)', backdropFilter: 'blur(10px)', borderColor: '#1E2D4A'}}>
-            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <SidebarTrigger className="md:hidden text-[#64748B]" />
-                <h1 className="text-base font-semibold text-white font-jakarta">Dashboard</h1>
+            <div className="w-full px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 min-w-0">
+                <SidebarTrigger className="md:hidden text-[#64748B] shrink-0" />
+                <h1 className="text-base font-semibold text-white font-jakarta truncate">Dashboard</h1>
               </div>
-              <div className="flex items-center gap-3">
-                {/* XP badge */}
+              <div className="flex items-center gap-2 shrink-0">
+                {/* XP badge — hidden on mobile */}
                 <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#6366F1]/30" style={{background: 'rgba(99,102,241,0.1)'}}>
                   <Star className="w-3.5 h-3.5 text-[#A78BFA]" />
                   <span className="text-xs font-semibold text-[#A78BFA]">2,340 XP</span>
                 </div>
-                {/* Streak */}
+                {/* Streak — hidden on mobile */}
                 <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#F97316]/30" style={{background: 'rgba(249,115,22,0.1)'}}>
                   <Flame className="w-3.5 h-3.5 text-[#FB923C]" />
                   <span className="text-xs font-semibold text-[#FB923C]">7 Streak</span>
                 </div>
                 {/* Avatar */}
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)'}}>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)'}}>
                   {(studentInfo.name || userName).charAt(0).toUpperCase()}
                 </div>
               </div>
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-6 pb-24 md:pb-8">
+          <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-24 md:pb-8">
             {/* Welcome banner */}
-            <div className="relative rounded-2xl p-6 mb-8 overflow-hidden border border-[#6366F1]/20">
+            <div className="relative rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 overflow-hidden border border-[#6366F1]/20">
               <div className="absolute inset-0" style={{background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.1) 50%, rgba(6,182,212,0.08) 100%)'}} />
               <div className="absolute inset-0 shimmer-bg opacity-50" />
-              <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <p className="text-[#94A3B8] text-sm">{getTimeOfDay()},</p>
-                  <h2 className="text-2xl font-bold text-white font-jakarta">{studentInfo.name || userName}! <span className="text-[#A78BFA]">Ready to level up?</span></h2>
-                  <p className="text-[#64748B] text-sm mt-1">Class {studentInfo.class || studentClass} · 7 day streak 🔥 · Level 8</p>
+              <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <div className="min-w-0">
+                  <p className="text-[#94A3B8] text-xs sm:text-sm">{getTimeOfDay()},</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white font-jakarta leading-tight">{studentInfo.name || userName}! <span className="text-[#A78BFA]">Ready to level up?</span></h2>
+                  <p className="text-[#64748B] text-xs sm:text-sm mt-1">Class {studentInfo.class || studentClass} · 7 day streak 🔥 · Level 8</p>
                 </div>
-                <div className="flex gap-3 w-full sm:w-auto">
+                <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => navigate('/quizzes')}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:scale-105"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:scale-105"
                     style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', boxShadow: '0 0 20px rgba(99,102,241,0.4)'}}
                   >
                     <Target className="w-4 h-4" />
-                    Take Quiz
+                    <span>Take Quiz</span>
                   </button>
                   <button
                     onClick={() => navigate('/games')}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[#94A3B8] font-semibold text-sm border border-[#6366F1]/30 hover:bg-[#6366F1]/10 hover:text-white transition-all"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[#94A3B8] font-semibold text-sm border border-[#6366F1]/30 hover:bg-[#6366F1]/10 hover:text-white transition-all"
                   >
                     <Gamepad2 className="w-4 h-4" />
-                    Play Game
+                    <span>Play Game</span>
                   </button>
                 </div>
               </div>
             </div>
 
             {/* Stats grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
               <StatCard label="Quizzes Completed" value={stats.completed_quizzes || 0} icon={<Target className="w-5 h-5" />} color="#A78BFA" glow="167,139,250" sub="+2 this week" />
               <StatCard label="Average Score" value={`${Math.round(stats.average_score || 0)}%`} icon={<Trophy className="w-5 h-5" />} color="#34D399" glow="52,211,153" sub="Top 15% of class" />
               <StatCard label="Best Score" value={`${Math.round(stats.best_score || 0)}%`} icon={<Star className="w-5 h-5" />} color="#FBBF24" glow="251,191,36" sub="Mathematics" />
               <StatCard label="Time Played" value={`${Math.round(stats.total_time_spent || 0)}m`} icon={<Clock className="w-5 h-5" />} color="#FB923C" glow="251,146,60" sub="This month" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* Subject Progress */}
               <div className="lg:col-span-2 space-y-3">
                 <div className="flex items-center justify-between mb-2">
