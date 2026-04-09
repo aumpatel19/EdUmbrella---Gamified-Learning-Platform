@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Zap } from "lucide-react";
+import EdUmbrellaLogo from "./EdUmbrellaLogo";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,16 +20,8 @@ const Header = () => {
     }`}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="relative">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#8B5CF6] flex items-center justify-center animate-pulse-glow">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#06B6D4] animate-ping" />
-          </div>
-          <span className="text-white font-bold text-lg font-jakarta">
-            Ed<span className="gradient-text-purple">Umbrella</span>
-          </span>
+        <div className="cursor-pointer" onClick={() => navigate('/')}>
+          <EdUmbrellaLogo size={34} withText />
         </div>
 
         {/* Nav */}
@@ -61,7 +53,6 @@ const Header = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-[#6366F1] to-[#8B5CF6] group-hover:from-[#4F46E5] group-hover:to-[#7C3AED] transition-all duration-300" />
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{background: 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%)'}} />
             <span className="relative flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5" />
               Get Started
             </span>
           </button>

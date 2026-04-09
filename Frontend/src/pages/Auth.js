@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../api";
-import { Zap, Trophy, Flame, Star, GraduationCap, Users, UserPlus, LogIn } from "lucide-react";
+import { Trophy, Flame, Star, GraduationCap, Users, UserPlus, LogIn } from "lucide-react";
+import EdUmbrellaLogo from "../components/EdUmbrellaLogo";
 
 const inputStyle = {
   background: '#0F1629',
@@ -98,14 +99,8 @@ const Auth = () => {
 
         <div className="relative z-10">
           {/* Logo */}
-          <div className="flex items-center gap-2 mb-12">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)'}}>
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-white font-jakarta text-lg">
-              Ed<span className="gradient-text-purple">Umbrella</span>
-            </span>
+          <div className="mb-12">
+            <EdUmbrellaLogo size={40} withText />
           </div>
 
           <h2 className="text-4xl font-bold text-white font-jakarta mb-3 leading-tight">
@@ -149,12 +144,8 @@ const Auth = () => {
         <div className="w-full max-w-md space-y-5">
 
           {/* Mobile logo */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)'}}>
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-white font-jakarta">EdUmbrella</span>
+          <div className="lg:hidden">
+            <EdUmbrellaLogo size={32} withText />
           </div>
 
           {/* Login / Sign Up tab switcher */}
@@ -313,7 +304,7 @@ const Auth = () => {
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  {mode === "signup" ? <UserPlus className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
+                  {mode === "signup" ? <UserPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
                   {mode === "signup"
                     ? (isTeacher ? "Create Teacher Account" : "Join the Arena")
                     : (isTeacher ? "Enter Teacher Portal" : "Start Your Adventure")}

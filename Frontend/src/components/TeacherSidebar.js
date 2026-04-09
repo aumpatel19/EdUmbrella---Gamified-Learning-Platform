@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Users, BookOpen, FileText, Upload, Calendar, LogOut, Zap } from "lucide-react";
+import { Home, Users, BookOpen, FileText, Upload, Calendar, LogOut } from "lucide-react";
+import EdUmbrellaLogo from "./EdUmbrellaLogo";
 import {
   Sidebar,
   SidebarContent,
@@ -47,16 +48,7 @@ const TeacherSidebar = () => {
     <Sidebar style={{background: '#070B17'}} className="border-r border-[#1E2D4A]">
       <SidebarHeader className="p-4" style={{background: '#070B17'}}>
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{background: 'linear-gradient(135deg, #10B981, #059669)'}}>
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#34D399] border border-[#070B17] animate-pulse" />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-white font-jakarta">EdUmbrella</h2>
-            <p className="text-xs text-[#64748B]">Teacher Portal</p>
-          </div>
+          <EdUmbrellaLogo size={36} withText portal="Teacher Portal" />
         </div>
       </SidebarHeader>
 
