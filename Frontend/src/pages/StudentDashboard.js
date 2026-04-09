@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
 import StudentSidebar from "../components/StudentSidebar";
 import SubjectIcon from "../components/SubjectIcon";
-import { Zap, Trophy, Flame, Clock, Target, Gamepad2, BookOpen, ChevronRight, Star } from "lucide-react";
+import { Trophy, Flame, Clock, Target, Gamepad2, BookOpen, ChevronRight, Star } from "lucide-react";
 
 const StatCard = ({ label, value, icon, color, glow, sub }) => (
   <div
@@ -128,7 +128,7 @@ const StudentDashboard = () => {
           <div className="min-h-screen flex items-center justify-center" style={{background: '#080D1A'}}>
             <div className="text-center">
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-glow" style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)'}}>
-                <Zap className="w-8 h-8 text-white" />
+                <Star className="w-8 h-8 text-white" />
               </div>
               <p className="text-[#94A3B8] font-medium">Loading your adventure...</p>
             </div>
@@ -181,7 +181,7 @@ const StudentDashboard = () => {
               <div className="flex items-center gap-3">
                 {/* XP badge */}
                 <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#6366F1]/30" style={{background: 'rgba(99,102,241,0.1)'}}>
-                  <Zap className="w-3.5 h-3.5 text-[#A78BFA]" />
+                  <Star className="w-3.5 h-3.5 text-[#A78BFA]" />
                   <span className="text-xs font-semibold text-[#A78BFA]">2,340 XP</span>
                 </div>
                 {/* Streak */}
@@ -197,24 +197,24 @@ const StudentDashboard = () => {
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-6 pb-24 md:pb-8">
             {/* Welcome banner */}
             <div className="relative rounded-2xl p-6 mb-8 overflow-hidden border border-[#6366F1]/20">
               <div className="absolute inset-0" style={{background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.1) 50%, rgba(6,182,212,0.08) 100%)'}} />
               <div className="absolute inset-0 shimmer-bg opacity-50" />
-              <div className="relative flex items-center justify-between flex-wrap gap-4">
+              <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <p className="text-[#94A3B8] text-sm">{getTimeOfDay()},</p>
                   <h2 className="text-2xl font-bold text-white font-jakarta">{studentInfo.name || userName}! <span className="text-[#A78BFA]">Ready to level up?</span></h2>
                   <p className="text-[#64748B] text-sm mt-1">Class {studentInfo.class || studentClass} · 7 day streak 🔥 · Level 8</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 w-full sm:w-auto">
                   <button
                     onClick={() => navigate('/quizzes')}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white font-semibold text-sm transition-all hover:scale-105"
                     style={{background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', boxShadow: '0 0 20px rgba(99,102,241,0.4)'}}
                   >
-                    <Zap className="w-4 h-4" />
+                    <Target className="w-4 h-4" />
                     Take Quiz
                   </button>
                   <button
@@ -257,7 +257,7 @@ const StudentDashboard = () => {
                   <h3 className="font-semibold text-white font-jakarta mb-4">Quick Actions</h3>
                   <div className="space-y-2.5">
                     {[
-                      { label: "Take a Quiz", icon: <Zap className="w-4 h-4" />, path: '/quizzes', style: {background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', boxShadow: '0 0 15px rgba(99,102,241,0.3)'}, textClass: "text-white" },
+                      { label: "Take a Quiz", icon: <Target className="w-4 h-4" />, path: '/quizzes', style: {background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', boxShadow: '0 0 15px rgba(99,102,241,0.3)'}, textClass: "text-white" },
                       { label: "Play a Game", icon: <Gamepad2 className="w-4 h-4" />, path: '/games', style: {background: 'rgba(244,114,182,0.1)', border: '1px solid rgba(244,114,182,0.3)'}, textClass: "text-[#F472B6]" },
                       { label: "Watch Lectures", icon: <BookOpen className="w-4 h-4" />, path: '/lectures', style: {background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.3)'}, textClass: "text-[#60A5FA]" },
                       { label: "Leaderboard", icon: <Trophy className="w-4 h-4" />, path: '/leaderboard', style: {background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)'}, textClass: "text-[#FBBF24]" },

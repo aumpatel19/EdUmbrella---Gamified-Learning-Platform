@@ -323,7 +323,7 @@ const Calendar = () => {
           </header>
 
           {/* ── Main Content ── */}
-          <div className="flex-1 overflow-hidden px-4 py-3 max-w-7xl w-full mx-auto">
+          <div className="flex-1 overflow-hidden px-4 py-3 pb-20 md:pb-3 max-w-7xl w-full mx-auto">
 
             {/* Two-column layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">

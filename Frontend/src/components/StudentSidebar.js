@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BookOpen, FileText, Trophy, Calendar, User, Gamepad2, Home, LogOut } from "lucide-react";
 import EdUmbrellaLogo from "./EdUmbrellaLogo";
+import MobileNav from "./MobileNav";
 import {
   Sidebar,
   SidebarContent,
@@ -135,6 +136,7 @@ const StudentSidebar = () => {
         </button>
       </SidebarFooter>
     </Sidebar>
+    <MobileNav />
   );
 };
 export default StudentSidebar;

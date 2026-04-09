@@ -289,7 +289,7 @@ const SubjectLectures = () => {
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-8 pb-24 md:pb-8">
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <Loader2 className="h-10 w-10 animate-spin text-violet-400" />

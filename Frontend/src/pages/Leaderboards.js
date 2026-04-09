@@ -172,7 +172,7 @@ const Leaderboards = () => {
             </div>
           </header>
 
-          <div className="mx-auto px-4 py-8 max-w-7xl">
+          <div className="mx-auto px-4 py-8 pb-24 md:pb-8 max-w-7xl">
 
             {/* ── Page Title ── */}
             <div className="mb-8 animate-slide-up">

@@ -236,7 +236,7 @@ const Quizzes = () => {
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto px-4 py-8 pb-24 md:pb-8">
             {/* Page Title */}
             <div className="mb-10 animate-slide-up">
               <h2
