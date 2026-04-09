@@ -305,11 +305,11 @@ const Calendar = () => {
       <StudentSidebar />
       <SidebarInset>
         {/* Root wrapper: dark bg + dot-grid */}
-        <div className="min-h-screen dot-grid" style={{ background: '#080D1A' }}>
+        <div className="h-screen flex flex-col dot-grid overflow-hidden" style={{ background: '#080D1A' }}>
 
           {/* ── Sticky Header ── */}
           <header
-            className="sticky top-0 z-50 flex items-center gap-4 px-6 py-4"
+            className="flex items-center gap-4 px-6 py-3 shrink-0"
             style={{
               background: 'rgba(8,13,26,0.95)',
               backdropFilter: 'blur(16px)',
@@ -323,17 +323,17 @@ const Calendar = () => {
           </header>
 
           {/* ── Main Content ── */}
-          <div className="container mx-auto px-4 py-8 max-w-7xl">
+          <div className="flex-1 overflow-hidden px-4 py-3 max-w-7xl w-full mx-auto">
 
             {/* Two-column layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
 
               {/* ─── LEFT: Calendar ─── */}
-              <div className="lg:col-span-2">
-                <div className="card-game p-6">
+              <div className="lg:col-span-2 flex flex-col min-h-0">
+                <div className="card-game p-4 flex flex-col flex-1 min-h-0">
 
                   {/* Month navigation */}
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center justify-between mb-3">
                     <button
                       onClick={() => navigateMonth('prev')}
                       className="glass w-9 h-9 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/40 transition-all"
@@ -341,7 +341,7 @@ const Calendar = () => {
                       <ChevronLeft className="w-4 h-4" />
                     </button>
 
-                    <h2 className="font-sora font-bold text-white text-lg">
+                    <h2 className="font-sora font-bold text-white text-base">
                       {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
                     </h2>
 
@@ -354,24 +354,24 @@ const Calendar = () => {
                   </div>
 
                   {/* Day-of-week headers */}
-                  <div className="grid grid-cols-7 mb-2">
+                  <div className="grid grid-cols-7 mb-1">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
-                      <div key={d} className="text-center text-xs text-slate-400 py-2 font-medium">
+                      <div key={d} className="text-center text-xs text-slate-400 py-1 font-medium">
                         {d}
                       </div>
                     ))}
                   </div>
 
                   {/* Day cells */}
-                  <div className="grid grid-cols-7 gap-1">
+                  <div className="grid grid-cols-7 gap-0.5 flex-1">
                     {renderCalendarDark()}
                   </div>
 
                   {/* Today button */}
-                  <div className="mt-4 flex justify-end">
+                  <div className="mt-2 flex justify-end">
                     <button
                       onClick={() => setCurrentDate(new Date())}
-                      className="glass text-xs text-slate-400 hover:text-cyan-300 px-3 py-1.5 rounded-lg transition-all"
+                      className="glass text-xs text-slate-400 hover:text-cyan-300 px-3 py-1 rounded-lg transition-all"
                     >
                       Today
                     </button>
@@ -380,18 +380,17 @@ const Calendar = () => {
               </div>
 
               {/* ─── RIGHT: Task Panel ─── */}
-              <div className="space-y-5">
+              <div className="flex flex-col gap-3 min-h-0 overflow-y-auto">
 
                 {/* Task list card */}
-                <div className="card-game p-5">
+                <div className="card-game p-4">
                   {/* Panel header */}
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-xs text-slate-500 mb-0.5">Selected day</p>
                       <h3 className="font-sora font-bold text-white text-sm">
                         {selectedDate.toLocaleDateString('default', {
-                          weekday: 'long',
-                          month: 'long',
+                          weekday: 'short',
+                          month: 'short',
                           day: 'numeric'
                         })}
                       </h3>
@@ -403,32 +402,32 @@ const Calendar = () => {
                     </div>
                     <button
                       onClick={() => setShowAddTodo(true)}
-                      className="btn-cyan flex items-center gap-1.5 px-3 py-2 text-sm"
+                      className="btn-cyan flex items-center gap-1.5 px-2.5 py-1.5 text-xs"
                     >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add Task
+                      <Plus className="w-3 h-3" />
+                      Add
                     </button>
                   </div>
 
                   {/* Progress bar */}
                   {totalTodos > 0 && (
-                    <div className="w-full h-1.5 rounded-full mb-4" style={{ background: 'rgba(15,22,41,0.8)' }}>
+                    <div className="w-full h-1 rounded-full mb-3" style={{ background: 'rgba(15,22,41,0.8)' }}>
                       <div
-                        className="xp-bar h-1.5 rounded-full transition-all"
+                        className="xp-bar h-1 rounded-full transition-all"
                         style={{ width: `${(completedTodos / totalTodos) * 100}%` }}
                       />
                     </div>
                   )}
 
                   {/* Tasks */}
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {selectedDateTodos.length === 0 ? (
-                      <div className="text-center py-10">
-                        <CalendarIcon className="w-10 h-10 mx-auto mb-3 text-slate-600" />
-                        <p className="text-slate-500 text-sm mb-3">No quests for this day</p>
+                      <div className="text-center py-4">
+                        <CalendarIcon className="w-8 h-8 mx-auto mb-2 text-slate-600" />
+                        <p className="text-slate-500 text-xs mb-2">No quests for this day</p>
                         <button
                           onClick={() => setShowAddTodo(true)}
-                          className="glass text-xs text-cyan-400 hover:text-cyan-300 px-4 py-2 rounded-lg transition-all"
+                          className="glass text-xs text-cyan-400 hover:text-cyan-300 px-3 py-1.5 rounded-lg transition-all"
                         >
                           Add your first quest
                         </button>
@@ -533,24 +532,20 @@ const Calendar = () => {
                 </div>
 
                 {/* Quick stats card */}
-                <div className="card-game p-5">
-                  <h4 className="font-sora font-bold text-white text-sm mb-4 flex items-center gap-2">
+                <div className="card-game p-3">
+                  <h4 className="font-sora font-bold text-white text-xs mb-2 flex items-center gap-2">
                     <span>📊</span> Day Overview
                   </h4>
-                  <div className="space-y-2.5">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
                     {[
-                      { label: 'Total Quests', value: totalTodos, color: '#06B6D4' },
-                      { label: 'Completed',    value: completedTodos, color: '#10B981' },
-                      { label: 'Remaining',    value: totalTodos - completedTodos, color: '#06B6D4' },
-                      {
-                        label: 'Progress',
-                        value: `${totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : 0}%`,
-                        color: '#F59E0B'
-                      }
+                      { label: 'Total', value: totalTodos, color: '#06B6D4' },
+                      { label: 'Done',  value: completedTodos, color: '#10B981' },
+                      { label: 'Left',  value: totalTodos - completedTodos, color: '#06B6D4' },
+                      { label: 'Progress', value: `${totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : 0}%`, color: '#F59E0B' }
                     ].map(({ label, value, color }) => (
                       <div key={label} className="flex items-center justify-between">
                         <span className="text-xs text-slate-500">{label}</span>
-                        <span className="text-sm font-bold font-mono-geist" style={{ color }}>{value}</span>
+                        <span className="text-xs font-bold" style={{ color }}>{value}</span>
                       </div>
                     ))}
                   </div>
