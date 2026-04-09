@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../api";
-import { Trophy, Flame, Star, GraduationCap, Users, UserPlus, LogIn } from "lucide-react";
+import { Trophy, Flame, Star, GraduationCap, Users, UserPlus, LogIn, Gamepad2 } from "lucide-react";
 import EdUmbrellaLogo from "../components/EdUmbrellaLogo";
 
 const inputStyle = {
@@ -111,7 +111,7 @@ const Auth = () => {
 
           <div className="space-y-4 mb-8">
             {[
-              { icon: <Zap className="w-4 h-4" />, label: "Gamified quizzes for Classes 6–12", color: "text-[#A78BFA]", bg: "rgba(99,102,241,0.12)", border: "rgba(99,102,241,0.25)" },
+              { icon: <Gamepad2 className="w-4 h-4" />, label: "Gamified quizzes for Classes 6–12", color: "text-[#A78BFA]", bg: "rgba(99,102,241,0.12)", border: "rgba(99,102,241,0.25)" },
               { icon: <Trophy className="w-4 h-4" />, label: "Live leaderboards & XP system", color: "text-[#FBBF24]", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.25)" },
               { icon: <Flame className="w-4 h-4" />, label: "Daily streaks & achievements", color: "text-[#FB923C]", bg: "rgba(249,115,22,0.12)", border: "rgba(249,115,22,0.25)" },
               { icon: <Star className="w-4 h-4" />, label: "Video lectures in multiple languages", color: "text-[#34D399]", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)" },
@@ -129,7 +129,7 @@ const Auth = () => {
           {/* Demo card */}
           <div className="rounded-xl p-4 border border-[#6366F1]/20" style={{background: 'rgba(99,102,241,0.08)'}}>
             <p className="text-xs text-[#A78BFA] font-semibold mb-2 flex items-center gap-1.5">
-              <Zap className="w-3 h-3" /> Demo Credentials
+              <Star className="w-3 h-3" /> Demo Credentials
             </p>
             <div className="space-y-1">
               <p className="text-xs text-[#64748B] font-mono">Student: student@edumbrella.com / student123</p>
