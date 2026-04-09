@@ -77,7 +77,7 @@ const TeacherClasses = () => {
                 borderBottom: "1px solid rgba(16,185,129,0.15)",
               }}
             >
-              <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="w-full px-4 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <SidebarTrigger className="md:hidden" />
                   <h1
@@ -93,7 +93,7 @@ const TeacherClasses = () => {
                 </div>
               </div>
             </header>
-            <div className="container mx-auto px-4 py-8 flex items-center justify-center">
+            <div className="w-full px-4 py-8 flex items-center justify-center">
               <p style={{ color: "rgba(255,255,255,0.5)", fontFamily: "Sora, sans-serif" }}>
                 Loading classes...
               </p>
@@ -107,7 +107,7 @@ const TeacherClasses = () => {
   return (
     <SidebarProvider>
       <TeacherSidebar />
-      <SidebarInset>
+      <SidebarInset className="overflow-x-hidden">
         <div
           className="min-h-screen dot-grid"
           style={{ background: "#080D1A" }}
@@ -121,8 +121,8 @@ const TeacherClasses = () => {
               borderBottom: "1px solid rgba(16,185,129,0.15)",
             }}
           >
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="w-full px-4 py-4 flex items-center justify-between min-w-0">
+              <div className="flex items-center gap-4 min-w-0 flex-1">
                 <SidebarTrigger className="md:hidden" style={{ color: "#10B981" }} />
                 <div
                   style={{
@@ -159,6 +159,7 @@ const TeacherClasses = () => {
                 </h1>
               </div>
               <button
+                className="flex-shrink-0"
                 style={{
                   background: "linear-gradient(135deg, #10B981, #059669)",
                   color: "#fff",
@@ -181,7 +182,7 @@ const TeacherClasses = () => {
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-8">
+          <div className="w-full px-4 py-6 sm:py-8">
             {/* Page Title */}
             <div className="mb-8 animate-slide-up">
               <h2

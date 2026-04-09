@@ -278,7 +278,7 @@ const TeacherSchedule = () => {
   return (
     <SidebarProvider>
       <TeacherSidebar />
-      <SidebarInset>
+      <SidebarInset className="overflow-x-hidden">
         <div className="min-h-screen" style={{ background: "#080D1A" }}>
           {/* Dot grid */}
           <div className="fixed inset-0 pointer-events-none" style={{
@@ -288,8 +288,8 @@ const TeacherSchedule = () => {
 
           {/* Header */}
           <header className="sticky top-0 z-50" style={{ background: "rgba(8,13,26,0.95)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(16,185,129,0.15)" }}>
-            <div className="px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="px-4 py-4 flex items-center justify-between min-w-0">
+              <div className="flex items-center gap-4 min-w-0 flex-1">
                 <SidebarTrigger className="text-slate-400 hover:text-white" />
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
@@ -300,7 +300,7 @@ const TeacherSchedule = () => {
                   </h1>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-shrink-0">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
                   {userName.charAt(0).toUpperCase()}
                 </div>
@@ -312,9 +312,9 @@ const TeacherSchedule = () => {
             </div>
           </header>
 
-          <div className="relative z-10 px-6 py-8 max-w-7xl mx-auto">
+          <div className="relative z-10 px-4 py-6 sm:py-8 w-full">
             {/* Page header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
               <div>
                 <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest">Teacher Portal</span>
                 <h2 className="text-3xl font-bold text-white mt-1" style={{ fontFamily: "Sora, sans-serif" }}>

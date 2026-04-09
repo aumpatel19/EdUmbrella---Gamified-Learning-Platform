@@ -165,7 +165,7 @@ const TeacherDashboard = () => {
   return (
     <SidebarProvider>
       <TeacherSidebar />
-      <SidebarInset>
+      <SidebarInset className="overflow-x-hidden">
         <div
           className="min-h-screen dot-grid"
           style={{ background: "#080D1A" }}
@@ -180,11 +180,12 @@ const TeacherDashboard = () => {
             }}
           >
             <div
-              className="container mx-auto px-4 py-3 flex items-center justify-between"
+              className="w-full px-4 py-3 flex items-center justify-between min-w-0"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <SidebarTrigger className="md:hidden" style={{ color: "#10B981" }} />
                 <h1
+                  className="truncate"
                   style={{
                     fontFamily: "Sora, sans-serif",
                     fontWeight: 700,
@@ -196,7 +197,7 @@ const TeacherDashboard = () => {
                   Teacher Dashboard
                 </h1>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-shrink-0">
                 <div
                   className="rounded-full flex items-center justify-center"
                   style={{
@@ -237,7 +238,7 @@ const TeacherDashboard = () => {
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-8">
+          <div className="w-full px-4 py-6 sm:py-8">
             {/* Welcome Banner */}
             <div
               className="card-game mb-8 relative overflow-hidden animate-slide-up"
@@ -311,13 +312,13 @@ const TeacherDashboard = () => {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-8">
               {statCards.map(({ label, value, sub, glow, accent, icon }) => (
                 <div
                   key={label}
                   className="card-game animate-slide-up"
                   style={{
-                    padding: "20px 18px",
+                    padding: "14px 14px",
                     boxShadow: `0 0 24px ${glow}`,
                     borderColor: `${accent}33`,
                   }}
