@@ -8,19 +8,29 @@ import logo from "../assets/edumbrella-logo.png";
  *   <EdUmbrellaLogo size={36} withText /> — icon + wordmark
  */
 const EdUmbrellaLogo = ({ size = 40, withText = false, portal }) => {
+  // Show only the top ~60% of the image (umbrella + gamepad icon, no text)
   const icon = (
-    <img
-      src={logo}
-      alt="EdUmbrella"
-      style={{
-        width: size,
-        height: size,
-        objectFit: "contain",
-        display: "block",
-        flexShrink: 0,
-        mixBlendMode: "screen",
-      }}
-    />
+    <div style={{
+      width: size,
+      height: size,
+      overflow: "hidden",
+      flexShrink: 0,
+      display: "flex",
+      alignItems: "flex-start",
+      justifyContent: "center",
+    }}>
+      <img
+        src={logo}
+        alt="EdUmbrella"
+        style={{
+          width: size * 1.6,
+          height: "auto",
+          objectFit: "contain",
+          display: "block",
+          marginLeft: -(size * 0.3),
+        }}
+      />
+    </div>
   );
 
   if (!withText) return icon;
