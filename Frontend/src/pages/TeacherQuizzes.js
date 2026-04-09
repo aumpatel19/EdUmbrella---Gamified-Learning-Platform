@@ -47,7 +47,7 @@ const TeacherQuizzes = () => {
     try {
       setLoading(true);
       const response = await ApiService.getTeacherQuizzes();
-      setPrebuiltQuizzes(response || []);
+      setPrebuiltQuizzes(response.quizzes || []);
     } catch (error) {
       console.error("Error fetching prebuilt quizzes:", error);
       setPrebuiltQuizzes([]);
