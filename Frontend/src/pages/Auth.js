@@ -76,7 +76,7 @@ const Auth = () => {
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userName", data.user?.name || data.user?.username || email);
         localStorage.setItem("userType", isTeacher ? "teacher" : "student");
-        localStorage.setItem("studentClass", data.user?.class || studentClass);
+        if (!isTeacher) localStorage.setItem("studentClass", data.user?.class || "6");
         navigate(isTeacher ? "/teacher-dashboard" : "/student-dashboard");
       }
     } catch (err) {
@@ -275,8 +275,8 @@ const Auth = () => {
               </div>
             )}
 
-            {/* Class — students only */}
-            {!isTeacher && (
+            {/* Class — sign up students only */}
+            {mode === "signup" && !isTeacher && (
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-[#CBD5E1]">Your Class</label>
                 <select
