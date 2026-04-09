@@ -18,6 +18,7 @@ const EdUmbrellaLogo = ({ size = 40, withText = false, portal }) => {
         objectFit: "contain",
         display: "block",
         flexShrink: 0,
+        mixBlendMode: "screen",
       }}
     />
   );
