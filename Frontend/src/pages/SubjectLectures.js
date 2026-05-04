@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
-import { Play, Clock, Eye, ArrowLeft, CheckCircle, X, Gamepad2, Brain, Loader2 } from "lucide-react";
+import { Play, Clock, Eye, ArrowLeft, CheckCircle, X, Gamepad2, Brain, Loader2, Globe } from "lucide-react";
 import VideoPlayer from "../components/VideoPlayer";
 import StudentSidebar from "../components/StudentSidebar";
 import { useState, useEffect } from "react";
@@ -396,7 +396,7 @@ const SubjectLectures = () => {
                                   className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-60"
                                   style={{ background: "linear-gradient(135deg,#10B981,#06B6D4)" }}
                                   onClick={handleMarkWatched}
-                                  disabled={markingWatched || !currentVideoId}
+                                  disabled={markingWatched || !selectedLecture?.videoUrl}
                                 >
                                   {markingWatched ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
