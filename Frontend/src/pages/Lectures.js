@@ -22,22 +22,36 @@ const subjectMeta = {
 const Lectures = () => {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "Student";
+  const userEmail = localStorage.getItem("userEmail") || "";
   const studentClass = localStorage.getItem("studentClass") || "6";
   const [subjects, setSubjects] = useState([]);
   const [lectureCounts, setLectureCounts] = useState({});
+  const [watchedBySubject, setWatchedBySubject] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const { subjects: subs } = await ApiService.getSubjectsByClass(parseInt(studentClass));
-        const { lectures } = await ApiService.getLectures(parseInt(studentClass));
+        const [subsRes, lecturesRes, progressRes] = await Promise.all([
+          ApiService.getSubjectsByClass(parseInt(studentClass)),
+          ApiService.getLectures(parseInt(studentClass)),
+          userEmail ? ApiService.getLectureProgress(userEmail) : Promise.resolve({ completedIds: [] }),
+        ]);
+
+        const lectures = lecturesRes.lectures || [];
+        const completedSet = new Set(progressRes.completedIds || []);
+
         const counts = {};
+        const watched = {};
         for (const l of lectures) {
           counts[l.subject_id] = (counts[l.subject_id] || 0) + 1;
+          if (completedSet.has(l.id)) {
+            watched[l.subject_id] = (watched[l.subject_id] || 0) + 1;
+          }
         }
-        setSubjects(subs || []);
+        setSubjects(subsRes.subjects || []);
         setLectureCounts(counts);
+        setWatchedBySubject(watched);
       } catch (err) {
         console.error('Failed to load lectures:', err);
       } finally {
@@ -45,7 +59,7 @@ const Lectures = () => {
       }
     };
     load();
-  }, [studentClass]);
+  }, [studentClass, userEmail]);
 
   const handleLogout = () => {
     localStorage.removeItem("userType");
@@ -213,6 +227,7 @@ const Lectures = () => {
                 const meta = subjectMeta[subject.name] || { icon: '📚', color: 'from-indigo-500 to-indigo-700', glow: 'rgba(99,102,241,0.35)' };
                 const glowColor = meta.glow;
                 const lectureCount = lectureCounts[subject.id] || 0;
+                const watchedCount = watchedBySubject[subject.id] || 0;
                 return (
                   <div
                     key={subject.id}
@@ -263,7 +278,7 @@ const Lectures = () => {
                       <div className="grid grid-cols-3 gap-2 mb-4">
                         {[
                           { label: "Lectures", val: lectureCount },
-                          { label: "Duration", val: `${lectureCount * 30}m` },
+                          { label: "Watched", val: lectureCount > 0 ? `${watchedCount}/${lectureCount}` : "—" },
                           { label: "CBSE", val: "✓" },
                         ].map((s) => (
                           <div

@@ -3,3 +3,8 @@
 # Environment variables
 Frontend/.env
 .env
+Backend/.env
+
+# Node
+Backend/node_modules/
+Backend/package-lock.json

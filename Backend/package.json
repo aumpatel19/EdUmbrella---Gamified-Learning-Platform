@@ -1,0 +1,13 @@
+{
+  "name": "edumbrella-backend",
+  "version": "1.0.0",
+  "description": "EdUmbrella seed scripts",
+  "scripts": {
+    "seed:lectures": "node seed_lectures.js",
+    "seed:quizzes": "node seed_quizzes.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1"
+  }
+}

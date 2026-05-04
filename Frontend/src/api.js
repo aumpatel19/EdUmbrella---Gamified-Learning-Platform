@@ -85,7 +85,7 @@ class ApiService {
   async getLectures(classLevel, subjectId = null) {
     let query = supabase
       .from('lectures')
-      .select('*, subjects(name, icon, color)')
+      .select('id, title, description, chapter_number, duration_minutes, display_order, subject_id, subjects(name, icon, color)')
       .eq('class_level', classLevel)
       .eq('is_active', true)
       .order('display_order');
@@ -98,13 +98,52 @@ class ApiService {
   async getLecturesBySubject(subjectId, classLevel) {
     const { data, error } = await supabase
       .from('lectures')
-      .select('*, subjects(name, icon, color)')
+      .select('id, title, description, chapter_number, duration_minutes, display_order, subject_id, thumbnail_url, subjects(name, icon, color), lecture_videos(id, language, youtube_video_id, video_url, subtitle_urls, is_default)')
       .eq('subject_id', subjectId)
       .eq('class_level', classLevel)
       .eq('is_active', true)
       .order('display_order');
     if (error) throw new Error(error.message);
     return { lectures: data };
+  }
+
+  async markLectureWatched(lectureId, studentEmail) {
+    const { data: student } = await supabase
+      .from('users').select('id').eq('email', studentEmail).eq('role', 'student').single();
+    if (!student) throw new Error('Student not found');
+
+    const { error } = await supabase
+      .from('student_lecture_progress')
+      .upsert({ student_id: student.id, lecture_id: lectureId, completed: true, last_watched_at: new Date().toISOString() },
+        { onConflict: 'student_id,lecture_id' });
+    if (error) throw new Error(error.message);
+
+    await this.awardXP(studentEmail, 'lecture', String(lectureId), 10);
+    return { message: 'Lecture marked as watched' };
+  }
+
+  async getLectureProgress(studentEmail) {
+    const { data: student } = await supabase
+      .from('users').select('id').eq('email', studentEmail).eq('role', 'student').single();
+    if (!student) return { completedIds: [] };
+
+    const { data } = await supabase
+      .from('student_lecture_progress')
+      .select('lecture_id')
+      .eq('student_id', student.id)
+      .eq('completed', true);
+    return { completedIds: (data || []).map(r => r.lecture_id) };
+  }
+
+  async getLectureCount(classLevel, subjectId) {
+    const { count, error } = await supabase
+      .from('lectures')
+      .select('id', { count: 'exact', head: true })
+      .eq('class_level', classLevel)
+      .eq('subject_id', subjectId)
+      .eq('is_active', true);
+    if (error) return 0;
+    return count || 0;
   }
 
   async getSubjects() {
@@ -291,15 +330,26 @@ class ApiService {
     }
     const score = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 10000) / 100 : 0;
 
-    const { error } = await supabase.from('quiz_attempts').update({
+    const { data: updatedAttempt, error } = await supabase.from('quiz_attempts').update({
       score,
       correct_answers: correctAnswers,
       time_spent_minutes: timeSpentMinutes,
       completed_at: new Date().toISOString(),
       is_completed: true,
       answers,
-    }).eq('id', attemptId);
+    }).eq('id', attemptId).select('student_id, quizzes(difficulty)').single();
     if (error) throw new Error(error.message);
+
+    // Award XP if passed (score >= 60%)
+    if (score >= 60) {
+      const { data: studentRow } = await supabase
+        .from('users').select('email').eq('id', updatedAttempt.student_id).single();
+      if (studentRow?.email) {
+        const difficultyMultiplier = { easy: 1, medium: 1.5, hard: 2 }[updatedAttempt.quizzes?.difficulty] || 1;
+        const xpAmount = Math.round(50 * difficultyMultiplier);
+        await this.awardXP(studentRow.email, 'quiz', String(attempt.quiz_id), xpAmount);
+      }
+    }
 
     return { score, correct_answers: correctAnswers, total_questions: questions.length, message: 'Quiz submitted successfully' };
   }
@@ -311,20 +361,23 @@ class ApiService {
       .from('users').select('id').eq('email', studentEmail).eq('role', 'student').single();
     if (!student) throw new Error('Student not found');
 
-    const gameMapping = {
-      'pizza': { class_level: 6, subject: 'Mathematics' },
-      'nutrition': { class_level: 6, subject: 'Science' },
-      'photosynthesis': { class_level: 7, subject: 'Science' },
-      'equation-unlock': { class_level: 8, subject: 'Mathematics' },
-      'circuit': { class_level: 10, subject: 'Physics' },
-    };
-    const gameInfo = gameMapping[gameName] || { class_level: null, subject: 'General' };
+    // Lookup class_level and subject from quizzes table instead of hardcoded map
+    const { data: gameQuiz } = await supabase
+      .from('quizzes')
+      .select('class_level, subjects(name)')
+      .eq('game_component', gameName)
+      .eq('quiz_type', 'game')
+      .limit(1)
+      .maybeSingle();
+
+    const classLevel = gameQuiz?.class_level || null;
+    const subjectName = gameQuiz?.subjects?.name || 'General';
 
     const { error } = await supabase.from('game_scores').insert({
       student_id: student.id,
       game_name: gameName,
-      class_level: gameInfo.class_level,
-      subject_name: gameInfo.subject,
+      class_level: classLevel,
+      subject_name: subjectName,
       score: scoreData.score || 0,
       level_reached: scoreData.level_reached || 1,
       time_played_minutes: scoreData.time_played_minutes || 0,
@@ -333,7 +386,11 @@ class ApiService {
     });
     if (error) throw new Error(error.message);
 
-    return { message: 'Game score saved successfully', class_level: gameInfo.class_level, subject: gameInfo.subject };
+    if (scoreData.completed) {
+      await this.awardXP(studentEmail, 'game', gameName, 30);
+    }
+
+    return { message: 'Game score saved successfully', class_level: classLevel, subject: subjectName };
   }
 
   async getGameLeaderboard(gameName) {
@@ -500,7 +557,12 @@ class ApiService {
   // ============ LEADERBOARD ============
 
   async getLeaderboard(currentUser = null) {
-    // Aggregate per-student: total quiz score + game scores
+    const { data: allUsers } = await supabase
+      .from('users')
+      .select('id, name, email, class, xp_points, level, current_streak')
+      .eq('role', 'student')
+      .order('xp_points', { ascending: false });
+
     const { data: quizAgg } = await supabase
       .from('quiz_attempts')
       .select('student_id, score, is_completed')
@@ -510,47 +572,34 @@ class ApiService {
       .from('game_scores')
       .select('student_id, score');
 
-    const { data: allUsers } = await supabase
-      .from('users')
-      .select('id, name, email, class')
-      .eq('role', 'student');
-
-    const map = {};
-    for (const u of (allUsers || [])) {
-      map[u.id] = { id: u.id, name: u.name || u.email, email: u.email, class: u.class, quiz_score: 0, quiz_count: 0, game_score: 0, game_count: 0 };
-    }
+    const quizMap = {};
     for (const a of (quizAgg || [])) {
-      if (map[a.student_id]) { map[a.student_id].quiz_score += Number(a.score); map[a.student_id].quiz_count++; }
+      if (!quizMap[a.student_id]) quizMap[a.student_id] = { count: 0 };
+      quizMap[a.student_id].count++;
     }
+    const gameMap = {};
     for (const g of (gameAgg || [])) {
-      if (map[g.student_id]) { map[g.student_id].game_score += Number(g.score); map[g.student_id].game_count++; }
+      if (!gameMap[g.student_id]) gameMap[g.student_id] = { count: 0 };
+      gameMap[g.student_id].count++;
     }
 
-    // Inject current user if their DB row doesn't exist yet (brand-new account)
-    if (currentUser?.email) {
-      const alreadyPresent = Object.values(map).some(u => u.email === currentUser.email);
-      if (!alreadyPresent) {
-        const tempId = `new_${currentUser.email}`;
-        map[tempId] = {
-          id: tempId,
-          name: currentUser.name || currentUser.email,
-          email: currentUser.email,
-          class: currentUser.class || '',
-          quiz_score: 0, quiz_count: 0, game_score: 0, game_count: 0,
-        };
-      }
-    }
+    let leaderboard = (allUsers || []).map(u => ({
+      id: u.id, name: u.name || u.email, email: u.email, class: u.class,
+      total_xp: u.xp_points || 0,
+      level: u.level || 1,
+      streak: u.current_streak || 0,
+      completed_quizzes: quizMap[u.id]?.count || 0,
+      completed_games: gameMap[u.id]?.count || 0,
+    }));
 
-    const leaderboard = Object.values(map).map((u) => ({
-      ...u,
-      total_xp: u.quiz_score * 15 + u.game_score * 10,
-      completed_quizzes: u.quiz_count,
-      completed_games: u.game_count,
-      average_score: u.quiz_count ? Math.round(u.quiz_score / u.quiz_count) : 0,
-      level: Math.floor((u.quiz_score * 15 + u.game_score * 10) / 500) + 1,
-      streak: 0,
-      badges: u.quiz_count + u.game_count,
-    })).sort((a, b) => b.total_xp - a.total_xp);
+    // Inject current user if their DB row doesn't exist yet
+    if (currentUser?.email && !leaderboard.some(u => u.email === currentUser.email)) {
+      leaderboard.push({
+        id: `new_${currentUser.email}`, name: currentUser.name || currentUser.email,
+        email: currentUser.email, class: currentUser.class || '',
+        total_xp: 0, level: 1, streak: 0, completed_quizzes: 0, completed_games: 0,
+      });
+    }
 
     return { leaderboard };
   }
@@ -674,6 +723,204 @@ class ApiService {
       .from('quizzes').update({ class_level: parseInt(studentClass), is_active: true }).eq('id', quizId);
     if (error) throw new Error(error.message);
     return { message: 'Quiz sent to students' };
+  }
+
+  async addQuizQuestions(quizId, questions) {
+    const rows = questions.map((q, i) => ({
+      quiz_id: quizId,
+      question_text: q.question_text,
+      question_type: q.question_type || 'multiple_choice',
+      correct_answer: q.correct_answer,
+      options: q.options || [],
+      explanation: q.explanation || '',
+      points: q.points || 1,
+      order_index: i,
+    }));
+    const { error } = await supabase.from('quiz_questions').insert(rows);
+    if (error) throw new Error(error.message);
+    return { message: 'Questions added', count: rows.length };
+  }
+
+  // ============ GAMIFICATION ============
+
+  async awardXP(userEmail, sourceType, sourceId, baseAmount, multiplier = 1) {
+    const xpAwarded = Math.round(baseAmount * multiplier);
+    const { data: user } = await supabase
+      .from('users').select('id, xp_points, level').eq('email', userEmail).single();
+    if (!user) return null;
+
+    const newXP = (user.xp_points || 0) + xpAwarded;
+    const newLevel = Math.floor(newXP / 500) + 1;
+    const leveledUp = newLevel > (user.level || 1);
+
+    await supabase.from('xp_events').insert({
+      user_id: user.id, source_type: sourceType, source_id: sourceId, xp_awarded: xpAwarded,
+    });
+
+    await supabase.from('users').update({ xp_points: newXP, level: newLevel }).eq('id', user.id);
+
+    const newAchievements = await this.checkAchievements(userEmail);
+    return { xp_awarded: xpAwarded, total_xp: newXP, level: newLevel, leveled_up: leveledUp, new_achievements: newAchievements };
+  }
+
+  async updateStreak(userEmail) {
+    const { data: user } = await supabase
+      .from('users').select('id, current_streak, longest_streak, last_activity_date').eq('email', userEmail).single();
+    if (!user) return null;
+
+    const today = new Date().toISOString().split('T')[0];
+    const lastDate = user.last_activity_date;
+    if (lastDate === today) return { streak: user.current_streak };
+
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const newStreak = lastDate === yesterday ? (user.current_streak || 0) + 1 : 1;
+    const longestStreak = Math.max(newStreak, user.longest_streak || 0);
+
+    await supabase.from('users').update({
+      current_streak: newStreak, longest_streak: longestStreak, last_activity_date: today,
+    }).eq('id', user.id);
+
+    if (newStreak > 1) {
+      await this.awardXP(userEmail, 'streak', today, 5);
+    }
+
+    return { streak: newStreak, is_new_day: true };
+  }
+
+  async checkAchievements(userEmail) {
+    const { data: user } = await supabase
+      .from('users').select('id, xp_points, level, current_streak').eq('email', userEmail).single();
+    if (!user) return [];
+
+    const { data: allAchievements } = await supabase.from('achievements').select('*');
+    const { data: userAchievements } = await supabase
+      .from('user_achievements').select('achievement_id').eq('user_id', user.id);
+
+    const earned = new Set((userAchievements || []).map(ua => ua.achievement_id));
+    const newlyEarned = [];
+
+    const { data: quizAttempts } = await supabase
+      .from('quiz_attempts').select('id, quizzes(difficulty, subjects(name))')
+      .eq('student_id', user.id).eq('is_completed', true);
+
+    const { data: gameScores } = await supabase
+      .from('game_scores').select('game_name, completed').eq('student_id', user.id);
+
+    const { data: lectureProgress } = await supabase
+      .from('student_lecture_progress').select('id').eq('student_id', user.id).eq('completed', true);
+
+    const stats = {
+      quiz_count: quizAttempts?.length || 0,
+      games_completed: gameScores?.filter(g => g.completed).length || 0,
+      lecture_count: lectureProgress?.length || 0,
+      level: user.level || 1,
+      streak: user.current_streak || 0,
+    };
+
+    for (const achievement of (allAchievements || [])) {
+      if (earned.has(achievement.id)) continue;
+      const c = achievement.criteria || {};
+      let qualifies = false;
+
+      if (c.quiz_count && stats.quiz_count >= c.quiz_count) qualifies = true;
+      if (c.games_completed && stats.games_completed >= c.games_completed) qualifies = true;
+      if (c.lecture_count && stats.lecture_count >= c.lecture_count) qualifies = true;
+      if (c.level && stats.level >= c.level) qualifies = true;
+      if (c.streak && stats.streak >= c.streak) qualifies = true;
+
+      if (qualifies) {
+        await supabase.from('user_achievements').insert({ user_id: user.id, achievement_id: achievement.id });
+        await this.awardXP(userEmail, 'achievement', String(achievement.id), achievement.xp_reward || 50);
+        newlyEarned.push(achievement);
+      }
+    }
+
+    return newlyEarned;
+  }
+
+  async getUserAchievements(userEmail) {
+    const { data: user } = await supabase.from('users').select('id').eq('email', userEmail).single();
+    if (!user) return { achievements: [], earned: [] };
+
+    const { data: all } = await supabase.from('achievements').select('*').order('tier');
+    const { data: earned } = await supabase
+      .from('user_achievements').select('achievement_id, earned_at').eq('user_id', user.id);
+
+    const earnedMap = {};
+    for (const e of (earned || [])) earnedMap[e.achievement_id] = e.earned_at;
+
+    return {
+      achievements: (all || []).map(a => ({ ...a, earned: !!earnedMap[a.id], earned_at: earnedMap[a.id] || null })),
+    };
+  }
+
+  async getXPEvents(userEmail, limit = 20) {
+    const { data: user } = await supabase.from('users').select('id').eq('email', userEmail).single();
+    if (!user) return { events: [] };
+
+    const { data } = await supabase
+      .from('xp_events')
+      .select('source_type, source_label, xp_awarded, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    return { events: data || [] };
+  }
+
+  // ============ PROFILE ============
+
+  async getProfile(userEmail) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, name, email, class, role, phone, avatar, bio, xp_points, level, current_streak, longest_streak, created_at')
+      .eq('email', userEmail)
+      .single();
+    if (error) throw new Error(error.message);
+    return { profile: data };
+  }
+
+  async updateProfile(userEmail, updates) {
+    const allowed = ['name', 'phone', 'class', 'avatar', 'bio'];
+    const sanitized = {};
+    for (const key of allowed) {
+      if (updates[key] !== undefined) sanitized[key] = updates[key];
+    }
+    const { data, error } = await supabase
+      .from('users').update({ ...sanitized, updated_at: new Date().toISOString() })
+      .eq('email', userEmail).select().single();
+    if (error) throw new Error(error.message);
+    return { profile: data };
+  }
+
+  // ============ CALENDAR ============
+
+  async getCalendarEvents(classLevel, userEmail) {
+    const { data: user } = await supabase.from('users').select('id').eq('email', userEmail).single();
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0).toISOString();
+
+    const { data, error } = await supabase
+      .from('calendar_events')
+      .select('*')
+      .or(`user_id.eq.${user?.id},and(is_public.eq.true,class_level.eq.${classLevel})`)
+      .gte('event_date', monthStart)
+      .lte('event_date', monthEnd)
+      .order('event_date');
+    if (error) throw new Error(error.message);
+    return { events: data || [] };
+  }
+
+  async createCalendarEvent(teacherEmail, eventData) {
+    const { data: teacher } = await supabase.from('users').select('id').eq('email', teacherEmail).single();
+    if (!teacher) throw new Error('Teacher not found');
+
+    const { data, error } = await supabase.from('calendar_events').insert({
+      ...eventData, created_by: teacher.id, is_public: true,
+    }).select().single();
+    if (error) throw new Error(error.message);
+    return { event: data };
   }
 }
 

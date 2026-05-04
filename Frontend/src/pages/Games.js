@@ -67,27 +67,26 @@ const Games = () => {
         loadData();
     }, [userEmail, studentClass]);
 
-    const handleGameStart = async (game) => {
-        try {
-            // Navigate to game pages
-            if (game.game_component === 'circuit') {
-                navigate('/games/circuit');
-            } else if (game.game_component === 'nutrition') {
-                navigate('/games/nutrition');
-            } else if (game.game_component === 'pizza') {
-                navigate('/games/pizza');
-            } else if (game.game_component === 'photosynthesis') {
-                navigate('/games/photosynthesis');
-            } else if (game.game_component === 'equation') {
-                navigate('/games/equation-unlock');
-            } else {
-                // Handle other games
-                navigate(`/games/${game.game_component}`);
-            }
-        } catch (error) {
-            console.error('Failed to start game:', error);
-            alert('Unable to start game. Please try again.');
-        }
+    const handleGameStart = (game) => {
+        const routeMap = {
+            'circuit': '/games/circuit',
+            'nutrition': '/games/nutrition',
+            'pizza': '/games/pizza',
+            'photosynthesis': '/games/photosynthesis',
+            'equation': '/games/equation-unlock',
+            'equation-unlock': '/games/equation-unlock',
+            'integer-battle': '/games/integer-battle',
+            'cell-explorer': '/games/cell-explorer',
+            'triangle-theorem': '/games/triangle-theorem',
+            'atom-builder': '/games/atom-builder',
+            'trig-tower': '/games/trig-tower',
+            'vector-voyage': '/games/vector-voyage',
+            'periodic-quest': '/games/periodic-quest',
+            'calculus-climber': '/games/calculus-climber',
+            'genetics-lab': '/games/genetics-lab',
+        };
+        const route = routeMap[game.game_component] || `/games/${game.game_component}`;
+        navigate(route);
     };
 
     const getDifficultyColor = (difficulty) => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { GamificationProvider } from "./contexts/GamificationContext";
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -27,6 +28,15 @@ import NutritionGame from "./pages/games/NutritionGame";
 import PizzaGame from "./pages/games/PizzaGame";
 import PhotosynthesisGame from "./pages/games/PhotosynthesisGame";
 import EquationGame from "./pages/games/EquationGame";
+import IntegerBattleGame from "./pages/games/IntegerBattleGame";
+import CellExplorerGame from "./pages/games/CellExplorerGame";
+import TriangleTheoremGame from "./pages/games/TriangleTheoremGame";
+import AtomBuilderGame from "./pages/games/AtomBuilderGame";
+import TrigTowerGame from "./pages/games/TrigTowerGame";
+import VectorVoyageGame from "./pages/games/VectorVoyageGame";
+import PeriodicQuestGame from "./pages/games/PeriodicQuestGame";
+import CalculusClimberGame from "./pages/games/CalculusClimberGame";
+import GeneticsLabGame from "./pages/games/GeneticsLabGame";
 
 
 const queryClient = new QueryClient();
@@ -34,6 +44,7 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <GamificationProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -62,9 +73,19 @@ const App = () => {
             <Route path="/games/pizza" element={<PizzaGame />} />
             <Route path="/games/photosynthesis" element={<PhotosynthesisGame />} />
             <Route path="/games/equation-unlock" element={<EquationGame />} />
+            <Route path="/games/integer-battle" element={<IntegerBattleGame />} />
+            <Route path="/games/cell-explorer" element={<CellExplorerGame />} />
+            <Route path="/games/triangle-theorem" element={<TriangleTheoremGame />} />
+            <Route path="/games/atom-builder" element={<AtomBuilderGame />} />
+            <Route path="/games/trig-tower" element={<TrigTowerGame />} />
+            <Route path="/games/vector-voyage" element={<VectorVoyageGame />} />
+            <Route path="/games/periodic-quest" element={<PeriodicQuestGame />} />
+            <Route path="/games/calculus-climber" element={<CalculusClimberGame />} />
+            <Route path="/games/genetics-lab" element={<GeneticsLabGame />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </GamificationProvider>
     </QueryClientProvider>
   );
 };
