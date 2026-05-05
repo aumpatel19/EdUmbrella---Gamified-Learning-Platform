@@ -1,0 +1,574 @@
+[
+  {
+    "class_level": 6,
+    "subject": "Science",
+    "chapter_no": 1,
+    "title": "Food: Where Does It Come From",
+    "description": "NCERT CBSE Science Class 6 - Food: Where Does It Come From",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313090051851706368188/f152.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130136194542714881156/71.mp4"
+    }
+  },
+  {
+    "class_level": 6,
+    "subject": "Science",
+    "chapter_no": 10,
+    "title": "Motion and Measurement of Distances",
+    "description": "NCERT CBSE Science Class 6 - Motion and Measurement of Distances",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_3131008900324966401676/artifact/logo.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131141080424611841167/motion-and-measurement-of-distances-720-x-1280-.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130136206122762241135/83.mp4"
+    }
+  },
+  {
+    "class_level": 7,
+    "subject": "Science",
+    "chapter_no": 1,
+    "title": "Nutrition in Plants",
+    "description": "NCERT CBSE Science Class 7 - Nutrition in Plants",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31305545279043993613121/artifact/7-science.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313080855294631936110945/nutrition-in-plants-.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130347774434508801107/33.mp4"
+    }
+  },
+  {
+    "class_level": 7,
+    "subject": "Science",
+    "chapter_no": 10,
+    "title": "Respiration in Organisms",
+    "description": "NCERT CBSE Science Class 7 - Respiration in Organisms",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130461125647564801436/ttllogo.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308450527208243211750/artifact/vid_20200615_233319_1597229647550.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130461125647564801436/47.mp4"
+    }
+  },
+  {
+    "class_level": 8,
+    "subject": "Science",
+    "chapter_no": 1,
+    "title": "Crop Production and Management",
+    "description": "NCERT CBSE Science Class 8 - Crop Production and Management",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31307669861185126417717/artifact/tv-icon.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307669663532646418559/crop_production_and_management.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130894448126771201734/b_hi_g_viii_c1_vt1_p1.mp4"
+    }
+  },
+  {
+    "class_level": 8,
+    "subject": "Science",
+    "chapter_no": 8,
+    "title": "Cell Structure and Functions",
+    "description": "NCERT CBSE Science Class 8 - Cell Structure and Functions",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_3130631797363998721104/artifact/web-icon_white-bg-1-01-2.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31309294628492902411179/b_en_g_viii_c8_vt1_part-1.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313090081336451072197/b_hi_g_viii_c8_vt1_p1.mp4"
+    }
+  },
+  {
+    "class_level": 9,
+    "subject": "Science",
+    "chapter_no": 8,
+    "title": "Motion - Uniform and Non-Uniform",
+    "description": "NCERT CBSE Science Class 9 - Motion - Uniform and Non-Uniform",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580824387993601822/ttllogo.png",
+    "videos": {
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580824387993601822/1.mp4",
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580824387993601822/1.mp4"
+    }
+  },
+  {
+    "class_level": 9,
+    "subject": "Science",
+    "chapter_no": 9,
+    "title": "Force and Laws of Motion",
+    "description": "NCERT CBSE Science Class 9 - Force and Laws of Motion",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131020768432619521530/ch27secondaryday20ch27wk04secondarycourse212lec7.mp4.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580826331709441875/4.mp4"
+    }
+  },
+  {
+    "class_level": 9,
+    "subject": "Science",
+    "chapter_no": 1,
+    "title": "Matter in Our Surroundings",
+    "description": "NCERT CBSE Science Class 9 - Matter in Our Surroundings",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310788067219865619/matter-in-our-surroundings.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130986545253007361179/27.mp4"
+    }
+  },
+  {
+    "class_level": 9,
+    "subject": "Science",
+    "chapter_no": 3,
+    "title": "Atoms and Molecules",
+    "description": "NCERT CBSE Science Class 9 - Atoms and Molecules",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131269999822684161828/9.atoms-and-molecules-part-iimodified-video-as-per-reviewers-comments.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130986559923978241135/36.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Science",
+    "chapter_no": 6,
+    "title": "Life Processes - Nutrition",
+    "description": "NCERT CBSE Science Class 10 - Life Processes - Nutrition",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_3130580839856128001357/artifact/ttllogo.thumb.png",
+    "videos": {
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580839856128001357/23.mp4",
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580839856128001357/23.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Science",
+    "chapter_no": 12,
+    "title": "Electricity - Ohm's Law",
+    "description": "NCERT CBSE Science Class 10 - Electricity - Ohm's Law",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_3130186551812669441742/artifact/dsert-econtent-logo_priority-1_1525849772226_1589191307647.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130577877898854401818/simple-electrical-circuit-with-resistors-in-series-and-parallel-connection.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130580852193116161881/32.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Science",
+    "chapter_no": 1,
+    "title": "Chemical Reactions and Equations",
+    "description": "NCERT CBSE Science Class 10 - Chemical Reactions and Equations",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31307736045552435217814/artifact/tv-icon.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313077358789533696111717/chemical-reactions-and-equations-part-1.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130986570428170241182/43.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Science",
+    "chapter_no": 2,
+    "title": "Acids Bases and Salts",
+    "description": "NCERT CBSE Science Class 10 - Acids Bases and Salts",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_3130186551812669441742/artifact/dsert-econtent-logo_priority-1_1525849772226_1589191307647.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31305590947918643212817/reaction-of-acids-with-metal-and-non-metals.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130986575169372161280/aml-aur-kssaark-ke-gunndhrmpart-11chemical-properties-of-acids-and-baseshindiclass-10.mp4"
+    }
+  },
+  {
+    "class_level": 6,
+    "subject": "Mathematics",
+    "chapter_no": 10,
+    "title": "Knowing Our Numbers",
+    "description": "NCERT CBSE Mathematics Class 6 - Knowing Our Numbers",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_313080455267688448112601/artifact/jk.jpeg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313077379405709312111332/part-2.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313077379405709312111332/part-2.mp4"
+    }
+  },
+  {
+    "class_level": 6,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Fractions",
+    "description": "NCERT CBSE Mathematics Class 6 - Fractions",
+    "duration_minutes": 15,
+    "thumbnail_url": "",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31309357858586624011385/types-of-fractions.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31309357858586624011385/types-of-fractions.mp4"
+    }
+  },
+  {
+    "class_level": 6,
+    "subject": "Social Science",
+    "chapter_no": 10,
+    "title": "Understanding Diversity",
+    "description": "NCERT CBSE Social Science Class 6 - Understanding Diversity",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310499901832396811883/ch30coursecode223_lec19.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310499901832396811883/ch30coursecode223_lec19.mp4"
+    }
+  },
+  {
+    "class_level": 7,
+    "subject": "Mathematics",
+    "chapter_no": 10,
+    "title": "Integers",
+    "description": "NCERT CBSE Mathematics Class 7 - Integers",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795700954365952110340/explanation.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795700954365952110340/integers_1558578859456.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131134705849630721179/integers.mp4"
+    }
+  },
+  {
+    "class_level": 7,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Triangles",
+    "description": "NCERT CBSE Mathematics Class 7 - Triangles",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795701526355968111596/explanation.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795701526355968111596/congruence_class_7_1558588929992.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131030158996930561975/ch27secondaryday45ch27wk08secondarycourse211lec17.mp4.mp4"
+    }
+  },
+  {
+    "class_level": 7,
+    "subject": "Social Science",
+    "chapter_no": 10,
+    "title": "Tracing Changes Through Thousand Years",
+    "description": "NCERT CBSE Social Science Class 7 - Tracing Changes Through Thousand Years",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310356383187763211810/tracing-changes-through-a-thousand-years-.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310356383187763211810/tracing-changes-through-a-thousand-years-.mp4"
+    }
+  },
+  {
+    "class_level": 7,
+    "subject": "English",
+    "chapter_no": 10,
+    "title": "An Alien Hand",
+    "description": "NCERT CBSE English Class 7 - An Alien Hand",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131296465006755841842/the-cop-and-the-anthem.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131296465006755841842/the-cop-and-the-anthem.mp4"
+    }
+  },
+  {
+    "class_level": 8,
+    "subject": "Mathematics",
+    "chapter_no": 10,
+    "title": "Rational Numbers",
+    "description": "NCERT CBSE Mathematics Class 8 - Rational Numbers",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795702336208896111604/explanation.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795702336208896111604/chapter_1-_rational_numbers_1561545801439.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307898897633280018302/ep-24-1.mp4"
+    }
+  },
+  {
+    "class_level": 8,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Linear Equations",
+    "description": "NCERT CBSE Mathematics Class 8 - Linear Equations",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795702416908288111605/explanation.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795702416908288111605/chapter_2-linear_equations_in_one_variable_1561545837950.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/do_3130886374856294401107/artifact/linear-equations-2_1597734068135.mp4"
+    }
+  },
+  {
+    "class_level": 8,
+    "subject": "Social Science",
+    "chapter_no": 10,
+    "title": "How When and Where History",
+    "description": "NCERT CBSE Social Science Class 8 - How When and Where History",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308594390750822411872/artifact/tv-icon.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308592031473664012933/01-history-class-viii-unit-1-how-when-where-part-1.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308592031473664012933/01-history-class-viii-unit-1-how-when-where-part-1.mp4"
+    }
+  },
+  {
+    "class_level": 9,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Polynomials",
+    "description": "NCERT CBSE Mathematics Class 9 - Polynomials",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310492306669568012070/6.polynomials-part-v-modified-video-as-per-reviewers-comments.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310278528542310411042/ch27secondaryday2ch27wk01secondarycourse211lec2.mp4-1.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Mathematics",
+    "chapter_no": 10,
+    "title": "Real Numbers",
+    "description": "NCERT CBSE Mathematics Class 10 - Real Numbers",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313095154163212288140/real-numbers.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313095154163212288140/real-numbers.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Quadratic Equations",
+    "description": "NCERT CBSE Mathematics Class 10 - Quadratic Equations",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795704746655744110377/explanation.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795704746655744110377/quadratic_equations-_compressed_1558657763787.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_312795704746655744110377/quadratic_equations-_compressed_1558657763787.mp4"
+    }
+  },
+  {
+    "class_level": 10,
+    "subject": "Social Science",
+    "chapter_no": 10,
+    "title": "Rise of Nationalism Europe",
+    "description": "NCERT CBSE Social Science Class 10 - Rise of Nationalism Europe",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130953250186117121107/the-rise-of-nationalism-in-europe.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130953250186117121107/the-rise-of-nationalism-in-europe.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Physics",
+    "chapter_no": 10,
+    "title": "Units and Measurement",
+    "description": "NCERT CBSE Physics Class 11 - Units and Measurement",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307115669094400011191/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307115669094400011191/i23hvdjdhc8.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307115669094400011191/i23hvdjdhc8.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Physics",
+    "chapter_no": 11,
+    "title": "Laws of Motion Newton",
+    "description": "NCERT CBSE Physics Class 11 - Laws of Motion Newton",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307116845667942411655/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307116845667942411655/csurufozyfm.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307116845667942411655/csurufozyfm.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Chemistry",
+    "chapter_no": 10,
+    "title": "Structure of Atom",
+    "description": "NCERT CBSE Chemistry Class 11 - Structure of Atom",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130710093554810881751/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130710093554810881751/gqmpwgedhhi.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130710093554810881751/gqmpwgedhhi.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Chemistry",
+    "chapter_no": 11,
+    "title": "Chemical Bonding",
+    "description": "NCERT CBSE Chemistry Class 11 - Chemical Bonding",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130710138623836161762/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130710138623836161762/ohmlksg9kbq.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130710138623836161762/ohmlksg9kbq.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Biology",
+    "chapter_no": 10,
+    "title": "Cell The Unit of Life",
+    "description": "NCERT CBSE Biology Class 11 - Cell The Unit of Life",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130708836093050881745/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130708836093050881745/t1qavuzb0k.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130708836093050881745/t1qavuzb0k.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Biology",
+    "chapter_no": 11,
+    "title": "Biomolecules",
+    "description": "NCERT CBSE Biology Class 11 - Biomolecules",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307088560425369611059/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307088560425369611059/ntfvxdmwftk.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31307088560425369611059/ntfvxdmwftk.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Mathematics",
+    "chapter_no": 10,
+    "title": "Sets",
+    "description": "NCERT CBSE Mathematics Class 11 - Sets",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310791728042803213457/mathematics-xi-ch1-ep3.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310791728042803213457/mathematics-xi-ch1-ep3.mp4"
+    }
+  },
+  {
+    "class_level": 11,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Trigonometric Functions",
+    "description": "NCERT CBSE Mathematics Class 11 - Trigonometric Functions",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313108397620355072188/mathematics-xi-ch3-ep5.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_313108397620355072188/mathematics-xi-ch3-ep5.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Physics",
+    "chapter_no": 10,
+    "title": "Electric Charges Fields",
+    "description": "NCERT CBSE Physics Class 12 - Electric Charges Fields",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130711955185090561994/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130711955185090561994/_7itlplrele.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3130958753934622721956/g12phy.1.3.electric-charges-and-fields.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Physics",
+    "chapter_no": 11,
+    "title": "Electromagnetic Induction",
+    "description": "NCERT CBSE Physics Class 12 - Electromagnetic Induction",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131006478679408641877/physics-xii-ch6-ep1.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_3131108344032952321917/physics-class-xii-online-class-for-delhi-government-school-students-sep-18-2020-830-am.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Chemistry",
+    "chapter_no": 10,
+    "title": "Solutions",
+    "description": "NCERT CBSE Chemistry Class 12 - Solutions",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://files.odev.oci.diksha.gov.in/ntp-content-production/content/do_31308592425032908814107/artifact/tv-icon.thumb.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308592425032908814107/l5-chemistry-xii-ch2-ep1.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308592425032908814107/l5-chemistry-xii-ch2-ep1.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Chemistry",
+    "chapter_no": 11,
+    "title": "Electrochemistry",
+    "description": "NCERT CBSE Chemistry Class 12 - Electrochemistry",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31309437785323110411575/l12-chemistry-xii-ch3-ep4.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31309437785323110411575/l12-chemistry-xii-ch3-ep4.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Biology",
+    "chapter_no": 10,
+    "title": "Reproduction Flowering Plants",
+    "description": "NCERT CBSE Biology Class 12 - Reproduction Flowering Plants",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308591562860953612764/l17-biology-xii-ch2-ep1.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31309605839703244814/12bio.2.2.sexual-reproduction-in-flowering-plants.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Biology",
+    "chapter_no": 11,
+    "title": "Genetics Inheritance",
+    "description": "NCERT CBSE Biology Class 12 - Genetics Inheritance",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31308581324555059213642/artifact/206ee204-bf15-495c-97a4-1fc462291dbf.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310424534621388812345/copy-of-ch28wk04srsecondarycourse314lec9.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31310424534621388812345/copy-of-ch28wk04srsecondarycourse314lec9.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Mathematics",
+    "chapter_no": 10,
+    "title": "Relations Functions",
+    "description": "NCERT CBSE Mathematics Class 12 - Relations Functions",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/do_31307618349463142417622/artifact/tv-icon.png",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308581954506752012161/l65-mathematics-xii-ch1-ep5.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31308581954506752012161/l65-mathematics-xii-ch1-ep5.mp4"
+    }
+  },
+  {
+    "class_level": 12,
+    "subject": "Mathematics",
+    "chapter_no": 11,
+    "title": "Integrals Calculus",
+    "description": "NCERT CBSE Mathematics Class 12 - Integrals Calculus",
+    "duration_minutes": 15,
+    "thumbnail_url": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31305471618207744012124/khan.jpg",
+    "videos": {
+      "english": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31305471618207744012124/jbfvrwxupxm.mp4",
+      "hindi": "https://obj.diksha.gov.in/ntp-content-production/content/assets/do_31305471618207744012124/jbfvrwxupxm.mp4"
+    }
+  }
+]

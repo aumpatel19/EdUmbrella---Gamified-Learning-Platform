@@ -89,11 +89,21 @@ const SubjectLectures = () => {
         setCompletedIds(new Set(progressRes.completedIds || []));
         setLectures(
           lecs.map((l, i) => {
-            // Find the best video URL from lecture_videos
             const videoRows = l.lecture_videos || [];
-            const defaultRow = videoRows.find(v => v.is_default) || videoRows[0];
-            const videoUrl = defaultRow?.video_url || null;
-            const subtitleUrls = defaultRow?.subtitle_urls || {};
+            // Build videosByLanguage: { english: url, hindi: url, ... }
+            const videosByLanguage = {};
+            for (const row of videoRows) {
+              if (row.video_url) videosByLanguage[row.language] = row.video_url;
+            }
+            // Build subtitleUrls from rows that have subtitle data
+            const subtitleUrls = {};
+            for (const row of videoRows) {
+              if (row.subtitle_urls) Object.assign(subtitleUrls, row.subtitle_urls);
+            }
+            // Default video: prefer saved language preference, then english, then first
+            const savedLang = localStorage.getItem('preferredSubtitleLang') || 'english';
+            const defaultLang = videosByLanguage[savedLang] ? savedLang : Object.keys(videosByLanguage)[0];
+            const videoUrl = videosByLanguage[defaultLang] || null;
             return {
               id: l.id,
               title: l.title,
@@ -103,6 +113,7 @@ const SubjectLectures = () => {
               uploadDate: l.created_at || new Date().toISOString(),
               thumbnail: l.thumbnail_url || thumbnails[i % 6],
               lecture_videos: videoRows,
+              videosByLanguage,
               videoUrl,
               subtitleUrls,
             };
@@ -348,6 +359,7 @@ const SubjectLectures = () => {
                               <VideoPlayer
                                 key={selectedLecture.id}
                                 videoUrl={selectedLecture.videoUrl}
+                                videosByLanguage={selectedLecture.videosByLanguage || {}}
                                 subtitleUrls={selectedLecture.subtitleUrls || {}}
                                 title={selectedLecture.title}
                                 posterUrl={selectedLecture.thumbnail}

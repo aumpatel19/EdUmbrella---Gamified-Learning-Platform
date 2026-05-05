@@ -12,10 +12,11 @@ const LANG_META = {
   bengali:  { name: 'বাংলা',    flag: '🟢',  short: 'BN' },
 };
 
-// Preferred order for display
 const LANG_ORDER = ['english', 'hindi', 'telugu', 'gujarati', 'kannada', 'tamil', 'marathi', 'bengali'];
 
-const VideoPlayer = ({ videoUrl, subtitleUrls = {}, title, onEnded, posterUrl }) => {
+// videosByLanguage: { english: mp4Url, hindi: mp4Url, ... }  — switches actual video source
+// subtitleUrls:     { english: vttUrl, hindi: vttUrl, ... }  — switches subtitle track on same video
+const VideoPlayer = ({ videoUrl, videosByLanguage = {}, subtitleUrls = {}, title, onEnded, posterUrl }) => {
   const videoRef = useRef(null);
   const progressRef = useRef(null);
   const [playing, setPlaying] = useState(false);
@@ -26,13 +27,18 @@ const VideoPlayer = ({ videoUrl, subtitleUrls = {}, title, onEnded, posterUrl })
     const saved = localStorage.getItem('preferredSubtitleLang') || 'english';
     return saved;
   });
+  // Active video URL — changes when user switches language (if per-lang videos exist)
+  const [activeVideoUrl, setActiveVideoUrl] = useState(() => {
+    const saved = localStorage.getItem('preferredSubtitleLang') || 'english';
+    return videosByLanguage[saved] || videosByLanguage['english'] || videoUrl;
+  });
   const [showControls, setShowControls] = useState(true);
   const [loaded, setLoaded] = useState(false);
   const controlsTimerRef = useRef(null);
 
-  const availableLangs = LANG_ORDER.filter(l => subtitleUrls[l]);
+  // Available languages = union of per-lang videos + subtitle tracks
+  const availableLangs = LANG_ORDER.filter(l => videosByLanguage[l] || subtitleUrls[l]);
 
-  // Auto-hide controls after 3s of inactivity
   const resetControlsTimer = () => {
     setShowControls(true);
     clearTimeout(controlsTimerRef.current);
@@ -97,11 +103,30 @@ const VideoPlayer = ({ videoUrl, subtitleUrls = {}, title, onEnded, posterUrl })
   const switchLang = (lang) => {
     setSelectedLang(lang);
     localStorage.setItem('preferredSubtitleLang', lang);
-    // Switch active subtitle track
-    const v = videoRef.current;
-    if (!v) return;
-    for (let i = 0; i < v.textTracks.length; i++) {
-      v.textTracks[i].mode = v.textTracks[i].label === lang ? 'showing' : 'hidden';
+
+    // If this language has its own video file, switch the source
+    if (videosByLanguage[lang]) {
+      const v = videoRef.current;
+      const wasPlaying = v && !v.paused;
+      const savedTime = v ? v.currentTime : 0;
+      setLoaded(false);
+      setActiveVideoUrl(videosByLanguage[lang]);
+      // After source change, restore position
+      if (v) {
+        v.src = videosByLanguage[lang];
+        v.load();
+        v.addEventListener('loadedmetadata', () => {
+          v.currentTime = savedTime;
+          if (wasPlaying) v.play();
+        }, { once: true });
+      }
+    } else {
+      // Fall back to subtitle track switching on the same video
+      const v = videoRef.current;
+      if (!v) return;
+      for (let i = 0; i < v.textTracks.length; i++) {
+        v.textTracks[i].mode = v.textTracks[i].label === lang ? 'showing' : 'hidden';
+      }
     }
   };
 
@@ -124,9 +149,7 @@ const VideoPlayer = ({ videoUrl, subtitleUrls = {}, title, onEnded, posterUrl })
       {availableLangs.length > 1 && (
         <div
           className="absolute top-0 left-0 right-0 z-20 flex items-center gap-1.5 px-3 py-2 flex-wrap"
-          style={{
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.75), transparent)',
-          }}
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.75), transparent)' }}
         >
           <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
           {availableLangs.map(lang => {
@@ -164,9 +187,9 @@ const VideoPlayer = ({ videoUrl, subtitleUrls = {}, title, onEnded, posterUrl })
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
       >
-        <source src={videoUrl} type="video/mp4" />
-        {/* Subtitle tracks — one per language */}
-        {availableLangs.map((lang, i) => (
+        <source src={activeVideoUrl} type="video/mp4" />
+        {/* Subtitle tracks for videos that share one source but have VTT files */}
+        {LANG_ORDER.filter(l => subtitleUrls[l]).map(lang => (
           <track
             key={lang}
             kind="subtitles"
