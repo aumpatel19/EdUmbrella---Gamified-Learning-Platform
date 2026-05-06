@@ -922,6 +922,112 @@ class ApiService {
     if (error) throw new Error(error.message);
     return { event: data };
   }
+
+  // ============ TEACHER LECTURE MANAGEMENT ============
+
+  async getTeacherLectures(teacherEmail) {
+    const { data: teacher } = await supabase
+      .from('users').select('id').eq('email', teacherEmail).eq('role', 'teacher').single();
+    if (!teacher) throw new Error('Teacher not found');
+
+    const { data, error } = await supabase
+      .from('lectures')
+      .select('id, title, description, class_level, chapter_number, duration_minutes, is_active, created_at, upload_type, subjects(id, name, icon, color), lecture_videos(id, language, youtube_video_id, video_url, is_default)')
+      .eq('teacher_id', teacher.id)
+      .order('created_at', { ascending: false });
+    if (error) throw new Error(error.message);
+    return { lectures: data || [] };
+  }
+
+  async createTeacherLecture(teacherEmail, lectureData) {
+    const { data: teacher } = await supabase
+      .from('users').select('id').eq('email', teacherEmail).eq('role', 'teacher').single();
+    if (!teacher) throw new Error('Teacher not found');
+
+    const { youtubeVideoId, language, ...lectureFields } = lectureData;
+
+    const { data: lecture, error } = await supabase
+      .from('lectures')
+      .insert({
+        ...lectureFields,
+        teacher_id: teacher.id,
+        upload_type: 'teacher',
+        display_order: 999,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+
+    // If a YouTube video ID was provided, attach it
+    if (youtubeVideoId) {
+      const { error: vidError } = await supabase.from('lecture_videos').insert({
+        lecture_id: lecture.id,
+        language: language || 'english',
+        youtube_video_id: youtubeVideoId,
+        is_default: true,
+      });
+      if (vidError) console.warn('Could not attach video:', vidError.message);
+    }
+
+    return { lecture };
+  }
+
+  async updateTeacherLecture(teacherEmail, lectureId, updates) {
+    const { data: teacher } = await supabase
+      .from('users').select('id').eq('email', teacherEmail).eq('role', 'teacher').single();
+    if (!teacher) throw new Error('Teacher not found');
+
+    const { youtubeVideoId, language, ...lectureFields } = updates;
+
+    const { data, error } = await supabase
+      .from('lectures')
+      .update({ ...lectureFields, updated_at: new Date().toISOString() })
+      .eq('id', lectureId)
+      .eq('teacher_id', teacher.id)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+
+    // Update or insert the default video
+    if (youtubeVideoId !== undefined) {
+      await supabase.from('lecture_videos').upsert({
+        lecture_id: lectureId,
+        language: language || 'english',
+        youtube_video_id: youtubeVideoId,
+        is_default: true,
+      }, { onConflict: 'lecture_id,language' });
+    }
+
+    return { lecture: data };
+  }
+
+  async deleteTeacherLecture(teacherEmail, lectureId) {
+    const { data: teacher } = await supabase
+      .from('users').select('id').eq('email', teacherEmail).eq('role', 'teacher').single();
+    if (!teacher) throw new Error('Teacher not found');
+
+    const { error } = await supabase
+      .from('lectures')
+      .delete()
+      .eq('id', lectureId)
+      .eq('teacher_id', teacher.id);
+    if (error) throw new Error(error.message);
+    return { message: 'Lecture deleted successfully' };
+  }
+
+  async toggleTeacherLectureStatus(teacherEmail, lectureId, isActive) {
+    const { data: teacher } = await supabase
+      .from('users').select('id').eq('email', teacherEmail).eq('role', 'teacher').single();
+    if (!teacher) throw new Error('Teacher not found');
+
+    const { error } = await supabase
+      .from('lectures')
+      .update({ is_active: isActive })
+      .eq('id', lectureId)
+      .eq('teacher_id', teacher.id);
+    if (error) throw new Error(error.message);
+    return { message: isActive ? 'Lecture published' : 'Lecture unpublished' };
+  }
 }
 
 export default new ApiService();

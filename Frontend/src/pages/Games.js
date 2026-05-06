@@ -154,6 +154,18 @@ const Games = () => {
         }
     };
 
+    const GAME_SVG = {
+        'integer-battle':   { bg: ['#1a237e','#4a148c'], icon: '⚔️', label: '± × ÷',    text: 'Integer Battle' },
+        'cell-explorer':    { bg: ['#004d40','#00695c'], icon: '🔬', label: 'Organelles', text: 'Cell Explorer' },
+        'triangle-theorem': { bg: ['#1b5e20','#2e7d32'], icon: '△',  label: 'SAS·ASA·SSS', text: 'Triangle Theorem' },
+        'atom-builder':     { bg: ['#0d47a1','#311b92'], icon: '⚛️', label: 'p⁺ n⁰ e⁻',  text: 'Atom Builder' },
+        'trig-tower':       { bg: ['#004d40','#00838f'], icon: '🗼', label: 'sin·cos·tan', text: 'Trig Tower' },
+        'vector-voyage':    { bg: ['#006064','#0277bd'], icon: '🧭', label: 'A + B = R',  text: 'Vector Voyage' },
+        'periodic-quest':   { bg: ['#4a148c','#880e4f'], icon: '🧪', label: 'H He Li Be', text: 'Periodic Quest' },
+        'calculus-climber': { bg: ['#1a237e','#283593'], icon: '📈', label: 'd/dx · ∫',  text: 'Calculus Climber' },
+        'genetics-lab':     { bg: ['#880e4f','#4a148c'], icon: '🧬', label: 'Aa × Aa',   text: 'Genetics Lab' },
+    };
+
     const getGameImage = (game) => {
         const cls = "w-full h-full object-cover";
         if (game.game_component === 'circuit')
@@ -166,9 +178,21 @@ const Games = () => {
             return <img src={photosynthesisGameImage} alt="Photosynthesis Explorer Game" className={cls} />;
         if (game.game_component === 'equation' || game.game_component === 'equation-unlock')
             return <img src={equationGameImage} alt="Equation Unlock Challenge Game" className={cls} />;
+
+        const svg = GAME_SVG[game.game_component];
+        if (svg) {
+            return (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-1"
+                    style={{ background: `linear-gradient(135deg, ${svg.bg[0]}, ${svg.bg[1]})` }}>
+                    <span style={{ fontSize: 28, lineHeight: 1 }}>{svg.icon}</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.8)', fontFamily: 'monospace', letterSpacing: 1 }}>{svg.label}</span>
+                </div>
+            );
+        }
         return (
-            <div className="w-full h-full flex items-center justify-center text-4xl" style={{ background: 'rgba(6,182,212,0.15)' }}>
-                {game.category_icon || "🎮"}
+            <div className="w-full h-full flex items-center justify-center text-4xl"
+                style={{ background: 'linear-gradient(135deg,rgba(124,58,237,0.2),rgba(6,182,212,0.2))' }}>
+                🎮
             </div>
         );
     };

@@ -7,14 +7,87 @@ import { useState, useEffect } from "react";
 import ApiService from "../api";
 import SubjectIcon from "../components/SubjectIcon";
 
-import sci1 from "../assets/sci1.png";
-import sci2 from "../assets/sci2.png";
-import sci3 from "../assets/sci3.png";
-import sci4 from "../assets/sci4.png";
-import sci5 from "../assets/sci5.png";
-import sci6 from "../assets/sci6.png";
+// ─── Topic thumbnails — Unsplash CDN (reliable, no CORS, no hotlink blocks) ───
+const p = (id) => `https://images.unsplash.com/photo-${id}?w=480&h=270&fit=crop&auto=format&q=75`;
 
-const thumbnails = [sci1, sci2, sci3, sci4, sci5, sci6];
+const TOPIC_IMAGES = {
+  // Science 6–8
+  'food: where':            p('1490818153393-6f5be8a78c1c'), // fruit & vegetable display
+  'nutrition in plants':    p('1441974231432-02f0c21299ed'), // green sunlit leaf
+  'respiration':            p('1559757148-7b2f5a34b16e'),    // lungs / breathing
+  'crop production':        p('1500382017468-9049fed747ef'), // golden wheat field
+  'cell structure':         p('1576086213369-97a306d36557'), // microscope
+  'cell the unit':          p('1576086213369-97a306d36557'), // microscope
+  // Science 9–10
+  'motion and measurement': p('1568702846914-96b305d2aaeb'), // speedometer dashboard
+  'motion - uniform':       p('1568702846914-96b305d2aaeb'), // speedometer
+  'force and laws':         p('1581093804218-3aef5d50fcea'), // physics equipment
+  'matter in our':          p('1493925410384-1a571dd7a2b8'), // ice & water states
+  'atoms and molecules':    p('1518770660439-4636190af475'), // atom / physics visualization
+  'life processes':         p('1559757148-7b2f5a34b16e'),    // biology / body
+  "ohm's law":              p('1589939705384-5185137a7f0f'), // electric circuit board
+  'electricity':            p('1589939705384-5185137a7f0f'), // circuit board
+  'chemical reactions':     p('1532094349884-543bc11b234d'), // chemistry lab beakers
+  'acids bases':            p('1583337130417-3346a1be7dee'), // colorful chemistry flasks
+  // Mathematics
+  'knowing our numbers':    p('1635070041078-e363dbe005cb'), // math notebook & numbers
+  'fractions':              p('1506905925346-21bda4d32df4'), // sliced pizza / pie
+  'integers':               p('1509228468518-180009e0f4bc'), // ruler / number line
+  'triangles':              p('1509228468518-180009e0f4bc'), // geometry shapes
+  'rational numbers':       p('1635070041078-e363dbe005cb'), // math
+  'linear equations':       p('1453733190371-a0e61c9fad97'), // graph paper / equations
+  'polynomials':            p('1453733190371-a0e61c9fad97'), // graph / curve
+  'real numbers':           p('1635070041078-e363dbe005cb'), // numbers
+  'quadratic equations':    p('1453733190371-a0e61c9fad97'), // parabola / graph
+  'sets':                   p('1509228468518-180009e0f4bc'), // venn / circles
+  'trigonometric':          p('1509228468518-180009e0f4bc'), // circle / angle
+  'relations':              p('1453733190371-a0e61c9fad97'), // functions / mapping
+  'integrals':              p('1453733190371-a0e61c9fad97'), // calculus / area
+  // Social Science
+  'understanding diversity': p('1529156069898-49953e39b3ac'), // diverse group of people
+  'tracing changes':        p('1524492412937-b28074a5d7da'), // ancient India / history
+  'how when and where':     p('1461360228754-6e81c478b882'), // old map / history
+  'rise of nationalism':    p('1550648051-a9640e851cc0'),    // flag / revolution crowd
+  // Physics 11–12
+  'units and measurement':  p('1551703599-6c16f31a1a33'),    // measuring instruments
+  'laws of motion newton':  p('1581093804218-3aef5d50fcea'), // physics
+  'electric charges':       p('1466611653911-0628a2b47fd3'), // lightning / electricity
+  'electromagnetic':        p('1519125323398-675f0ddb6308'), // coil / magnet
+  // Chemistry 11–12
+  'structure of atom':      p('1518770660439-4636190af475'), // atomic visualization
+  'chemical bonding':       p('1532094349884-543bc11b234d'), // chemistry lab
+  'solutions':              p('1583337130417-3346a1be7dee'), // colored solutions
+  'electrochemistry':       p('1516146544193-b172d84fb6b0'), // battery / electrodes
+  // Biology 11–12
+  'biomolecules':           p('1526663843849-f9dd5a2a7e6e'), // DNA helix visualization
+  'reproduction flower':    p('1490750967868-88eadb14f12a'), // flower cross-section
+  'genetics':               p('1559233351-c8b1f17d2b90'),    // DNA lab research
+  // English
+  'an alien hand':          p('1512820708607-22a5fe5b5efb'), // open book
+};
+
+const SUBJECT_FALLBACKS = {
+  'Mathematics':    p('1635070041078-e363dbe005cb'),
+  'Science':        p('1532094349884-543bc11b234d'),
+  'Physics':        p('1518770660439-4636190af475'),
+  'Chemistry':      p('1583337130417-3346a1be7dee'),
+  'Biology':        p('1576086213369-97a306d36557'),
+  'English':        p('1512820708607-22a5fe5b5efb'),
+  'Hindi':          p('1524492412937-b28074a5d7da'),
+  'Social Science': p('1461360228754-6e81c478b882'),
+};
+
+function getTopicThumbnail(title, subject) {
+  const t = (title || '').toLowerCase();
+  for (const [key, url] of Object.entries(TOPIC_IMAGES)) {
+    if (t.includes(key)) return url;
+  }
+  return SUBJECT_FALLBACKS[subject] || SUBJECT_FALLBACKS['Science'];
+}
+
+
+
+
 
 const subjectMeta = {
   'Mathematics':    { icon: '🧮', color: 'from-blue-500 to-blue-700' },
@@ -85,40 +158,41 @@ const SubjectLectures = () => {
 
         const lecs = lecturesRes.lectures || [];
         if (lecs.length > 0) setSubjectInfo(lecs[0].subjects);
-
         setCompletedIds(new Set(progressRes.completedIds || []));
-        setLectures(
-          lecs.map((l, i) => {
-            const videoRows = l.lecture_videos || [];
-            // Build videosByLanguage: { english: url, hindi: url, ... }
-            const videosByLanguage = {};
-            for (const row of videoRows) {
-              if (row.video_url) videosByLanguage[row.language] = row.video_url;
-            }
-            // Build subtitleUrls from rows that have subtitle data
-            const subtitleUrls = {};
-            for (const row of videoRows) {
-              if (row.subtitle_urls) Object.assign(subtitleUrls, row.subtitle_urls);
-            }
-            // Default video: prefer saved language preference, then english, then first
-            const savedLang = localStorage.getItem('preferredSubtitleLang') || 'english';
-            const defaultLang = videosByLanguage[savedLang] ? savedLang : Object.keys(videosByLanguage)[0];
-            const videoUrl = videosByLanguage[defaultLang] || null;
-            return {
-              id: l.id,
-              title: l.title,
-              description: l.description || `Chapter ${l.chapter_number}: ${l.title}`,
-              duration: `${l.duration_minutes || 30} min`,
-              views: (i + 1) * 17 + 80,
-              uploadDate: l.created_at || new Date().toISOString(),
-              thumbnail: l.thumbnail_url || thumbnails[i % 6],
-              lecture_videos: videoRows,
-              videosByLanguage,
-              videoUrl,
-              subtitleUrls,
-            };
-          })
-        );
+
+
+        // Build lecture objects — thumbnails resolved instantly from static map
+        const built = lecs.map((l, i) => {
+          const videoRows = l.lecture_videos || [];
+          const videosByLanguage = {};
+          for (const row of videoRows) {
+            if (row.video_url) videosByLanguage[row.language] = row.video_url;
+          }
+          const subtitleUrls = {};
+          for (const row of videoRows) {
+            if (row.subtitle_urls) Object.assign(subtitleUrls, row.subtitle_urls);
+          }
+          const savedLang = localStorage.getItem('preferredSubtitleLang') || 'english';
+          const defaultLang = videosByLanguage[savedLang] ? savedLang : Object.keys(videosByLanguage)[0];
+          const subjectName = l.subjects?.name || '';
+          return {
+            id: l.id,
+            title: l.title,
+            subjectName,
+            description: l.description || `Chapter ${l.chapter_number}: ${l.title}`,
+            duration: `${l.duration_minutes || 30} min`,
+            views: (i + 1) * 17 + 80,
+            uploadDate: l.created_at || new Date().toISOString(),
+            thumbnail: getTopicThumbnail(l.title, subjectName),
+            lecture_videos: videoRows,
+            videosByLanguage,
+            videoUrl: videosByLanguage[defaultLang] || null,
+            subtitleUrls,
+          };
+        });
+
+        setLectures(built);
+
       } catch (err) {
         console.error('Failed to load lectures:', err);
       } finally {
@@ -563,6 +637,10 @@ const SubjectLectures = () => {
                                 src={lecture.thumbnail}
                                 alt={lecture.title}
                                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = SUBJECT_FALLBACKS[lecture.subjectName] || SUBJECT_FALLBACKS['Science'];
+                                }}
                               />
                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300" />
                               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

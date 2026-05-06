@@ -1,91 +1,196 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "../components/ui/badge";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "../components/ui/sidebar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {
-  Upload, Play, Eye, Edit, Trash2, Plus, Video, FileVideo,
-  Clock, Users, CheckCircle, AlertCircle, Zap
+  Upload, Play, Eye, EyeOff, Edit, Trash2, Plus, Video, FileVideo,
+  Clock, Users, CheckCircle, AlertCircle, X, BookOpen, Search, Filter, Youtube
 } from "lucide-react";
 import TeacherSidebar from "../components/TeacherSidebar";
+import api from "../api";
 
-const TeacherContent = () => {
+const LANGUAGES = ["english","hindi","telugu","gujarati","kannada","tamil","marathi","bengali"];
+const CLASS_LEVELS = [6,7,8,9,10,11,12];
+const SUBJECT_MAP = {
+  6:  ["Mathematics","Science","Social Science","English","Hindi"],
+  7:  ["Mathematics","Science","Social Science","English","Hindi"],
+  8:  ["Mathematics","Science","Social Science","English","Hindi"],
+  9:  ["Mathematics","Science","Social Science","English","Hindi"],
+  10: ["Mathematics","Science","Social Science","English","Hindi"],
+  11: ["Mathematics","Physics","Chemistry","Biology","English"],
+  12: ["Mathematics","Physics","Chemistry","Biology","English"],
+};
+
+const EMPTY_FORM = {
+  title: "", description: "", class_level: "6", subject_name: "Mathematics",
+  chapter_number: 1, duration_minutes: 30, youtubeVideoId: "", language: "english",
+  is_active: false,
+};
+
+const inputStyle = {
+  background: "rgba(15,22,41,0.7)", border: "1px solid rgba(99,102,241,0.25)",
+  color: "#fff", borderRadius: 10, padding: "9px 13px", width: "100%", fontSize: 13, outline: "none",
+};
+const labelStyle = { color: "#94a3b8", fontSize: 12, marginBottom: 4, display: "block" };
+
+function extractYtId(raw) {
+  const m = raw.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : raw.trim();
+}
+
+export default function TeacherContent() {
   const navigate = useNavigate();
-  const userName = localStorage.getItem("userName") || "Teacher";
-  const [isUploading, setIsUploading] = useState(false);
-  const [showUploadForm, setShowUploadForm] = useState(false);
+  const userEmail = localStorage.getItem("userEmail") || "";
+  const userName  = localStorage.getItem("userName")  || "Teacher";
+
+  const [lectures, setLectures]         = useState([]);
+  const [subjects, setSubjects]         = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [saving, setSaving]             = useState(false);
+  const [showForm, setShowForm]         = useState(false);
+  const [editId, setEditId]             = useState(null);
+  const [form, setForm]                 = useState(EMPTY_FORM);
+  const [search, setSearch]             = useState("");
+  const [filterClass, setFilterClass]   = useState("all");
+  const [filterSubject, setFilterSubject] = useState("all");
+  const [toast, setToast]               = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  const showToast = (msg, ok = true) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const loadLectures = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { lectures: data } = await api.getTeacherLectures(userEmail);
+      setLectures(data);
+    } catch (e) { showToast(e.message, false); }
+    finally { setLoading(false); }
+  }, [userEmail]);
+
+  const loadSubjects = useCallback(async () => {
+    try {
+      const { subjects: data } = await api.getSubjects();
+      setSubjects(data);
+    } catch {}
+  }, []);
+
+  useEffect(() => { loadLectures(); loadSubjects(); }, [loadLectures, loadSubjects]);
+
+  const getSubjectId = (name) => subjects.find(s => s.name === name)?.id;
+
+  const openAdd  = () => { setForm(EMPTY_FORM); setEditId(null); setShowForm(true); };
+  const openEdit = (lec) => {
+    const vid = lec.lecture_videos?.[0];
+    setForm({
+      title: lec.title, description: lec.description || "",
+      class_level: String(lec.class_level), subject_name: lec.subjects?.name || "Mathematics",
+      chapter_number: lec.chapter_number || 1, duration_minutes: lec.duration_minutes || 30,
+      youtubeVideoId: vid?.youtube_video_id || "", language: vid?.language || "english",
+      is_active: lec.is_active,
+    });
+    setEditId(lec.id);
+    setShowForm(true);
+  };
+  const closeForm = () => { setShowForm(false); setEditId(null); };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const subjectId = getSubjectId(form.subject_name);
+      const payload = {
+        title: form.title.trim(), description: form.description.trim(),
+        class_level: parseInt(form.class_level), subject_id: subjectId,
+        chapter_number: parseInt(form.chapter_number) || 1,
+        duration_minutes: parseInt(form.duration_minutes) || 30,
+        is_active: form.is_active,
+        youtubeVideoId: extractYtId(form.youtubeVideoId),
+        language: form.language,
+      };
+      if (editId) {
+        await api.updateTeacherLecture(userEmail, editId, payload);
+        showToast("Lecture updated!");
+      } else {
+        await api.createTeacherLecture(userEmail, payload);
+        showToast("Lecture created!");
+      }
+      closeForm();
+      loadLectures();
+    } catch (err) { showToast(err.message, false); }
+    finally { setSaving(false); }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await api.deleteTeacherLecture(userEmail, id);
+      showToast("Lecture deleted.");
+      setConfirmDelete(null);
+      loadLectures();
+    } catch (err) { showToast(err.message, false); }
+  };
+
+  const handleToggle = async (lec) => {
+    try {
+      await api.toggleTeacherLectureStatus(userEmail, lec.id, !lec.is_active);
+      showToast(lec.is_active ? "Lecture unpublished." : "Lecture published!");
+      loadLectures();
+    } catch (err) { showToast(err.message, false); }
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem("userType");
-    localStorage.removeItem("userName");
+    localStorage.removeItem("userType"); localStorage.removeItem("userName");
     navigate("/");
   };
 
-  const subjects = [
-    { id: "math", name: "Mathematics", icon: "🧮", color: "from-blue-500 to-blue-700", glow: "59,130,246", videoCount: 12, totalDuration: "8h 30m", status: "active" },
-    { id: "science", name: "Science", icon: "🔬", color: "from-green-500 to-green-700", glow: "16,185,129", videoCount: 15, totalDuration: "10h 45m", status: "active" },
-    { id: "physics", name: "Physics", icon: "⚛️", color: "from-purple-500 to-purple-700", glow: "124,58,237", videoCount: 18, totalDuration: "12h 15m", status: "active" },
-    { id: "history", name: "History", icon: "🌍", color: "from-orange-500 to-orange-700", glow: "245,158,11", videoCount: 10, totalDuration: "6h 20m", status: "active" }
-  ];
+  const availableSubjects = SUBJECT_MAP[parseInt(form.class_level)] || SUBJECT_MAP[6];
+  const allSubjectNames   = [...new Set(lectures.map(l => l.subjects?.name).filter(Boolean))];
 
-  const recentVideos = [
-    { id: 1, title: "Introduction to Calculus", subject: "Mathematics", duration: "45 min", uploadDate: "2024-01-15", views: 234, status: "published" },
-    { id: 2, title: "Chemical Reactions Basics", subject: "Science", duration: "38 min", uploadDate: "2024-01-14", views: 189, status: "published" },
-    { id: 3, title: "Newton's Laws of Motion", subject: "Physics", duration: "52 min", uploadDate: "2024-01-13", views: 156, status: "draft" },
-    { id: 4, title: "World War II Timeline", subject: "History", duration: "41 min", uploadDate: "2024-01-12", views: 98, status: "published" }
-  ];
+  const filtered = lectures.filter(l => {
+    const matchSearch  = l.title.toLowerCase().includes(search.toLowerCase());
+    const matchClass   = filterClass   === "all" || String(l.class_level) === filterClass;
+    const matchSubject = filterSubject === "all" || l.subjects?.name === filterSubject;
+    return matchSearch && matchClass && matchSubject;
+  });
 
-  const handleVideoUpload = async (formData) => {
-    setIsUploading(true);
-    setTimeout(() => {
-      setIsUploading(false);
-      setShowUploadForm(false);
-      alert("Video uploaded successfully! It will be available to students soon.");
-    }, 3000);
+  const stats = {
+    total:     lectures.length,
+    published: lectures.filter(l => l.is_active).length,
+    drafts:    lectures.filter(l => !l.is_active).length,
+    views:     filtered.length,
   };
-
-  const statCards = [
-    { label: "Total Videos", value: "55", icon: <Video className="w-5 h-5" />, color: "59,130,246" },
-    { label: "Total Views", value: "2,350", icon: <Eye className="w-5 h-5" />, color: "16,185,129" },
-    { label: "Total Duration", value: "37h+", icon: <Clock className="w-5 h-5" />, color: "124,58,237" },
-    { label: "Active Students", value: "124", icon: <Users className="w-5 h-5" />, color: "245,158,11" },
-  ];
 
   return (
     <SidebarProvider>
       <TeacherSidebar />
       <SidebarInset className="overflow-x-hidden">
         <div className="min-h-screen" style={{ background: "#080D1A" }}>
-          {/* Dot grid */}
           <div className="fixed inset-0 pointer-events-none" style={{
-            backgroundImage: "radial-gradient(rgba(16,185,129,0.12) 1px, transparent 1px)",
-            backgroundSize: "30px 30px"
+            backgroundImage: "radial-gradient(rgba(16,185,129,0.1) 1px, transparent 1px)",
+            backgroundSize: "30px 30px",
           }} />
 
           {/* Header */}
           <header className="sticky top-0 z-50" style={{
-            background: "rgba(8,13,26,0.95)",
-            backdropFilter: "blur(16px)",
-            borderBottom: "1px solid rgba(16,185,129,0.15)"
+            background: "rgba(8,13,26,0.96)", backdropFilter: "blur(16px)",
+            borderBottom: "1px solid rgba(16,185,129,0.15)",
           }}>
-            <div className="px-4 py-4 flex items-center justify-between min-w-0">
-              <div className="flex items-center gap-4 min-w-0 flex-1">
+            <div className="px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 <SidebarTrigger className="text-slate-400 hover:text-white" />
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #10B981, #059669)" }}>
-                    <span className="text-sm">📚</span>
-                  </div>
-                  <h1 className="text-lg font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
-                    Content <span style={{ background: "linear-gradient(90deg,#10B981,#06B6D4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Management</span>
-                  </h1>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
+                  <span className="text-sm">📚</span>
                 </div>
+                <h1 className="text-lg font-bold text-white" style={{ fontFamily: "Sora,sans-serif" }}>
+                  Content <span style={{ background: "linear-gradient(90deg,#10B981,#06B6D4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Hub</span>
+                </h1>
               </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: "linear-gradient(135deg,#10B981,#059669)" }}>
                   {userName.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-slate-300 text-sm">{userName}</span>
+                <span className="text-slate-300 text-sm hidden sm:block">{userName}</span>
                 <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg text-slate-400 border text-sm hover:text-white transition-colors" style={{ borderColor: "rgba(16,185,129,0.3)" }}>
                   Logout
                 </button>
@@ -93,79 +198,148 @@ const TeacherContent = () => {
             </div>
           </header>
 
-          <div className="relative z-10 px-4 py-6 sm:py-8 w-full">
-            {/* Page header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest">Teacher Portal</span>
+          {/* Toast */}
+          {toast && (
+            <div className="fixed top-20 right-6 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-2xl transition-all" style={{
+              background: toast.ok ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.15)",
+              border: `1px solid ${toast.ok ? "rgba(16,185,129,0.4)" : "rgba(239,68,68,0.4)"}`,
+              color: toast.ok ? "#10B981" : "#F87171", backdropFilter: "blur(12px)",
+            }}>
+              {toast.ok ? "✅" : "❌"} {toast.msg}
+            </div>
+          )}
+
+          {/* Confirm Delete Modal */}
+          {confirmDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}>
+              <div className="rounded-2xl p-6 w-80" style={{ background: "#0f1629", border: "1px solid rgba(239,68,68,0.3)" }}>
+                <h3 className="text-white font-bold mb-2">Delete Lecture?</h3>
+                <p className="text-slate-400 text-sm mb-5">This will permanently delete the lecture and its video link.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => handleDelete(confirmDelete)} className="flex-1 py-2 rounded-lg text-white text-sm font-semibold" style={{ background: "linear-gradient(135deg,#ef4444,#dc2626)" }}>Delete</button>
+                  <button onClick={() => setConfirmDelete(null)} className="flex-1 py-2 rounded-lg text-slate-300 text-sm border" style={{ borderColor: "rgba(99,102,241,0.3)" }}>Cancel</button>
                 </div>
-                <h2 className="text-3xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>
-                  📚 Content <span style={{ background: "linear-gradient(90deg,#10B981,#06B6D4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Hub</span>
-                </h2>
-                <p className="text-slate-400 mt-1">Upload and manage video lectures for your students</p>
               </div>
-              {!showUploadForm && (
-                <button onClick={() => setShowUploadForm(true)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold transition-all hover:scale-105" style={{ background: "linear-gradient(135deg,#10B981,#059669)", boxShadow: "0 0 20px rgba(16,185,129,0.4)" }}>
-                  <Plus className="w-4 h-4" />
-                  Upload Video
+            </div>
+          )}
+
+          <div className="relative z-10 px-4 py-6 w-full">
+            {/* Page title row */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest">Teacher Portal</span>
+                <h2 className="text-2xl font-bold text-white mt-1" style={{ fontFamily: "Sora,sans-serif" }}>
+                  📚 My <span style={{ background: "linear-gradient(90deg,#10B981,#06B6D4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Lectures</span>
+                </h2>
+                <p className="text-slate-400 text-sm mt-0.5">Upload and manage video lectures for your students</p>
+              </div>
+              {!showForm && (
+                <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 rounded-xl text-white font-semibold text-sm transition-all hover:scale-105" style={{ background: "linear-gradient(135deg,#10B981,#059669)", boxShadow: "0 0 20px rgba(16,185,129,0.35)" }}>
+                  <Plus className="w-4 h-4" /> Upload Lecture
                 </button>
               )}
             </div>
 
-            {/* Upload Form */}
-            {showUploadForm && (
-              <div className="mb-8 rounded-2xl p-6" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(16,185,129,0.2)" }}>
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-emerald-400" /> Upload New Video Lecture
-                </h3>
-                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleVideoUpload(new FormData(e.currentTarget)); }}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Stat cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              {[
+                { label: "Total Lectures",   value: stats.total,     icon: <Video className="w-5 h-5"/>,       color:"59,130,246" },
+                { label: "Published",        value: stats.published, icon: <CheckCircle className="w-5 h-5"/>, color:"16,185,129" },
+                { label: "Drafts",           value: stats.drafts,    icon: <AlertCircle className="w-5 h-5"/>, color:"245,158,11" },
+                { label: "Visible to Students", value: stats.published, icon: <Users className="w-5 h-5"/>,    color:"139,92,246" },
+              ].map((s,i) => (
+                <div key={i} className="rounded-2xl p-4 transition-all hover:scale-105 cursor-default" style={{ background:"rgba(15,22,41,0.75)", backdropFilter:"blur(14px)", border:"1px solid rgba(99,102,241,0.15)" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2" style={{ background:`rgba(${s.color},0.15)`, color:`rgb(${s.color})` }}>
+                    {s.icon}
+                  </div>
+                  <p className="text-slate-400 text-xs">{s.label}</p>
+                  <p className="text-2xl font-bold text-white" style={{ fontFamily:"Sora,sans-serif" }}>{s.value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Upload / Edit Form */}
+            {showForm && (
+              <div className="mb-8 rounded-2xl p-6" style={{ background:"rgba(15,22,41,0.85)", backdropFilter:"blur(14px)", border:"1px solid rgba(16,185,129,0.25)" }}>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-white font-bold flex items-center gap-2">
+                    <Upload className="w-5 h-5 text-emerald-400" />
+                    {editId ? "Edit Lecture" : "Upload New Lecture"}
+                  </h3>
+                  <button onClick={closeForm} className="text-slate-400 hover:text-white transition-colors"><X className="w-5 h-5"/></button>
+                </div>
+                <form onSubmit={handleSave} className="space-y-4">
+                  {/* Row 1: class + subject */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-slate-400 mb-1">Video Title *</label>
-                      <input name="title" required placeholder="e.g., Introduction to Algebra" className="w-full px-3 py-2 rounded-lg text-white bg-slate-800/60 border border-slate-600 focus:outline-none placeholder-slate-500 text-sm" style={{ transition: "border-color 0.2s" }} onFocus={e => e.target.style.borderColor = "#10B981"} onBlur={e => e.target.style.borderColor = ""} />
+                      <label style={labelStyle}>Class Level *</label>
+                      <select value={form.class_level} onChange={e => setForm(f => ({ ...f, class_level: e.target.value, subject_name: SUBJECT_MAP[parseInt(e.target.value)][0] }))} style={inputStyle} required>
+                        {CLASS_LEVELS.map(c => <option key={c} value={c}>Class {c}</option>)}
+                      </select>
                     </div>
                     <div>
-                      <label className="block text-sm text-slate-400 mb-1">Subject *</label>
-                      <select name="subject" required className="w-full px-3 py-2 rounded-lg text-white bg-slate-800/60 border border-slate-600 focus:outline-none text-sm">
-                        {subjects.map(s => <option key={s.id} value={s.id}>{s.icon} {s.name}</option>)}
+                      <label style={labelStyle}>Subject *</label>
+                      <select value={form.subject_name} onChange={e => setForm(f => ({ ...f, subject_name: e.target.value }))} style={inputStyle} required>
+                        {availableSubjects.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </div>
                   </div>
+
+                  {/* Row 2: title */}
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">Description</label>
-                    <textarea name="description" rows={3} placeholder="Brief description of the video content" className="w-full px-3 py-2 rounded-lg text-white bg-slate-800/60 border border-slate-600 focus:outline-none placeholder-slate-500 text-sm resize-none" />
+                    <label style={labelStyle}>Lecture Title *</label>
+                    <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g., Introduction to Algebra" style={inputStyle} required />
                   </div>
+
+                  {/* Row 3: description */}
                   <div>
-                    <label className="block text-sm text-slate-400 mb-1">Video File *</label>
-                    <input name="video" type="file" accept="video/*" required className="w-full px-3 py-2 rounded-lg text-slate-300 bg-slate-800/60 border border-slate-600 text-sm" />
+                    <label style={labelStyle}>Description</label>
+                    <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} placeholder="What will students learn?" style={{ ...inputStyle, resize: "none" }} />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                  {/* Row 4: chapter + duration */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-slate-400 mb-1">Duration (min)</label>
-                      <input name="duration" type="number" placeholder="45" className="w-full px-3 py-2 rounded-lg text-white bg-slate-800/60 border border-slate-600 focus:outline-none text-sm" />
+                      <label style={labelStyle}>Chapter Number</label>
+                      <input type="number" min={1} value={form.chapter_number} onChange={e => setForm(f => ({ ...f, chapter_number: e.target.value }))} style={inputStyle} />
                     </div>
                     <div>
-                      <label className="block text-sm text-slate-400 mb-1">Difficulty</label>
-                      <select name="difficulty" className="w-full px-3 py-2 rounded-lg text-white bg-slate-800/60 border border-slate-600 focus:outline-none text-sm">
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm text-slate-400 mb-1">Status</label>
-                      <select name="status" defaultValue="draft" className="w-full px-3 py-2 rounded-lg text-white bg-slate-800/60 border border-slate-600 focus:outline-none text-sm">
-                        <option value="draft">Save as Draft</option>
-                        <option value="published">Publish Immediately</option>
-                      </select>
+                      <label style={labelStyle}>Duration (minutes)</label>
+                      <input type="number" min={1} value={form.duration_minutes} onChange={e => setForm(f => ({ ...f, duration_minutes: e.target.value }))} style={inputStyle} />
                     </div>
                   </div>
-                  <div className="flex gap-3">
-                    <button type="submit" disabled={isUploading} className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm transition-all" style={{ background: "linear-gradient(135deg,#10B981,#059669)", opacity: isUploading ? 0.7 : 1 }}>
-                      {isUploading ? <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" /> Uploading...</> : <><Upload className="w-4 h-4" /> Upload Video</>}
+
+                  {/* Row 5: YouTube URL + language */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label style={labelStyle} className="flex items-center gap-1"><Youtube className="w-3 h-3 text-red-400"/>YouTube Video URL / ID</label>
+                      <input value={form.youtubeVideoId} onChange={e => setForm(f => ({ ...f, youtubeVideoId: e.target.value }))} placeholder="https://youtube.com/watch?v=... or video ID" style={inputStyle} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Language</label>
+                      <select value={form.language} onChange={e => setForm(f => ({ ...f, language: e.target.value }))} style={inputStyle}>
+                        {LANGUAGES.map(l => <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Row 6: status */}
+                  <div className="flex items-center gap-3">
+                    <button type="button" onClick={() => setForm(f => ({ ...f, is_active: !f.is_active }))}
+                      className="relative w-11 h-6 rounded-full transition-colors flex-shrink-0"
+                      style={{ background: form.is_active ? "rgba(16,185,129,0.8)" : "rgba(99,102,241,0.2)" }}>
+                      <span className="absolute top-1 w-4 h-4 bg-white rounded-full transition-all" style={{ left: form.is_active ? "calc(100% - 20px)" : 4 }} />
                     </button>
-                    <button type="button" onClick={() => setShowUploadForm(false)} className="px-4 py-2 rounded-lg text-slate-300 border border-slate-600 text-sm hover:border-slate-400 transition-colors">
+                    <span className="text-sm" style={{ color: form.is_active ? "#10B981" : "#94a3b8" }}>
+                      {form.is_active ? "Publish immediately (visible to students)" : "Save as draft (hidden from students)"}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-3 pt-1">
+                    <button type="submit" disabled={saving} className="flex items-center gap-2 px-5 py-2 rounded-xl text-white font-semibold text-sm transition-all hover:scale-105" style={{ background: "linear-gradient(135deg,#10B981,#059669)", opacity: saving ? 0.7 : 1 }}>
+                      {saving ? <><div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"/> Saving…</> : <><Upload className="w-4 h-4"/> {editId ? "Save Changes" : "Upload Lecture"}</>}
+                    </button>
+                    <button type="button" onClick={closeForm} className="px-4 py-2 rounded-xl text-slate-300 text-sm border transition-colors hover:border-slate-400" style={{ borderColor:"rgba(99,102,241,0.3)" }}>
                       Cancel
                     </button>
                   </div>
@@ -173,175 +347,106 @@ const TeacherContent = () => {
               </div>
             )}
 
-            {/* Tabs */}
-            <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid grid-cols-4 rounded-xl p-1" style={{ background: "rgba(15,22,41,0.8)", border: "1px solid rgba(99,102,241,0.15)" }}>
-                {["overview","videos","subjects","analytics"].map(tab => (
-                  <TabsTrigger key={tab} value={tab} className="rounded-lg text-slate-400 capitalize data-[state=active]:text-white data-[state=active]:bg-emerald-600/20 data-[state=active]:shadow-none">
-                    {tab}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 mb-5">
+              <div className="flex items-center gap-2 rounded-xl px-3 py-2 flex-1 min-w-48" style={{ background:"rgba(15,22,41,0.75)", border:"1px solid rgba(99,102,241,0.15)" }}>
+                <Search className="w-4 h-4 text-slate-400 flex-shrink-0"/>
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search lectures…" className="bg-transparent text-white text-sm outline-none w-full placeholder-slate-500"/>
+              </div>
+              <select value={filterClass} onChange={e => setFilterClass(e.target.value)} className="rounded-xl px-3 py-2 text-sm text-white" style={{ background:"rgba(15,22,41,0.75)", border:"1px solid rgba(99,102,241,0.15)" }}>
+                <option value="all">All Classes</option>
+                {CLASS_LEVELS.map(c => <option key={c} value={c}>Class {c}</option>)}
+              </select>
+              <select value={filterSubject} onChange={e => setFilterSubject(e.target.value)} className="rounded-xl px-3 py-2 text-sm text-white" style={{ background:"rgba(15,22,41,0.75)", border:"1px solid rgba(99,102,241,0.15)" }}>
+                <option value="all">All Subjects</option>
+                {allSubjectNames.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
 
-              {/* Overview */}
-              <TabsContent value="overview" className="space-y-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {statCards.map((s, i) => (
-                    <div key={i} className="rounded-2xl p-4 transition-all hover:scale-105 cursor-default" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}
-                      onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 24px rgba(${s.color},0.25)`}
-                      onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
-                    >
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `rgba(${s.color},0.15)`, color: `rgb(${s.color})` }}>
-                        {s.icon}
-                      </div>
-                      <p className="text-slate-400 text-xs">{s.label}</p>
-                      <p className="text-2xl font-bold text-white" style={{ fontFamily: "Sora, sans-serif" }}>{s.value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Recent Videos */}
-                <div className="rounded-2xl p-6" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}>
-                  <h3 className="text-white font-bold mb-4" style={{ fontFamily: "Sora, sans-serif" }}>Recently Uploaded</h3>
-                  <div className="space-y-3">
-                    {recentVideos.map((v) => (
-                      <div key={v.id} className="flex items-center gap-4 p-3 rounded-xl" style={{ background: "rgba(8,13,26,0.5)", border: "1px solid rgba(99,102,241,0.1)" }}>
-                        <div className="w-14 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(99,102,241,0.15)" }}>
-                          <FileVideo className="w-5 h-5 text-violet-400" />
+            {/* Lecture list */}
+            {loading ? (
+              <div className="text-center py-20">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-400 mx-auto mb-3"/>
+                <p className="text-slate-400 text-sm">Loading your lectures…</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-20 rounded-2xl" style={{ background:"rgba(15,22,41,0.5)", border:"1px solid rgba(99,102,241,0.1)" }}>
+                <div className="text-5xl mb-4">📭</div>
+                <p className="text-white font-semibold mb-1">No lectures found</p>
+                <p className="text-slate-400 text-sm mb-5">Upload your first lecture to get started.</p>
+                <button onClick={openAdd} className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-white font-semibold text-sm" style={{ background:"linear-gradient(135deg,#10B981,#059669)" }}>
+                  <Plus className="w-4 h-4"/> Upload Lecture
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filtered.map(lec => {
+                  const vid = lec.lecture_videos?.[0];
+                  const ytId = vid?.youtube_video_id;
+                  return (
+                    <div key={lec.id} className="rounded-2xl p-4 transition-all" style={{ background:"rgba(15,22,41,0.75)", backdropFilter:"blur(14px)", border:`1px solid ${lec.is_active ? "rgba(16,185,129,0.2)" : "rgba(99,102,241,0.12)"}` }}>
+                      <div className="flex items-start gap-4">
+                        {/* Thumbnail */}
+                        <div className="w-20 h-14 rounded-xl flex-shrink-0 overflow-hidden" style={{ background:"rgba(99,102,241,0.15)" }}>
+                          {ytId ? (
+                            <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt="" className="w-full h-full object-cover"/>
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center"><FileVideo className="w-6 h-6 text-violet-400"/></div>
+                          )}
                         </div>
+
+                        {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-white font-medium text-sm truncate">{v.title}</span>
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <span className="text-white font-semibold text-sm truncate">{lec.title}</span>
                             <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0" style={{
-                              background: v.status === "published" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)",
-                              color: v.status === "published" ? "#10B981" : "#F59E0B",
-                              border: `1px solid rgba(${v.status === "published" ? "16,185,129" : "245,158,11"},0.3)`
+                              background: lec.is_active ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)",
+                              color: lec.is_active ? "#10B981" : "#F59E0B",
+                              border: `1px solid ${lec.is_active ? "rgba(16,185,129,0.3)" : "rgba(245,158,11,0.3)"}`,
                             }}>
-                              {v.status === "published" ? <CheckCircle className="inline w-3 h-3 mr-1" /> : <AlertCircle className="inline w-3 h-3 mr-1" />}
-                              {v.status}
+                              {lec.is_active ? <CheckCircle className="inline w-3 h-3 mr-1"/> : <AlertCircle className="inline w-3 h-3 mr-1"/>}
+                              {lec.is_active ? "Published" : "Draft"}
                             </span>
                           </div>
-                          <div className="flex items-center gap-3 text-slate-500 text-xs mt-1">
-                            <span>{v.subject}</span><span>•</span><span>{v.duration}</span><span>•</span><span>{v.views} views</span>
+                          <div className="flex flex-wrap items-center gap-2 text-slate-500 text-xs">
+                            <span className="text-violet-400 font-medium">Class {lec.class_level}</span>
+                            <span>•</span>
+                            <span>{lec.subjects?.name}</span>
+                            {lec.chapter_number && <><span>•</span><span>Ch. {lec.chapter_number}</span></>}
+                            {lec.duration_minutes && <><span>•</span><Clock className="w-3 h-3"/><span>{lec.duration_minutes} min</span></>}
+                            {vid && <><span>•</span><span className="capitalize text-slate-400">{vid.language}</span></>}
                           </div>
+                          {lec.description && <p className="text-slate-500 text-xs mt-1 line-clamp-1">{lec.description}</p>}
                         </div>
+
+                        {/* Actions */}
                         <div className="flex items-center gap-1 flex-shrink-0">
-                          <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"><Edit className="w-4 h-4" /></button>
-                          <button className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"><Eye className="w-4 h-4" /></button>
-                          <button className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-900/20 transition-colors"><Trash2 className="w-4 h-4" /></button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* All Videos */}
-              <TabsContent value="videos" className="space-y-4">
-                {recentVideos.map((v) => (
-                  <div key={v.id} className="rounded-2xl p-5" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}>
-                    <div className="flex items-start gap-4">
-                      <div className="w-20 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(99,102,241,0.15)" }}>
-                        <Play className="w-7 h-7 text-violet-400" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-1">
-                          <div>
-                            <h4 className="text-white font-semibold">{v.title}</h4>
-                            <p className="text-slate-400 text-sm">{v.subject}</p>
-                          </div>
-                          <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                            background: v.status === "published" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)",
-                            color: v.status === "published" ? "#10B981" : "#F59E0B"
-                          }}>{v.status}</span>
-                        </div>
-                        <div className="flex items-center gap-4 text-slate-500 text-sm">
-                          <span>{v.duration}</span><span>{v.views} views</span><span>{new Date(v.uploadDate).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 text-sm border border-slate-600 hover:border-slate-400 transition-colors"><Edit className="w-4 h-4" /> Edit</button>
-                        <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 text-sm border border-slate-600 hover:border-slate-400 transition-colors"><Eye className="w-4 h-4" /> Preview</button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </TabsContent>
-
-              {/* By Subject */}
-              <TabsContent value="subjects">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {subjects.map((s) => (
-                    <div key={s.id} className="rounded-2xl overflow-hidden transition-all hover:scale-[1.01]" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}
-                      onMouseEnter={e => e.currentTarget.style.boxShadow = `0 0 30px rgba(${s.glow},0.2)`}
-                      onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
-                    >
-                      <div className="h-1.5" style={{ background: `linear-gradient(90deg, rgb(${s.glow}), transparent)` }} />
-                      <div className="p-5">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <div className="text-2xl">{s.icon}</div>
-                            <div>
-                              <h4 className="text-white font-bold">{s.name}</h4>
-                              <p className="text-slate-400 text-sm">{s.videoCount} videos · {s.totalDuration}</p>
-                            </div>
-                          </div>
-                          <span className="text-xs px-2 py-1 rounded-full text-emerald-400" style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)" }}>{s.status}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-slate-300 text-sm border border-slate-600 hover:border-slate-400 transition-colors"><Eye className="w-4 h-4" /> View All</button>
-                          <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-white text-sm transition-all hover:opacity-90" style={{ background: `linear-gradient(135deg,rgba(${s.glow},0.8),rgba(${s.glow},0.5))` }}><Plus className="w-4 h-4" /> Add Video</button>
+                          {ytId && (
+                            <a href={`https://youtube.com/watch?v=${ytId}`} target="_blank" rel="noreferrer"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-900/20 transition-colors" title="Watch on YouTube">
+                              <Play className="w-4 h-4"/>
+                            </a>
+                          )}
+                          <button onClick={() => handleToggle(lec)} className="p-1.5 rounded-lg transition-colors" style={{ color: lec.is_active ? "#10B981" : "#94a3b8" }}
+                            title={lec.is_active ? "Unpublish" : "Publish"}>
+                            {lec.is_active ? <Eye className="w-4 h-4"/> : <EyeOff className="w-4 h-4"/>}
+                          </button>
+                          <button onClick={() => openEdit(lec)} className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors" title="Edit">
+                            <Edit className="w-4 h-4"/>
+                          </button>
+                          <button onClick={() => setConfirmDelete(lec.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-900/20 transition-colors" title="Delete">
+                            <Trash2 className="w-4 h-4"/>
+                          </button>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </TabsContent>
-
-              {/* Analytics */}
-              <TabsContent value="analytics">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="rounded-2xl p-6" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}>
-                    <h3 className="text-white font-bold mb-4">🏆 Top Performing Videos</h3>
-                    <div className="space-y-3">
-                      {recentVideos.slice(0, 3).map((v, i) => (
-                        <div key={v.id} className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: "linear-gradient(135deg,#7C3AED,#06B6D4)" }}>{i+1}</div>
-                          <div className="flex-1">
-                            <p className="text-white text-sm font-medium">{v.title}</p>
-                            <p className="text-slate-400 text-xs">{v.views} views</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="rounded-2xl p-6" style={{ background: "rgba(15,22,41,0.75)", backdropFilter: "blur(14px)", border: "1px solid rgba(99,102,241,0.15)" }}>
-                    <h3 className="text-white font-bold mb-4">📊 Subject Performance</h3>
-                    <div className="space-y-4">
-                      {subjects.map((s, i) => {
-                        const pct = [72, 85, 61, 48][i];
-                        return (
-                          <div key={s.id}>
-                            <div className="flex justify-between text-sm mb-1">
-                              <span className="text-slate-300 flex items-center gap-1"><span>{s.icon}</span>{s.name}</span>
-                              <span className="text-white font-medium">{[520, 680, 410, 290][i]} views</span>
-                            </div>
-                            <div className="h-2 rounded-full" style={{ background: "rgba(99,102,241,0.1)" }}>
-                              <div className="h-2 rounded-full transition-all" style={{ width: `${pct}%`, background: `linear-gradient(90deg, rgb(${s.glow}), rgba(${s.glow},0.5))` }} />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
   );
-};
-
-export default TeacherContent;
+}
